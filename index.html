@@ -273,6 +273,7 @@ var data = JSON.parse(localStorage.getItem('turmuhasebe') || '[]');
 var editId = null;
 var activeFilter = 'tumu';
 var icsRows = [];
+var icsSkippedZero = 0;
 var KURS = JSON.parse(localStorage.getItem('turmuhasebe_kurlar') || '{"TL":1,"USD":33,"EUR":36,"GBP":42}');
 
 function save() { localStorage.setItem('turmuhasebe', JSON.stringify(data)); }
@@ -552,6 +553,7 @@ document.getElementById('modal-bg').addEventListener('click', function(e) {
 // =========================================================
 function openIcsModal() {
   icsRows = [];
+  icsSkippedZero = 0;
   document.getElementById('ics-preview').style.display = 'none';
   document.getElementById('import-btn').style.display = 'none';
   document.getElementById('ics-file').value = '';
@@ -829,11 +831,18 @@ function parseIcs(text) {
   }
 
   var rawRows = [];
+  var skippedZero = 0;
   events.forEach(function(ev, idx) {
     var tarih = icsDate(ev.dtstart || '');
     if (!tarih) return; // Tarihi cozemedik, atla
 
     var p = parseIcsEvent(ev.summary || '', ev.description || '', ev.location || '');
+
+    // Tutari 0 olan etkinlikleri atla (ornegin sadece acenta adi yazan,
+    // tutari ayrica baska bir etkinlikte belirtilen kayitlar). Kullanici
+    // bu "0 TL" satirlarini ice aktarmak istemiyor.
+    if (!p.tutar || p.tutar <= 0) { skippedZero++; return; }
+
     rawRows.push({
       _id: 'ics_' + idx,
       tarih: tarih,
@@ -847,11 +856,12 @@ function parseIcs(text) {
   });
 
   if (rawRows.length === 0) {
-    alert('Etkinlikler bulundu fakat tarihleri cozemedi. ICS formatini kontrol edin.');
+    alert('Tutari 0 olan ' + skippedZero + ' etkinlik atlandi, tutarli hicbir etkinlik bulunamadi.\nICS formatini kontrol edin.');
     return;
   }
 
   icsRows = rawRows;
+  icsSkippedZero = skippedZero;
   renderIcsPreview();
 }
 
@@ -860,7 +870,8 @@ function renderIcsPreview() {
     alert('Isleme alinacak etkinlik bulunamadi.');
     return;
   }
-  document.getElementById('ics-count').textContent = icsRows.length;
+  document.getElementById('ics-count').textContent = icsRows.length +
+    (icsSkippedZero > 0 ? ' (tutari 0 olan ' + icsSkippedZero + ' etkinlik otomatik atlandi)' : '');
   document.getElementById('ics-preview').style.display = '';
   document.getElementById('import-btn').style.display = '';
 
