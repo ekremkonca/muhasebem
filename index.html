@@ -37,6 +37,7 @@
   .btn:hover { opacity: 0.85; }
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-ics { background: #1e3a5f; color: #6b8ef0; border: 1px solid #2e4a7f; }
+  .btn-danger { background: #5f1e1e; color: #f08e8e; border: 1px solid #7f2e2e; }
   .btn-sm { padding: 5px 12px; font-size: 0.78rem; border-radius: 6px; border: none; font-family: inherit; font-weight: 600; cursor: pointer; }
   .rate-panel { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px; color:var(--muted); font-size:.78rem; }
   .rate-panel label { display:flex; gap:5px; align-items:center; }
@@ -105,6 +106,7 @@
   <div class="header-actions">
     <button class="btn btn-ics" id="btn-takvim">&#128197; Takvim'den Aktar</button>
     <button class="btn btn-primary" id="btn-yeni">+ Kayit Ekle</button>
+    <button class="btn btn-danger" id="btn-tumunu-kaldir">&#128465; Tumunu Kaldir</button>
   </div>
 </header>
 
@@ -218,8 +220,9 @@
       <input type="file" id="ics-file" accept=".ics" style="display:none">
     </div>
     <div id="ics-preview" style="display:none">
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:8px">
-        <span id="ics-count"></span> etkinlik bulundu. Alanlari kontrol edip duzenleyebilirsiniz.
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span><span id="ics-count"></span> etkinlik bulundu. Alanlari kontrol edip duzenleyebilirsiniz.</span>
+        <button class="btn-ghost" id="btn-preview-tumunu-kaldir" style="padding:5px 12px;font-size:0.75rem;white-space:nowrap">Tumunu Kaldir</button>
       </p>
       <div class="preview-wrap">
         <table class="preview-table">
@@ -562,6 +565,18 @@ function openIcsModal() {
 
 function closeIcsModal() { document.getElementById('ics-modal-bg').classList.remove('open'); }
 
+document.getElementById('btn-tumunu-kaldir').addEventListener('click', function() {
+  if (data.length === 0) { alert('Zaten hicbir kayit yok.'); return; }
+  var onay1 = confirm(data.length + ' kaydin TAMAMI silinecek. Bu islem GERI ALINAMAZ. Emin misin?');
+  if (!onay1) return;
+  var onay2 = confirm('Son kez soruyorum: TUM kayitlari kalici olarak silmek istiyor musun?');
+  if (!onay2) return;
+  data = [];
+  save();
+  render();
+  alert('Tum kayitlar silindi. Simdi temiz bir sekilde tekrar ice aktarabilirsin.');
+});
+
 document.getElementById('btn-takvim').addEventListener('click', openIcsModal);
 document.getElementById('btn-ics-iptal').addEventListener('click', closeIcsModal);
 document.getElementById('ics-modal-bg').addEventListener('click', function(e) {
@@ -584,6 +599,15 @@ document.getElementById('ics-file').addEventListener('change', function() {
 });
 
 document.getElementById('import-btn').addEventListener('click', importAll);
+document.getElementById('btn-preview-tumunu-kaldir').addEventListener('click', function() {
+  if (icsRows.length === 0) return;
+  var onay = confirm('Onizlemedeki ' + icsRows.length + ' satirin tumunu kaldirmak istiyor musun? (Henuz ice aktarilmadi, sadece onizleme temizlenir.)');
+  if (!onay) return;
+  icsRows = [];
+  icsSkippedZero = 0;
+  document.getElementById('ics-preview').style.display = 'none';
+  document.getElementById('import-btn').style.display = 'none';
+});
 
 function handleIcsFile(file) {
   if (!file) return;
