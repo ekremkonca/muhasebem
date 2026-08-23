@@ -80,18 +80,7 @@
   .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 8px; font-family: inherit; font-size: 0.85rem; cursor: pointer; }
   .empty { text-align: center; color: var(--muted); padding: 40px; font-size: 0.9rem; }
   .cur-hint { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
-  .ics-drop { border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; transition: all 0.2s; cursor: pointer; }
-  .ics-drop:hover, .ics-drop.dragover { border-color: var(--accent); background: rgba(91,110,245,0.05); }
-  .ics-drop .icon { font-size: 2rem; margin-bottom: 8px; }
-  .ics-drop p { color: var(--muted); font-size: 0.85rem; }
-  .preview-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  .preview-table th { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); }
-  .preview-table td { padding: 8px; border-bottom: 1px solid var(--border); }
-  .preview-table tr:last-child td { border-bottom: none; }
-  .preview-table select, .preview-table input { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 4px 8px; font-size: 0.78rem; font-family: inherit; width: 100%; }
-  .preview-wrap { max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; margin-top: 10px; }
-  .import-info { background: rgba(91,110,245,0.1); border: 1px solid rgba(91,110,245,0.3); border-radius: 8px; padding: 12px; font-size: 0.8rem; color: var(--blue); margin-bottom: 16px; }
-  .import-info strong { display: block; margin-bottom: 4px; color: var(--text); }
+  .cur-hint { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
   .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:0.72rem; margin-bottom:14px; padding: 10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:8px; }
   .legend-item { display:flex; align-items:center; gap:5px; }
   .legend-dot { width:10px; height:10px; border-radius:50%; }
@@ -104,7 +93,9 @@
 <header>
   <h1>Tur <span>Muhasebe</span></h1>
   <div class="header-actions">
-    <button class="btn btn-ics" id="btn-takvim">&#128197; Takvim'den Aktar</button>
+    <button class="btn btn-ics" id="btn-yedekle">&#128190; Yedekle</button>
+    <button class="btn btn-ics" id="btn-yedekten-yukle">&#128193; Yedekten Yukle</button>
+    <input type="file" id="restore-file" accept="application/json,.json" style="display:none">
     <button class="btn btn-primary" id="btn-yeni">+ Kayit Ekle</button>
     <button class="btn btn-danger" id="btn-tumunu-kaldir">&#128465; Tumunu Kaldir</button>
   </div>
@@ -205,39 +196,6 @@
   </div>
 </div>
 
-<!-- ICS Modal -->
-<div class="modal-bg" id="ics-modal-bg">
-  <div class="modal" style="max-width:700px">
-    <h2>&#128197; Takvim'den Aktar (ICS)</h2>
-    <div class="import-info">
-      <strong>Nasil ICS dosyasi alirsin?</strong>
-      Google Calendar → Ayarlar (⚙) → Ice/Disa Aktar → Disa Aktar → ZIP icindeki .ics dosyasini buraya surukle veya tikla sec
-    </div>
-    <div class="ics-drop" id="ics-drop">
-      <div class="icon">&#128194;</div>
-      <strong>ICS dosyasini buraya surukle</strong>
-      <p>veya tikla sec</p>
-      <input type="file" id="ics-file" accept=".ics" style="display:none">
-    </div>
-    <div id="ics-preview" style="display:none">
-      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <span><span id="ics-count"></span> etkinlik bulundu. Alanlari kontrol edip duzenleyebilirsiniz.</span>
-        <button class="btn-ghost" id="btn-preview-tumunu-kaldir" style="padding:5px 12px;font-size:0.75rem;white-space:nowrap">Tumunu Kaldir</button>
-      </p>
-      <div class="preview-wrap">
-        <table class="preview-table">
-          <thead><tr><th>Tarih</th><th>Acenta / Sirket</th><th>Aciklama</th><th>Tutar</th><th>Doviz</th><th>Kategori</th><th>Durum</th><th></th></tr></thead>
-          <tbody id="preview-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-ghost" id="btn-ics-iptal">Iptal</button>
-      <button class="btn btn-primary" id="import-btn" style="display:none">Tumunu Ice Aktar</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // =========================================================
 // YARDIMCI FONKSIYONLAR
@@ -275,9 +233,6 @@ function parseMoney(value) {
 var data = JSON.parse(localStorage.getItem('turmuhasebe') || '[]');
 var editId = null;
 var activeFilter = 'tumu';
-var icsRows = [];
-var icsSkippedZero = 0;
-var icsMergedCount = 0;
 var KURS = JSON.parse(localStorage.getItem('turmuhasebe_kurlar') || '{"TL":1,"USD":33,"EUR":36,"GBP":42}');
 
 function save() { localStorage.setItem('turmuhasebe', JSON.stringify(data)); }
@@ -552,21 +507,10 @@ document.getElementById('modal-bg').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
-// =========================================================
-// ICS - TAKVIMDEN AKTAR
-// =========================================================
-function openIcsModal() {
-  icsRows = [];
-  icsSkippedZero = 0;
-  icsMergedCount = 0;
-  document.getElementById('ics-preview').style.display = 'none';
-  document.getElementById('import-btn').style.display = 'none';
-  document.getElementById('ics-file').value = '';
-  document.getElementById('ics-modal-bg').classList.add('open');
-}
 
-function closeIcsModal() { document.getElementById('ics-modal-bg').classList.remove('open'); }
-
+// =========================================================
+// TUMUNU KALDIR
+// =========================================================
 document.getElementById('btn-tumunu-kaldir').addEventListener('click', function() {
   if (data.length === 0) { alert('Zaten hicbir kayit yok.'); return; }
   var onay1 = confirm(data.length + ' kaydin TAMAMI silinecek. Bu islem GERI ALINAMAZ. Emin misin?');
@@ -576,518 +520,74 @@ document.getElementById('btn-tumunu-kaldir').addEventListener('click', function(
   data = [];
   save();
   render();
-  alert('Tum kayitlar silindi. Simdi temiz bir sekilde tekrar ice aktarabilirsin.');
+  alert('Tum kayitlar silindi.');
 });
 
-document.getElementById('btn-takvim').addEventListener('click', openIcsModal);
-document.getElementById('btn-ics-iptal').addEventListener('click', closeIcsModal);
-document.getElementById('ics-modal-bg').addEventListener('click', function(e) {
-  if (e.target === this) closeIcsModal();
-});
+// =========================================================
+// YEDEKLE / YEDEKTEN YUKLE
+// =========================================================
+function exportBackup() {
+  var backup = {
+    app: 'tur-muhasebe',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data: data,
+    kurlar: KURS
+  };
+  var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var ts = new Date().toISOString().slice(0,19).replace(/[:T]/g, '-');
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'tur-muhasebe-yedek-' + ts + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
-// Drag & drop
-var dropZone = document.getElementById('ics-drop');
-dropZone.addEventListener('click', function() { document.getElementById('ics-file').click(); });
-dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
-dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
-dropZone.addEventListener('drop', function(e) {
-  e.preventDefault();
-  dropZone.classList.remove('dragover');
-  var file = e.dataTransfer.files[0];
-  if (file) handleIcsFile(file);
-});
-document.getElementById('ics-file').addEventListener('change', function() {
-  if (this.files[0]) handleIcsFile(this.files[0]);
-});
-
-document.getElementById('import-btn').addEventListener('click', importAll);
-document.getElementById('btn-preview-tumunu-kaldir').addEventListener('click', function() {
-  if (icsRows.length === 0) return;
-  var onay = confirm('Onizlemedeki ' + icsRows.length + ' satirin tumunu kaldirmak istiyor musun? (Henuz ice aktarilmadi, sadece onizleme temizlenir.)');
-  if (!onay) return;
-  icsRows = [];
-  icsSkippedZero = 0;
-  icsMergedCount = 0;
-  document.getElementById('ics-preview').style.display = 'none';
-  document.getElementById('import-btn').style.display = 'none';
-});
-
-function handleIcsFile(file) {
+function handleRestoreFile(file) {
   if (!file) return;
   var reader = new FileReader();
-  reader.onload = function(e) { parseIcs(e.target.result); };
+  reader.onload = function(e) {
+    var backup;
+    try {
+      backup = JSON.parse(e.target.result);
+    } catch (err) {
+      alert('Yedek dosyasi okunamadi: gecerli bir JSON dosyasi degil.');
+      return;
+    }
+    if (!backup || !Array.isArray(backup.data)) {
+      alert('Gecersiz yedek dosyasi. Lutfen bu uygulamadan alinmis bir "Yedekle" dosyasi (.json) secin.');
+      return;
+    }
+    var onay = confirm(
+      'Bu yedek dosyasi ' + backup.data.length + ' kayit iceriyor.\n' +
+      'Yukleme yapilirsa mevcut TUM kayitlarin yerine bu yedekteki kayitlar gelecek.\n' +
+      'Devam edilsin mi?'
+    );
+    if (!onay) return;
+    data = backup.data;
+    if (backup.kurlar) {
+      KURS = backup.kurlar;
+      saveKurs();
+      loadRateInputs();
+    }
+    save();
+    render();
+    alert(data.length + ' kayit basariyla geri yuklendi.');
+  };
   reader.readAsText(file, 'UTF-8');
 }
 
-// =========================================================
-// ICS PARSE - DUZELTILMIS
-// =========================================================
-function normTR(s) {
-  return String(s || '')
-    .replace(/\u00e7/g,'c').replace(/\u00c7/g,'C')
-    .replace(/\u011f/g,'g').replace(/\u011e/g,'G')
-    .replace(/\u0131/g,'i').replace(/\u0130/g,'I')
-    .replace(/\u00f6/g,'o').replace(/\u00d6/g,'O')
-    .replace(/\u015f/g,'s').replace(/\u015e/g,'S')
-    .replace(/\u00fc/g,'u').replace(/\u00dc/g,'U');
-}
-
-function normalizeText(s) {
-  return normTR(String(s || ''))
-    .toUpperCase()
-    .replace(/[^\w\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-// Google Calendar ICS formatinda tarih coz
-// Formatlar: 20260814, 20260814T120000, 20260814T120000Z, TZID=Europe/Istanbul:20260814T120000
-function icsDate(dtstart) {
-  if (!dtstart) return '';
-  // TZID iceren parametreleri at, sadece deger al
-  var val = dtstart;
-  if (val.indexOf(':') !== -1) {
-    val = val.substring(val.lastIndexOf(':') + 1);
-  }
-  // Tarih kismi: ilk 8 rakam
-  var digits = val.replace(/[^0-9]/g, '');
-  if (digits.length < 8) return '';
-  return digits.substring(0,4) + '-' + digits.substring(4,6) + '-' + digits.substring(6,8);
-}
-
-// ICS escape karakterlerini temizle
-function cleanIcsVal(s) {
-  return String(s || '')
-    .replace(/\\n/g, ' ')
-    .replace(/\\N/g, ' ')
-    .replace(/\\,/g, ',')
-    .replace(/\\;/g, ';')
-    .replace(/\\\\/g, '\\')
-    .replace(/\r/g, '')
-    .trim();
-}
-
-// Para birimini tespit et
-function detectCurrency(raw) {
-  var s = String(raw || '');
-  if (s.indexOf('$') !== -1) return 'USD';
-  if (s.indexOf('\u20ac') !== -1) return 'EUR'; // €
-  if (s.indexOf('\u00a3') !== -1) return 'GBP'; // £
-  var up = normalizeText(s);
-  if (up.indexOf(' USD') !== -1 || up.indexOf('USD ') !== -1) return 'USD';
-  if (up.indexOf(' EUR') !== -1 || up.indexOf('EUR ') !== -1) return 'EUR';
-  if (up.indexOf(' GBP') !== -1 || up.indexOf('GBP ') !== -1) return 'GBP';
-  return 'TL';
-}
-
-// Tutari metin icerisinden cikart
-function extractMoney(s) {
-  var str = String(s || '');
-  // Para birimi + sayi: $100, €50, £30
-  var m;
-  m = str.match(/[\$]\s*([0-9][0-9.,]*)/);
-  if (m) { var n = parseMoney(m[1]); if (n > 0) return n; }
-  m = str.match(/[\u20ac]\s*([0-9][0-9.,]*)/);
-  if (m) { var n = parseMoney(m[1]); if (n > 0) return n; }
-  m = str.match(/[\u00a3]\s*([0-9][0-9.,]*)/);
-  if (m) { var n = parseMoney(m[1]); if (n > 0) return n; }
-  // Sayi + birim: 100 TL, 50 USD, 4700TL
-  m = str.match(/([0-9][0-9.,]*)\s*(?:TL|TRY)/i);
-  if (m) { var n = parseMoney(m[1]); if (n > 0) return n; }
-  m = str.match(/([0-9][0-9.,]*)\s*(?:USD|EUR|GBP)/i);
-  if (m) { var n = parseMoney(m[1]); if (n > 0) return n; }
-  // Sadece buyuk sayi (500+) - muhtemelen para
-  m = str.match(/([0-9][0-9.,]*)/g);
-  if (m) {
-    for (var i = m.length - 1; i >= 0; i--) {
-      var n = parseMoney(m[i]);
-      if (n >= 10) return n;
-    }
-  }
-  return 0;
-}
-
-// Kategori tespit et (normalizeText uygulanmis metin ile)
-function detectCategory(up) {
-  if (up.indexOf('HIZMET UCRETI') !== -1) return 'hizmet';
-  if (up.indexOf('SERVICE FEE') !== -1) return 'hizmet';
-  if (up.indexOf('HIZMET') !== -1) return 'hizmet';
-  if (up.indexOf('LIMAN') !== -1) return 'hizmet';
-  if (up.indexOf('KOMISYON') !== -1) return 'komisyon';
-  if (up.indexOf('COMMISSION') !== -1) return 'komisyon';
-  if (up.indexOf('BAHSIS') !== -1) return 'bahsis';
-  if (up.indexOf('TIPS') !== -1) return 'bahsis';
-  if (up.indexOf(' TIP ') !== -1) return 'bahsis';
-  if (up.indexOf('GIDER') !== -1) return 'gider';
-  if (up.indexOf('MASRAF') !== -1) return 'gider';
-  if (up.indexOf('EXPENSE') !== -1) return 'gider';
-  return 'gelir';
-}
-
-// Durum tespit et
-function detectStatus(up) {
-  if (up.indexOf('ALINMADI') !== -1) return 'alinmadi';
-  if (up.indexOf('BEKLENIYOR') !== -1) return 'alinmadi';
-  if (up.indexOf('UNPAID') !== -1) return 'alinmadi';
-  if (up.indexOf('PENDING') !== -1) return 'alinmadi';
-  if (up.indexOf('NOT PAID') !== -1) return 'alinmadi';
-  return 'alindi';
-}
-
-// SUMMARY metninden acenta adini cikart
-// Google Calendar'da genellikle format: "IGLESIAS LIMAN - 4700 TL HIZMET UCRETI" seklinde
-function extractCompanyName(summaryRaw) {
-  var s = String(summaryRaw || '');
-  // Para birimini ve sayilari kaldir
-  s = s.replace(/[\$\u20ac\u00a3\u20ba]\s*[0-9][0-9.,]*/g, ' ');
-  s = s.replace(/[0-9][0-9.,]*\s*[\$\u20ac\u00a3\u20ba]/g, ' ');
-  s = s.replace(/[0-9][0-9.,]*\s*(?:TL|TRY|USD|EUR|GBP)/gi, ' ');
-  s = s.replace(/[\$\u20ac\u00a3\u20ba]/g, ' '); // yanda kalan tek basina sembolleri de kaldir
-  s = s.replace(/[0-9][0-9.,]{2,}/g, ' '); // 3+ haneli sayilari kaldir
-  // Bilinen durum/kategori ifadelerini kaldir
-  var removeList = [
-    'ALINDI','ALINMADI','BEKLENIYOR','PAID','UNPAID','PENDING','RECEIVED',
-    'HIZMET UCRETI','SERVICE FEE','HIZMET','LIMAN','PORT',
-    'KOMISYON','COMMISSION','BAHSIS','TIPS','GIDER','MASRAF','EXPENSE',
-    'TL','USD','EUR','GBP'
-  ];
-  var up = normTR(s).toUpperCase();
-  removeList.forEach(function(w) {
-    // Kelime sinirlarini manuel kontrol et
-    var idx;
-    while ((idx = up.indexOf(w)) !== -1) {
-      var before = idx === 0 || !/[A-Z0-9]/.test(up[idx-1]);
-      var after = (idx + w.length) >= up.length || !/[A-Z0-9]/.test(up[idx + w.length]);
-      if (before && after) {
-        up = up.substring(0, idx) + ' ' + up.substring(idx + w.length);
-      } else {
-        break;
-      }
-    }
-  });
-  // Temizle ve dondur
-  up = up.replace(/[-|:;,./\\]/g, ' ').replace(/\s+/g,' ').trim();
-  return up;
-}
-
-// Tek bir ICS event'i isle
-function parseIcsEvent(summary, description, location) {
-  var rawSum = String(summary || '');
-  var rawDesc = String(description || '');
-  var rawLoc = String(location || '');
-  var combined = rawSum + ' ' + rawDesc;
-  var up = normalizeText(combined);
-
-  var doviz = detectCurrency(combined);
-  var tutar = extractMoney(combined);
-  var kategori = detectCategory(up);
-  var durum = detectStatus(up);
-
-  // Acenta adi: summary'den al, bos gelirse description'in ilk satiri
-  var realTur = extractCompanyName(rawSum);
-  if (!realTur && rawDesc) {
-    var firstLine = rawDesc.split(/[\\n\n]/)[0];
-    realTur = extractCompanyName(firstLine);
-  }
-  var fallbackTur = normalizeText(rawSum).substring(0, 40);
-  var tur = realTur || fallbackTur;
-
-  // Aciklama: description'in insan-okunabilir hali
-  var aciklama = rawDesc
-    .replace(/\\n/g, ' | ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  // Cok uzunsa kisalt
-  if (aciklama.length > 80) aciklama = aciklama.substring(0, 77) + '...';
-
-  // realTur: bos ise bu etkinlik muhtemelen sadece tutar/durum iceren
-  // "esi" olan bir etkinliktir (ayni gundeki isim etkinligiyle eslestirilebilir)
-  return { tur: tur, realTur: realTur, fallbackTur: fallbackTur, aciklama: aciklama, tutar: tutar, doviz: doviz, kategori: kategori, durum: durum };
-}
-
-// Ana ICS parse fonksiyonu
-function parseIcs(text) {
-  if (!text || text.indexOf('BEGIN:VCALENDAR') === -1) {
-    alert('Gecersiz ICS dosyasi. Lutfen Google Calendar\'dan disa aktarilan .ics dosyasini yukleyin.');
-    return;
-  }
-
-  // RFC 5545: satir devamini birlestir (CRLF veya LF + TAB/BOSLUK)
-  var unfolded = text
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .replace(/\n[ \t]/g, ''); // Satir devami: sonraki satir bosluk/tab ile baslarsa birlestir
-
-  var lines = unfolded.split('\n');
-  var events = [];
-  var cur = null;
-
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i].trim();
-    if (!line) continue;
-
-    if (line === 'BEGIN:VEVENT') {
-      cur = {};
-      continue;
-    }
-    if (line === 'END:VEVENT') {
-      if (cur) events.push(cur);
-      cur = null;
-      continue;
-    }
-    if (!cur) continue;
-
-    // Property name; parametreler:deger
-    var colonIdx = line.indexOf(':');
-    if (colonIdx === -1) continue;
-
-    var propFull = line.substring(0, colonIdx);
-    var propVal = line.substring(colonIdx + 1);
-
-    // Property adi: DTSTART;TZID=Europe/Istanbul -> DTSTART
-    var propName = propFull.split(';')[0].toUpperCase();
-
-    var val = cleanIcsVal(propVal);
-
-    switch (propName) {
-      case 'SUMMARY':     cur.summary = val; break;
-      case 'DTSTART':     cur.dtstart = propVal; break; // Ham deger - icsDate icinde isle
-      case 'DESCRIPTION': cur.description = val; break;
-      case 'LOCATION':    cur.location = val; break;
-    }
-  }
-
-  if (events.length === 0) {
-    alert('Bu ICS dosyasinda etkinlik bulunamadi.\nDosya gecerli bir Google Calendar disa aktarmasi olmayabilir.');
-    return;
-  }
-
-  var rawEvents = [];
-  events.forEach(function(ev, idx) {
-    var tarih = icsDate(ev.dtstart || '');
-    if (!tarih) return; // Tarihi cozemedik, atla
-    var p = parseIcsEvent(ev.summary || '', ev.description || '', ev.location || '');
-    rawEvents.push({
-      idx: idx, tarih: tarih, tur: p.tur, realTur: p.realTur, fallbackTur: p.fallbackTur,
-      aciklama: p.aciklama, tutar: p.tutar, doviz: p.doviz, kategori: p.kategori, durum: p.durum
-    });
-  });
-
-  // Ayni gunde "sadece isim" (tutar 0, gercek acenta adi var) ile
-  // "sadece tutar" (tutar var, gercek acenta adi yok) etkinliklerini
-  // birlestir. Google Takvim'de tek islem genellikle iki ayri etkinlik
-  // olarak girildigi icin (orn. "IGLESIAS EFES" + "4700 TL ALINMADI")
-  // bunlari tek satirda birlestirmek acenta adinin kaybolmasini engeller.
-  var byDate = {};
-  rawEvents.forEach(function(e) {
-    (byDate[e.tarih] = byDate[e.tarih] || []).push(e);
-  });
-
-  var rawRows = [];
-  var skippedZero = 0;
-  var mergedCount = 0;
-
-  Object.keys(byDate).forEach(function(dateKey) {
-    var group = byDate[dateKey];
-    var nameOnly = group.filter(function(e) { return (!e.tutar || e.tutar <= 0) && e.realTur; });
-    var amountOnly = group.filter(function(e) { return e.tutar > 0 && !e.realTur; });
-    var others = group.filter(function(e) {
-      var isNameOnly = (!e.tutar || e.tutar <= 0) && e.realTur;
-      var isAmountOnly = e.tutar > 0 && !e.realTur;
-      return !isNameOnly && !isAmountOnly;
-    });
-
-    var pairCount = Math.min(nameOnly.length, amountOnly.length);
-    for (var k = 0; k < pairCount; k++) {
-      var n = nameOnly[k], a = amountOnly[k];
-      rawRows.push({
-        _id: 'ics_' + a.idx,
-        tarih: dateKey,
-        tur: n.tur,
-        aciklama: [n.aciklama, a.aciklama].filter(Boolean).join(' | '),
-        tutar: a.tutar,
-        doviz: a.doviz,
-        kategori: a.kategori,
-        durum: a.durum
-      });
-      mergedCount++;
-    }
-    // Esi bulunamayan "sadece isim" etkinlikleri (hala tutar 0) atla
-    for (var k2 = pairCount; k2 < nameOnly.length; k2++) skippedZero++;
-    // Esi bulunamayan "sadece tutar" etkinlikleri: fallback isimle ekle
-    for (var k3 = pairCount; k3 < amountOnly.length; k3++) {
-      var a2 = amountOnly[k3];
-      rawRows.push({
-        _id: 'ics_' + a2.idx,
-        tarih: dateKey,
-        tur: a2.fallbackTur || 'BELIRSIZ',
-        aciklama: a2.aciklama,
-        tutar: a2.tutar,
-        doviz: a2.doviz,
-        kategori: a2.kategori,
-        durum: a2.durum
-      });
-    }
-    // Diger etkinlikler: normal sekilde isim+tutar birlikte olanlar,
-    // ya da esilemeyen 0 tutarli/isimsiz etkinlikler
-    others.forEach(function(e) {
-      if (!e.tutar || e.tutar <= 0) { skippedZero++; return; }
-      rawRows.push({
-        _id: 'ics_' + e.idx,
-        tarih: dateKey,
-        tur: e.tur || 'BELIRSIZ',
-        aciklama: e.aciklama,
-        tutar: e.tutar,
-        doviz: e.doviz,
-        kategori: e.kategori,
-        durum: e.durum
-      });
-    });
-  });
-
-  if (rawRows.length === 0) {
-    alert('Tutari 0 olan ' + skippedZero + ' etkinlik atlandi, tutarli hicbir etkinlik bulunamadi.\nICS formatini kontrol edin.');
-    return;
-  }
-
-  icsRows = rawRows;
-  icsSkippedZero = skippedZero;
-  icsMergedCount = mergedCount;
-  renderIcsPreview();
-}
-
-function renderIcsPreview() {
-  if (icsRows.length === 0) {
-    alert('Isleme alinacak etkinlik bulunamadi.');
-    return;
-  }
-  var extra = [];
-  if (icsMergedCount > 0) extra.push(icsMergedCount + ' cift ayni gunde birlestirildi');
-  if (icsSkippedZero > 0) extra.push('tutari 0 olan ' + icsSkippedZero + ' etkinlik atlandi');
-  document.getElementById('ics-count').textContent = icsRows.length +
-    (extra.length ? ' (' + extra.join(', ') + ')' : '');
-  document.getElementById('ics-preview').style.display = '';
-  document.getElementById('import-btn').style.display = '';
-
-  var ptbody = document.getElementById('preview-tbody');
-  ptbody.innerHTML = '';
-
-  icsRows.forEach(function(r, i) {
-    var tr = document.createElement('tr');
-
-    // Tarih
-    var td0 = document.createElement('td');
-    td0.style.cssText = 'white-space:nowrap;color:var(--muted);font-size:0.78rem';
-    td0.textContent = r.tarih.split('-').reverse().join('.');
-    tr.appendChild(td0);
-
-    // Acenta
-    var td1 = document.createElement('td');
-    var inp1 = document.createElement('input');
-    inp1.value = r.tur || '';
-    inp1.placeholder = 'Acenta adi';
-    inp1.style.minWidth = '100px';
-    inp1.addEventListener('change', (function(idx) { return function() { icsRows[idx].tur = this.value.toUpperCase(); }; })(i));
-    td1.appendChild(inp1); tr.appendChild(td1);
-
-    // Aciklama
-    var td2 = document.createElement('td');
-    var inp2 = document.createElement('input');
-    inp2.value = r.aciklama || '';
-    inp2.placeholder = 'Aciklama';
-    inp2.addEventListener('change', (function(idx) { return function() { icsRows[idx].aciklama = this.value; }; })(i));
-    td2.appendChild(inp2); tr.appendChild(td2);
-
-    // Tutar
-    var td3 = document.createElement('td');
-    var inp3 = document.createElement('input');
-    inp3.type = 'number'; inp3.step = '0.01';
-    inp3.value = r.tutar || '';
-    inp3.placeholder = '0';
-    inp3.style.width = '80px';
-    inp3.addEventListener('change', (function(idx) { return function() { icsRows[idx].tutar = parseMoney(this.value); }; })(i));
-    td3.appendChild(inp3); tr.appendChild(td3);
-
-    // Doviz
-    var td4 = document.createElement('td');
-    var sel4 = document.createElement('select');
-    [['TL','TL'],['USD','$ USD'],['EUR','€ EUR'],['GBP','£ GBP']].forEach(function(o) {
-      var opt = document.createElement('option');
-      opt.value = o[0]; opt.textContent = o[1];
-      if (o[0] === r.doviz) opt.selected = true;
-      sel4.appendChild(opt);
-    });
-    sel4.addEventListener('change', (function(idx) { return function() { icsRows[idx].doviz = this.value; }; })(i));
-    td4.appendChild(sel4); tr.appendChild(td4);
-
-    // Kategori
-    var td5 = document.createElement('td');
-    var sel5 = document.createElement('select');
-    [['gelir','Gelir'],['hizmet','Hizmet Ucreti'],['bahsis','Bahsis'],['komisyon','Komisyon'],['gider','Gider']].forEach(function(o) {
-      var opt = document.createElement('option');
-      opt.value = o[0]; opt.textContent = o[1];
-      if (o[0] === r.kategori) opt.selected = true;
-      sel5.appendChild(opt);
-    });
-    sel5.addEventListener('change', (function(idx) { return function() { icsRows[idx].kategori = this.value; }; })(i));
-    td5.appendChild(sel5); tr.appendChild(td5);
-
-    // Durum
-    var td6 = document.createElement('td');
-    var sel6 = document.createElement('select');
-    [['alindi','ALINDI'],['alinmadi','ALINMADI']].forEach(function(o) {
-      var opt = document.createElement('option');
-      opt.value = o[0]; opt.textContent = o[1];
-      if (o[0] === r.durum) opt.selected = true;
-      sel6.appendChild(opt);
-    });
-    sel6.addEventListener('change', (function(idx) { return function() { icsRows[idx].durum = this.value; }; })(i));
-    td6.appendChild(sel6); tr.appendChild(td6);
-
-    // Sil
-    var td7 = document.createElement('td');
-    var delBtn = document.createElement('button');
-    delBtn.className = 'btn-sm';
-    delBtn.style.cssText = 'background:#3a1a1a;color:var(--red)';
-    delBtn.textContent = 'Kaldir';
-    delBtn.addEventListener('click', (function(idx) { return function() { icsRows.splice(idx,1); renderIcsPreview(); }; })(i));
-    td7.appendChild(delBtn); tr.appendChild(td7);
-
-    ptbody.appendChild(tr);
-  });
-}
-
-function importAll() {
-  var added = 0, updated = 0;
-  icsRows.forEach(function(r) {
-    if (!r.tarih || !r.tur) return;
-    var key = r.tarih + '|' + normalizeText(r.tur);
-    var existing = data.find(function(x) {
-      return (x.tarih + '|' + normalizeText(x.tur)) === key;
-    });
-    if (existing) {
-      if (r.aciklama) existing.aciklama = r.aciklama;
-      if (r.tutar) { existing.tutar = r.tutar; existing.doviz = r.doviz || existing.doviz; }
-      if (r.kategori) existing.kategori = r.kategori;
-      if (r.durum) existing.durum = r.durum;
-      updated++;
-    } else {
-      data.push({
-        id: Date.now().toString() + Math.random().toString(36).substring(2,7),
-        tarih: r.tarih,
-        tur: r.tur,
-        aciklama: r.aciklama || '',
-        kategori: r.kategori || 'gelir',
-        tutar: r.tutar || 0,
-        doviz: r.doviz || 'TL',
-        durum: r.durum || 'alindi'
-      });
-      added++;
-    }
-  });
-  save(); render(); closeIcsModal();
-  alert(added + ' yeni kayit eklendi, ' + updated + ' mevcut kayit guncellendi.');
-}
+document.getElementById('btn-yedekle').addEventListener('click', exportBackup);
+document.getElementById('btn-yedekten-yukle').addEventListener('click', function() {
+  document.getElementById('restore-file').click();
+});
+document.getElementById('restore-file').addEventListener('change', function() {
+  if (this.files[0]) handleRestoreFile(this.files[0]);
+  this.value = '';
+});
 
 function clearAllData() {
   if (!confirm('Tum muhasebe kayitlari silinecek. Emin misiniz?')) return;
