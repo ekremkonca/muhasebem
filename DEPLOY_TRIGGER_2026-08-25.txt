@@ -1,0 +1,3 @@
+Force Cloudflare Pages production deployment after syncing root and tur-butcem-site applications.
+Commit target: main
+Features: D1, animated analytics chart, records calendar.
