@@ -1,28 +1,13 @@
-# Tur Bütçem
+# Tur Bütçem — Cloudflare Pages
 
-Tur gelirleri, tur masrafları, bahşişler ve komisyonlar için özel bütçe takip uygulaması.
+Cloudflare Pages için hazırlanmış React/Vite sürümü.
 
-## Özellikler
+## Cloudflare ayarları
 
-- Gelir, gider, bahşiş ve komisyon kaydı
-- Alındı/Alınmadı ve Ödendi/Ödenmedi durumları
-- TRY, USD, EUR ve GBP para birimi filtreleri
-- Son altı aya ait gelir-gider grafiği
-- Net kazanç ve bekleyen tahsilat göstergeleri
-- Excel `.xlsx` dışa aktarımı
-- Tarayıcıda kalıcı kayıt (`localStorage`)
+- Production branch: `main`
+- Root directory: `tur-butcem-site`
+- Framework preset: `Vite`
+- Build command: `npm run build`
+- Build output directory: `dist`
 
-## Yerel çalıştırma
-
-```bash
-npm install
-npm run dev
-```
-
-## Üretim derlemesi
-
-```bash
-npm run build
-```
-
-Kişisel muhasebe kayıtları GitHub deposuna yazılmaz. Kayıtlar, siteyi açtığınız tarayıcının yerel depolama alanında tutulur. Alan adı değiştirildiğinde mevcut kayıtlar otomatik taşınmaz; önce Excel yedeği alınmalıdır.
+Kayıtlar GitHub'a gönderilmez; tarayıcının `localStorage` alanında tutulur. Alan adı değişmeden önce Excel yedeği alınmalıdır.
