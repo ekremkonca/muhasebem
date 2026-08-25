@@ -1,6 +1,6 @@
 const JSON_HEADERS = { 'content-type': 'application/json; charset=UTF-8' };
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: JSON_HEADERS });
-
+ 
 function findD1(env) {
   const preferred = [env.DB, env.db, env.D1, env.DATABASE, env.MUHASEBEM_DB].filter(Boolean);
   for (const candidate of preferred) {
@@ -12,14 +12,14 @@ function findD1(env) {
   }
   return null;
 }
-
+ 
 function bindingNames(env) {
   return Object.entries(env || {}).map(([key, value]) => ({
     name: key,
     type: value && typeof value.prepare === 'function' && typeof value.batch === 'function' ? 'D1' : key === 'ASSETS' ? 'ASSETS' : typeof value,
   }));
 }
-
+ 
 async function ensureSchema(db) {
   await db.prepare(`CREATE TABLE IF NOT EXISTS records (
     id TEXT PRIMARY KEY,
@@ -37,7 +37,7 @@ async function ensureSchema(db) {
   await db.prepare('CREATE INDEX IF NOT EXISTS idx_records_date ON records(date DESC)').run();
   await db.prepare('CREATE INDEX IF NOT EXISTS idx_records_currency ON records(currency)').run();
 }
-
+ 
 function normalizeRecord(input) {
   if (!input || typeof input !== 'object') throw new Error('Geçersiz kayıt.');
   const r = {
@@ -51,7 +51,7 @@ function normalizeRecord(input) {
     status: String(input.status || '').trim(),
     note: String(input.note || '').trim(),
   };
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date)) throw new Error('Geçersiz tarih.');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date) || r.date < '2026-04-01') throw new Error('Kayıt tarihi 1 Nisan 2026 veya sonrası olmalı.');
   if (!r.tour) throw new Error('Tur adı gerekli.');
   if (!['Tur Geliri','Tur Masrafı','Bahşiş','Komisyon'].includes(r.type)) throw new Error('Geçersiz işlem türü.');
   if (!Number.isFinite(r.amount) || r.amount <= 0) throw new Error('Tutar sıfırdan büyük olmalı.');
@@ -59,7 +59,7 @@ function normalizeRecord(input) {
   if (!['Alındı','Alınmadı','Ödendi','Ödenmedi'].includes(r.status)) throw new Error('Geçersiz durum.');
   return r;
 }
-
+ 
 async function handleApi(request, env) {
   const db = findD1(env);
   if (!db) return json({ error: 'Cloudflare D1 binding bu deployment içinde görünmüyor.', bindings: bindingNames(env), hint: 'D1 binding Production ortamına eklenmeli ve ardından yeni deployment oluşmalı.' }, 500);
@@ -91,6 +91,12 @@ async function handleApi(request, env) {
   }
   if (request.method === 'PATCH') {
     const body = await request.json();
+    if (body?.record) {
+      const r = normalizeRecord(body.record);
+      const result = await db.prepare(`UPDATE records SET date=?,tour=?,guest=?,type=?,amount=?,currency=?,status=?,note=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(r.date,r.tour,r.guest,r.type,r.amount,r.currency,r.status,r.note,r.id).run();
+      if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı.' }, 404);
+      return json({ record: r });
+    }
     const id = String(body?.id || '');
     const status = String(body?.status || '');
     if (!id) return json({ error: 'Kayıt kimliği gerekli.' }, 400);
@@ -108,7 +114,7 @@ async function handleApi(request, env) {
   }
   return json({ error: 'Method not allowed' }, 405);
 }
-
+ 
 export default {
   async fetch(request, env) {
     try {
