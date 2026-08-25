@@ -27,6 +27,15 @@ export async function createRecord(record) {
   return data.records?.[0] || record;
 }
 
+export async function createRecords(records) {
+  const data = await fetch('/api/records', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify({ records }),
+  }).then(parseResponse);
+  return Array.isArray(data.records) ? data.records : records;
+}
+
 export async function updateRecordStatus(id, status) {
   return fetch('/api/records', {
     method: 'PATCH',
