@@ -43,7 +43,7 @@ function normalizeRecord(input) {
   if (!['Tur Geliri', 'Tur Masrafı', 'Bahşiş', 'Komisyon'].includes(record.type)) throw new Error('Geçersiz işlem türü.');
   if (!Number.isFinite(record.amount) || record.amount <= 0) throw new Error('Tutar sıfırdan büyük olmalı.');
   if (!['TRY', 'USD', 'EUR', 'GBP'].includes(record.currency)) throw new Error('Geçersiz para birimi.');
-  if (!['Alındı', 'Alınmadı', 'Ödendi', 'Ödenmedi'].includes(record.status)) throw new Error('Geçersiz durum.');
+  if (!['Ödendi', 'Ödenmedi'].includes(record.status)) throw new Error('Geçersiz durum.');
  
   return record;
 }
@@ -114,7 +114,7 @@ export async function onRequestPatch(context) {
     const status = String(body?.status || '');
  
     if (!id) return json({ error: 'Kayıt kimliği gerekli.' }, 400);
-    if (!['Alındı', 'Alınmadı', 'Ödendi', 'Ödenmedi'].includes(status)) return json({ error: 'Geçersiz durum.' }, 400);
+    if (!['Ödendi', 'Ödenmedi'].includes(status)) return json({ error: 'Geçersiz durum.' }, 400);
  
     const result = await db.prepare(`
       UPDATE records SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
