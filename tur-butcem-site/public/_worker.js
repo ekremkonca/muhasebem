@@ -1,6 +1,25 @@
 const JSON_HEADERS = { 'content-type': 'application/json; charset=UTF-8' };
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: JSON_HEADERS });
 
+function findD1(env) {
+  const preferred = [env.DB, env.db, env.D1, env.DATABASE, env.MUHASEBEM_DB].filter(Boolean);
+  for (const candidate of preferred) {
+    if (candidate && typeof candidate.prepare === 'function' && typeof candidate.batch === 'function') return candidate;
+  }
+  for (const [key, value] of Object.entries(env || {})) {
+    if (key === 'ASSETS') continue;
+    if (value && typeof value.prepare === 'function' && typeof value.batch === 'function') return value;
+  }
+  return null;
+}
+
+function bindingNames(env) {
+  return Object.entries(env || {}).map(([key, value]) => ({
+    name: key,
+    type: value && typeof value.prepare === 'function' && typeof value.batch === 'function' ? 'D1' : key === 'ASSETS' ? 'ASSETS' : typeof value,
+  }));
+}
+
 async function ensureSchema(db) {
   await db.prepare(`CREATE TABLE IF NOT EXISTS records (
     id TEXT PRIMARY KEY,
@@ -42,12 +61,30 @@ function normalizeRecord(input) {
 }
 
 async function handleApi(request, env) {
-  if (!env.DB) return json({ error: 'D1 binding bulunamadı. Variable name DB olmalı.' }, 500);
-  await ensureSchema(env.DB);
+  const db = findD1(env);
+  if (!db) {
+    return json({
+      error: 'Cloudflare D1 binding bu deployment içinde görünmüyor.',
+      bindings: bindingNames(env),
+      hint: 'D1 binding Production ortamına eklenmeli ve ardından yeni deployment oluşmalı.'
+    }, 500);
+  }
+
   const url = new URL(request.url);
 
+  if (url.pathname === '/api/health') {
+    try {
+      const probe = await db.prepare('SELECT 1 AS ok').first();
+      return json({ ok: true, d1: true, probe, bindings: bindingNames(env) });
+    } catch (error) {
+      return json({ ok: false, d1: true, error: error?.message || 'D1 sorgusu başarısız.', bindings: bindingNames(env) }, 500);
+    }
+  }
+
+  await ensureSchema(db);
+
   if (request.method === 'GET') {
-    const result = await env.DB.prepare('SELECT id,date,tour,guest,type,amount,currency,status,note FROM records ORDER BY date DESC, created_at DESC').all();
+    const result = await db.prepare('SELECT id,date,tour,guest,type,amount,currency,status,note FROM records ORDER BY date DESC, created_at DESC').all();
     return json({ records: result.results || [] });
   }
 
@@ -55,11 +92,12 @@ async function handleApi(request, env) {
     const body = await request.json();
     const incoming = Array.isArray(body?.records) ? body.records : [body?.record ?? body];
     const records = incoming.map(normalizeRecord);
-    const statements = records.map(r => env.DB.prepare(`INSERT INTO records (id,date,tour,guest,type,amount,currency,status,note,updated_at)
+    const statements = records.map(r => db.prepare(`INSERT INTO records (id,date,tour,guest,type,amount,currency,status,note,updated_at)
       VALUES (?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
       ON CONFLICT(id) DO UPDATE SET date=excluded.date,tour=excluded.tour,guest=excluded.guest,type=excluded.type,amount=excluded.amount,currency=excluded.currency,status=excluded.status,note=excluded.note,updated_at=CURRENT_TIMESTAMP`)
       .bind(r.id,r.date,r.tour,r.guest,r.type,r.amount,r.currency,r.status,r.note));
-    if (statements.length) await env.DB.batch(statements);
+    if (statements.length === 1) await statements[0].run();
+    else if (statements.length > 1) await db.batch(statements);
     return json({ records }, 201);
   }
 
@@ -69,7 +107,7 @@ async function handleApi(request, env) {
     const status = String(body?.status || '');
     if (!id) return json({ error: 'Kayıt kimliği gerekli.' }, 400);
     if (!['Alındı','Alınmadı','Ödendi','Ödenmedi'].includes(status)) return json({ error: 'Geçersiz durum.' }, 400);
-    const result = await env.DB.prepare('UPDATE records SET status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?').bind(status,id).run();
+    const result = await db.prepare('UPDATE records SET status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?').bind(status,id).run();
     if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı.' }, 404);
     return json({ id, status });
   }
@@ -77,7 +115,7 @@ async function handleApi(request, env) {
   if (request.method === 'DELETE') {
     const id = String(url.searchParams.get('id') || '');
     if (!id) return json({ error: 'Kayıt kimliği gerekli.' }, 400);
-    const result = await env.DB.prepare('DELETE FROM records WHERE id=?').bind(id).run();
+    const result = await db.prepare('DELETE FROM records WHERE id=?').bind(id).run();
     if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı.' }, 404);
     return json({ id });
   }
@@ -89,10 +127,11 @@ export default {
   async fetch(request, env) {
     try {
       const url = new URL(request.url);
-      if (url.pathname === '/api/records') return await handleApi(request, env);
-      return env.ASSETS.fetch(request);
+      if (url.pathname === '/api/records' || url.pathname === '/api/health') return await handleApi(request, env);
+      if (env.ASSETS && typeof env.ASSETS.fetch === 'function') return env.ASSETS.fetch(request);
+      return new Response('Static asset binding bulunamadı.', { status: 500 });
     } catch (error) {
-      return json({ error: error?.message || 'Sunucu hatası.' }, 500);
+      return json({ error: error?.message || 'Sunucu hatası.', stack: error?.stack || null }, 500);
     }
   }
 };
