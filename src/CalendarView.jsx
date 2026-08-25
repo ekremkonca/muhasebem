@@ -42,81 +42,63 @@ export default function CalendarView({ rows }) {
   const days = useMemo(() => buildCalendar(viewDate), [viewDate]);
   const selectedRows = (byDate[selectedDate] || []).slice().sort((a, b) => b.amount - a.amount);
   const monthLabel = new Intl.DateTimeFormat('tr-TR', { month: 'long', year: 'numeric' }).format(viewDate);
-  const selectedLabel = new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(`${selectedDate}T12:00:00`));
+  const selectedLabel = new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short' }).format(new Date(`${selectedDate}T12:00:00`));
 
-  const moveMonth = (delta) => {
-    setViewDate((current) => new Date(current.getFullYear(), current.getMonth() + delta, 1));
-  };
-
+  const moveMonth = (delta) => setViewDate(current => new Date(current.getFullYear(), current.getMonth() + delta, 1));
   const goToday = () => {
     setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
     setSelectedDate(today);
   };
 
-  return <section className="calendar-panel">
-    <div className="calendar-head">
-      <div>
-        <span className="eyebrow">TAKVİM</span>
-        <h2>Tüm kayıtlar</h2>
+  return <section className="calendar-panel calendar-compact">
+    <div className="calendar-head compact-head">
+      <div><span className="eyebrow">TAKVİM</span><h2>Kayıt takvimi</h2></div>
+      <button type="button" className="calendar-today-link" onClick={goToday}>Bugün</button>
+    </div>
+
+    <div className="calendar-nav compact-nav">
+      <button type="button" onClick={() => moveMonth(-1)} aria-label="Önceki ay">‹</button>
+      <strong>{monthLabel}</strong>
+      <button type="button" onClick={() => moveMonth(1)} aria-label="Sonraki ay">›</button>
+    </div>
+
+    <div className="calendar-wrap compact-calendar-wrap">
+      <div className="calendar-weekdays">
+        {['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map(day => <span key={day}>{day}</span>)}
       </div>
-      <div className="calendar-nav">
-        <button type="button" onClick={() => moveMonth(-1)} aria-label="Önceki ay">‹</button>
-        <strong>{monthLabel}</strong>
-        <button type="button" onClick={() => moveMonth(1)} aria-label="Sonraki ay">›</button>
-        <button type="button" className="today-btn" onClick={goToday}>Bugün</button>
+      <div className="calendar-grid">
+        {days.map(day => {
+          const records = byDate[day.key] || [];
+          const visibleTypes = [...new Set(records.map(row => row.type))].slice(0, 4);
+          return <button
+            type="button"
+            key={day.key}
+            className={`calendar-day${day.currentMonth ? '' : ' muted'}${day.key === today ? ' today' : ''}${day.key === selectedDate ? ' selected' : ''}`}
+            onClick={() => setSelectedDate(day.key)}
+            title={records.length ? `${records.length} kayıt` : 'Kayıt yok'}
+          >
+            <span className="day-number">{day.date.getDate()}</span>
+            {!!records.length && <div className="calendar-dots">
+              {visibleTypes.map(type => <i key={type} className={TYPE_META[type]?.className || ''}/>) }
+            </div>}
+          </button>;
+        })}
       </div>
     </div>
 
-    <div className="calendar-layout">
-      <div className="calendar-wrap">
-        <div className="calendar-weekdays">
-          {['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map((day) => <span key={day}>{day}</span>)}
-        </div>
-        <div className="calendar-grid">
-          {days.map((day) => {
-            const records = byDate[day.key] || [];
-            const visibleTypes = [...new Set(records.map((row) => row.type))].slice(0, 4);
-            return <button
-              type="button"
-              key={day.key}
-              className={`calendar-day${day.currentMonth ? '' : ' muted'}${day.key === today ? ' today' : ''}${day.key === selectedDate ? ' selected' : ''}`}
-              onClick={() => setSelectedDate(day.key)}
-            >
-              <span className="day-number">{day.date.getDate()}</span>
-              {records.length > 0 && <>
-                <div className="calendar-dots">
-                  {visibleTypes.map((type) => <i key={type} className={TYPE_META[type]?.className || ''}/>) }
-                </div>
-                <small>{records.length} kayıt</small>
-              </>}
-            </button>;
-          })}
-        </div>
+    <div className="compact-day-details">
+      <div className="compact-day-title"><span>{selectedLabel}</span><b>{selectedRows.length} kayıt</b></div>
+      <div className="calendar-record-list compact-record-list">
+        {selectedRows.map(row => {
+          const meta = TYPE_META[row.type] || { label: row.type, className: '' };
+          return <article key={row.id}>
+            <i className={meta.className}/>
+            <div><strong>{row.tour}</strong><span>{row.guest || row.note || meta.label}</span></div>
+            <div className="calendar-record-amount"><strong>{fmtMoney(row.amount, row.currency)}</strong><span>{meta.label}</span></div>
+          </article>;
+        })}
+        {!selectedRows.length && <p className="calendar-empty compact-empty">Bu tarihte kayıt yok.</p>}
       </div>
-
-      <aside className="calendar-details">
-        <div className="calendar-details-head">
-          <div><span>Seçilen gün</span><strong>{selectedLabel}</strong></div>
-          <b>{selectedRows.length}</b>
-        </div>
-        <div className="calendar-record-list">
-          {selectedRows.map((row) => {
-            const meta = TYPE_META[row.type] || { label: row.type, className: '' };
-            return <article key={row.id}>
-              <i className={meta.className}/>
-              <div>
-                <strong>{row.tour}</strong>
-                <span>{row.guest || row.note || meta.label}</span>
-              </div>
-              <div className="calendar-record-amount">
-                <strong>{fmtMoney(row.amount, row.currency)}</strong>
-                <span>{meta.label}</span>
-              </div>
-            </article>;
-          })}
-          {!selectedRows.length && <p className="calendar-empty">Bu tarihte kayıt yok.</p>}
-        </div>
-      </aside>
     </div>
   </section>;
 }
