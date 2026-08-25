@@ -8,6 +8,7 @@ import ThemeSwitcher from'./ThemeSwitcher';
 import'./features.css';
 
 const TYPES=['Tur Geliri','Tur Masrafı','Bahşiş','Komisyon'],INCOME=new Set(['Tur Geliri','Bahşiş','Komisyon']),CURRENCIES=['TRY','USD','EUR','GBP'],MIN_DATE='2026-04-01';
+const AVERAGE_TRY_PER_CURRENCY={USD:46.30,EUR:53.00,GBP:62.30};
 const today=()=>new Date().toISOString().slice(0,10);
 const uid=()=>crypto.randomUUID?.()||`${Date.now()}-${Math.random()}`;
 const fmtDate=d=>new Intl.DateTimeFormat('tr-TR',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(`${d}T12:00:00`));
@@ -19,8 +20,8 @@ function EntryModal({record,onClose,onSave,currency}){const editing=!!record;con
 
 export default function App(){const[rows,setRows]=useState([]),[currency,setCurrency]=useState('TRY'),[typeFilter,setTypeFilter]=useState('Tümü'),[statusFilter,setStatusFilter]=useState('Tümü'),[modal,setModal]=useState(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[selected,setSelected]=useState([]);
  useEffect(()=>{loadRecords().then(x=>setRows(x.filter(r=>r.date>=MIN_DATE))).catch(e=>setError(e.message)).finally(()=>setLoading(false))},[]);
- const converted=r=>Number(r.amount||0);
- const visible=useMemo(()=>rows.filter(r=>r.date>=MIN_DATE&&r.currency===currency&&(typeFilter==='Tümü'||r.type===typeFilter)&&(statusFilter==='Tümü'||r.status===statusFilter)).sort((a,b)=>b.date.localeCompare(a.date)),[rows,currency,typeFilter,statusFilter]);
+ const converted=r=>r.currency===currency?Number(r.amount||0):Number(r.amount||0)/AVERAGE_TRY_PER_CURRENCY[currency];
+ const visible=useMemo(()=>rows.filter(r=>r.date>=MIN_DATE&&(r.currency===currency||(currency!=='TRY'&&r.currency==='TRY'))&&(typeFilter==='Tümü'||r.type===typeFilter)&&(statusFilter==='Tümü'||r.status===statusFilter)).sort((a,b)=>b.date.localeCompare(a.date)),[rows,currency,typeFilter,statusFilter]);
  const income=visible.filter(r=>INCOME.has(r.type)).reduce((s,r)=>s+converted(r),0),expense=visible.filter(r=>!INCOME.has(r.type)).reduce((s,r)=>s+converted(r),0),pending=visible.filter(r=>r.status==='Alınmadı'||r.status==='Ödenmedi').reduce((s,r)=>s+converted(r),0),ids=visible.map(r=>r.id),all=ids.length&&ids.every(id=>selected.includes(id));
  const persist=async r=>{try{const saved=r.id&&rows.some(x=>x.id===r.id)?await updateRecord(r):await createRecord(r);setRows(x=>[saved,...x.filter(a=>a.id!==saved.id)]);setModal(null)}catch(e){setError(e.message);throw e}};
  const status=async r=>{const next=INCOME.has(r.type)?r.status==='Alındı'?'Alınmadı':'Alındı':r.status==='Ödendi'?'Ödenmedi':'Ödendi';setRows(x=>x.map(a=>a.id===r.id?{...a,status:next}:a));try{await updateRecordStatus(r.id,next)}catch(e){setError(e.message);setRows(x=>x.map(a=>a.id===r.id?r:a))}};
