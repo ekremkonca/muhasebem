@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { createRecord, deleteRecord, loadRecords, updateRecordStatus } from './api';
+import { createRecord, createRecords, deleteRecord, loadRecords, updateRecordStatus } from './api';
 import AnalyticsChart from './AnalyticsChart';
 import CalendarView from './CalendarView';
+import ICSImportModal from './ICSImportModal';
 import './features.css';
 
 const TYPES = ['Tur Geliri', 'Tur Masrafı', 'Bahşiş', 'Komisyon'];
@@ -19,6 +20,8 @@ function Icon({name, size=18}) {
   const paths = {
     plus:<><path d="M12 5v14M5 12h14"/></>,
     download:<><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></>,
+    upload:<><path d="M12 21V9m0 0-4 4m4-4 4 4M5 3h14"/></>,
+    calendar:<><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></>,
     wallet:<><path d="M4 7h14a2 2 0 0 1 2 2v9H4a2 2 0 0 1-2-2V6a3 3 0 0 1 3-3h12v4m0 5h3"/><circle cx="16" cy="12" r="1" fill="currentColor"/></>,
     trash:<><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6"/></>,
     filter:<><path d="M4 5h16l-6 7v5l-4 2v-7z"/></>,
@@ -56,6 +59,7 @@ export default function App(){
   const [currency,setCurrency]=useState('TRY');
   const [filter,setFilter]=useState('Tümü');
   const [modal,setModal]=useState(false);
+  const [icsModal,setIcsModal]=useState(false);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState('');
 
@@ -82,6 +86,18 @@ export default function App(){
       setModal(false);
       setCurrency(saved.currency);
     }catch(err){setError(err.message||'Kayıt eklenemedi.');throw err;}
+  };
+
+  const importCalendarRecords=async(records)=>{
+    try{
+      setError('');
+      const saved=await createRecords(records);
+      setRows(prev=>{
+        const merged=new Map(prev.map(row=>[row.id,row]));
+        saved.forEach(row=>merged.set(row.id,row));
+        return [...merged.values()].sort((a,b)=>b.date.localeCompare(a.date));
+      });
+    }catch(err){setError(err.message||'Google Calendar kayıtları aktarılamadı.');throw err;}
   };
 
   const toggleStatus=async(record)=>{
@@ -112,9 +128,8 @@ export default function App(){
       <div className="brand"><div className="brand-mark"><Icon name="wallet" size={22}/></div><div><strong>Tur Bütçem</strong><span>Özel finans çalışma alanı</span></div></div>
       <div className="header-actions"><select className="currency" value={currency} onChange={e=>setCurrency(e.target.value)}>{CURRENCIES.map(c=><option key={c}>{c}</option>)}</select><button className="btn secondary desktop" onClick={exportExcel}><Icon name="download"/>Excel'e aktar</button><button className="btn primary" onClick={()=>setModal(true)}><Icon name="plus"/>Yeni kayıt</button></div>
     </header>
-    <main>
-      <section className="hero"><div><span className="eyebrow">TUR FİNANSLARI</span><h1>Kazancın net, tahsilatın kontrol altında.</h1><p>Tur gelirlerini, masrafları, bahşişleri ve komisyonları tek yerden yönet.</p></div><button className="btn secondary mobile" onClick={exportExcel}><Icon name="download"/>Excel'e aktar</button></section>
-      {error&&<p className="privacy-note" style={{marginTop:0}}>D1 bağlantı hatası: {error}</p>}
+    <main className="main-dashboard">
+      {error&&<p className="system-error">D1 bağlantı hatası: {error}</p>}
 
       <section className="dashboard">
         <div className="kpis">
@@ -126,18 +141,34 @@ export default function App(){
         <AnalyticsChart rows={rows} currency={currency}/>
       </section>
 
-      <CalendarView rows={rows}/>
+      <section className="workspace-grid">
+        <section className="records workspace-records">
+          <div className="records-head">
+            <div><span className="eyebrow">KAYITLAR</span><h2>Son hareketler</h2></div>
+            <div className="records-tools">
+              <div className="filter"><Icon name="filter" size={16}/><select value={filter} onChange={e=>setFilter(e.target.value)}><option>Tümü</option>{TYPES.map(t=><option key={t}>{t}</option>)}</select></div>
+              <button type="button" className="btn secondary records-import" onClick={()=>setIcsModal(true)}><Icon name="calendar"/>Google Calendar</button>
+              <button type="button" className="btn primary records-add" onClick={()=>setModal(true)}><Icon name="plus"/>Yeni kayıt</button>
+            </div>
+          </div>
+          <div className="mobile-record-actions">
+            <button type="button" className="btn secondary" onClick={exportExcel}><Icon name="download"/>Excel</button>
+            <button type="button" className="btn secondary" onClick={()=>setIcsModal(true)}><Icon name="upload"/>ICS aktar</button>
+            <button type="button" className="btn primary" onClick={()=>setModal(true)}><Icon name="plus"/>Yeni kayıt</button>
+          </div>
+          <div className="table-scroll"><table><thead><tr><th>Tarih</th><th>Tur / Misafir</th><th>Tür</th><th>Durum</th><th className="right">Tutar</th><th/></tr></thead><tbody>
+            {[...active].sort((a,b)=>b.date.localeCompare(a.date)).map(r=><tr key={r.id}><td>{fmtDate(r.date)}</td><td><strong>{r.tour}</strong><span>{r.guest||r.note||'—'}</span></td><td><span className={`type type-${TYPES.indexOf(r.type)}`}>{r.type}</span></td><td><button className={`status ${['Alındı','Ödendi'].includes(r.status)?'done':'open'}`} onClick={()=>toggleStatus(r)}>{r.status}</button></td><td className="right amount">{money(r.amount,r.currency)}</td><td><button className="delete" onClick={()=>removeRecord(r)} aria-label="Sil"><Icon name="trash" size={17}/></button></td></tr>)}
+            {loading&&<tr><td colSpan="6" className="empty">D1 kayıtları yükleniyor...</td></tr>}
+            {!loading&&!active.length&&<tr><td colSpan="6" className="empty">Bu filtrede kayıt yok.</td></tr>}
+          </tbody></table></div>
+        </section>
 
-      <section className="records">
-        <div className="records-head"><div><span className="eyebrow">KAYITLAR</span><h2>Son hareketler</h2></div><div className="filter"><Icon name="filter" size={16}/><select value={filter} onChange={e=>setFilter(e.target.value)}><option>Tümü</option>{TYPES.map(t=><option key={t}>{t}</option>)}</select></div></div>
-        <div className="table-scroll"><table><thead><tr><th>Tarih</th><th>Tur / Misafir</th><th>Tür</th><th>Durum</th><th className="right">Tutar</th><th/></tr></thead><tbody>
-          {[...active].sort((a,b)=>b.date.localeCompare(a.date)).map(r=><tr key={r.id}><td>{fmtDate(r.date)}</td><td><strong>{r.tour}</strong><span>{r.guest||r.note||'—'}</span></td><td><span className={`type type-${TYPES.indexOf(r.type)}`}>{r.type}</span></td><td><button className={`status ${['Alındı','Ödendi'].includes(r.status)?'done':'open'}`} onClick={()=>toggleStatus(r)}>{r.status}</button></td><td className="right amount">{money(r.amount,r.currency)}</td><td><button className="delete" onClick={()=>removeRecord(r)} aria-label="Sil"><Icon name="trash" size={17}/></button></td></tr>)}
-          {loading&&<tr><td colSpan="6" className="empty">D1 kayıtları yükleniyor...</td></tr>}
-          {!loading&&!active.length&&<tr><td colSpan="6" className="empty">Bu filtrede kayıt yok.</td></tr>}
-        </tbody></table></div>
+        <CalendarView rows={rows}/>
       </section>
+
       <p className="privacy-note">Kayıtlar Cloudflare D1 veritabanında saklanır ve tüm cihazlarında aynı veriler görünür.</p>
     </main>
     {modal&&<EntryModal currency={currency} onClose={()=>setModal(false)} onSave={saveRecord}/>} 
+    {icsModal&&<ICSImportModal onClose={()=>setIcsModal(false)} onImport={importCalendarRecords}/>} 
   </>;
 }
