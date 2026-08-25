@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { createRecord, deleteRecord, loadRecords, updateRecordStatus } from './api';
 
 const TYPES = ['Tur Geliri', 'Tur Masrafı', 'Bahşiş', 'Komisyon'];
 const INCOME_TYPES = new Set(['Tur Geliri', 'Bahşiş', 'Komisyon']);
@@ -10,12 +11,6 @@ const fmtDate = (d) => new Intl.DateTimeFormat('tr-TR', { day:'2-digit', month:'
 const today = new Date().toISOString().slice(0,10);
 const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`;
 const money = (n, currency) => new Intl.NumberFormat('tr-TR', { style:'currency', currency, maximumFractionDigits:2 }).format(Number(n) || 0);
-
-const initialRows = [
-  { id:'sample-income', date:today, tour:'Efes Özel Tur', guest:'Örnek kayıt', type:'Tur Geliri', amount:4500, currency:'TRY', status:'Alındı', note:'Bu örnek kaydı silebilirsin.' },
-  { id:'sample-expense', date:today, tour:'Efes Özel Tur', guest:'', type:'Tur Masrafı', amount:650, currency:'TRY', status:'Ödendi', note:'Ulaşım ve yemek' },
-  { id:'sample-tip', date:today, tour:'Efes Özel Tur', guest:'Örnek kayıt', type:'Bahşiş', amount:30, currency:'USD', status:'Alınmadı', note:'' }
-];
 
 function Icon({name, size=18}) {
   const paths = {
@@ -52,9 +47,10 @@ function MiniChart({ rows, currency }) {
 
 function EntryModal({ onClose, onSave, currency }) {
   const [form,setForm]=useState({date:today,tour:'',guest:'',type:'Tur Geliri',amount:'',currency,status:'Alındı',note:''});
+  const [saving,setSaving]=useState(false);
   const set=(k,v)=>setForm(f=>({...f,[k]:v,...(k==='type'?{status:INCOME_TYPES.has(v)?'Alınmadı':'Ödenmedi'}:{})}));
   const statuses=INCOME_TYPES.has(form.type)?['Alındı','Alınmadı']:['Ödendi','Ödenmedi'];
-  const submit=(e)=>{e.preventDefault(); if(!form.tour.trim() || !Number(form.amount)) return; onSave({...form,id:uid(),amount:Number(form.amount)});};
+  const submit=async(e)=>{e.preventDefault(); if(!form.tour.trim() || !Number(form.amount) || saving) return; setSaving(true); try{await onSave({...form,id:uid(),amount:Number(form.amount)});}finally{setSaving(false)}};
   return <div className="modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&onClose()}><form className="modal" onSubmit={submit}>
     <div className="modal-head"><div><span className="eyebrow">YENİ HAREKET</span><h2>Tur kaydı ekle</h2></div><button type="button" className="icon-btn" onClick={onClose} aria-label="Kapat"><Icon name="close"/></button></div>
     <div className="form-grid">
@@ -67,37 +63,69 @@ function EntryModal({ onClose, onSave, currency }) {
       <label>Para birimi<select value={form.currency} onChange={e=>set('currency',e.target.value)}>{CURRENCIES.map(x=><option key={x}>{x}</option>)}</select></label>
       <label className="wide">Not<input value={form.note} onChange={e=>set('note',e.target.value)} placeholder="Açıklama ekle"/></label>
     </div>
-    <div className="modal-actions"><button type="button" className="btn secondary" onClick={onClose}>Vazgeç</button><button className="btn primary"><Icon name="check"/>Kaydı ekle</button></div>
+    <div className="modal-actions"><button type="button" className="btn secondary" onClick={onClose} disabled={saving}>Vazgeç</button><button className="btn primary" disabled={saving}><Icon name="check"/>{saving?'Kaydediliyor...':'Kaydı ekle'}</button></div>
   </form></div>;
 }
 
 export default function App(){
-  const [rows,setRows]=useState(()=>{try{return typeof window==='undefined'?initialRows:(JSON.parse(localStorage.getItem('tour-budget-v1'))||initialRows)}catch{return initialRows}});
+  const [rows,setRows]=useState([]);
   const [currency,setCurrency]=useState('TRY'); const [filter,setFilter]=useState('Tümü'); const [modal,setModal]=useState(false);
-  useEffect(()=>localStorage.setItem('tour-budget-v1',JSON.stringify(rows)),[rows]);
+  const [loading,setLoading]=useState(true); const [error,setError]=useState('');
+
+  useEffect(()=>{
+    let active=true;
+    loadRecords().then(data=>{if(active)setRows(data)}).catch(err=>{if(active)setError(err.message||'D1 verileri yüklenemedi.')}).finally(()=>{if(active)setLoading(false)});
+    return()=>{active=false};
+  },[]);
+
   const active=rows.filter(r=>r.currency===currency && (filter==='Tümü'||r.type===filter));
   const total=(fn)=>active.filter(fn).reduce((a,r)=>a+Number(r.amount),0);
   const income=total(r=>INCOME_TYPES.has(r.type)); const expense=total(r=>r.type==='Tur Masrafı');
   const pending=total(r=>INCOME_TYPES.has(r.type)&&r.status==='Alınmadı');
+
+  const saveRecord=async(record)=>{
+    try{
+      setError('');
+      const saved=await createRecord(record);
+      setRows(prev=>[saved,...prev.filter(x=>x.id!==saved.id)]);
+      setModal(false);
+      setCurrency(saved.currency);
+    }catch(err){setError(err.message||'Kayıt eklenemedi.'); throw err;}
+  };
+
+  const toggleStatus=async(record)=>{
+    const nextStatus=INCOME_TYPES.has(record.type)?(record.status==='Alındı'?'Alınmadı':'Alındı'):(record.status==='Ödendi'?'Ödenmedi':'Ödendi');
+    const previous=record.status;
+    setRows(prev=>prev.map(x=>x.id===record.id?{...x,status:nextStatus}:x));
+    try{setError('');await updateRecordStatus(record.id,nextStatus)}catch(err){setRows(prev=>prev.map(x=>x.id===record.id?{...x,status:previous}:x));setError(err.message||'Durum güncellenemedi.')}
+  };
+
+  const removeRecord=async(record)=>{
+    const snapshot=rows;
+    setRows(prev=>prev.filter(x=>x.id!==record.id));
+    try{setError('');await deleteRecord(record.id)}catch(err){setRows(snapshot);setError(err.message||'Kayıt silinemedi.')}
+  };
+
   const exportExcel=()=>{
     const ordered=[...rows].sort((a,b)=>b.date.localeCompare(a.date));
     const data=ordered.map(r=>({'Tarih':r.date,'Tur':r.tour,'Misafir / Kaynak':r.guest,'Tür':r.type,'Tutar':r.amount,'Para Birimi':r.currency,'Durum':r.status,'Not':r.note}));
-    const summary=CURRENCIES.map(c=>{const x=rows.filter(r=>r.currency===c);const g=x.filter(r=>INCOME_TYPES.has(r.type)).reduce((a,r)=>a+r.amount,0);const m=x.filter(r=>r.type==='Tur Masrafı').reduce((a,r)=>a+r.amount,0);return {'Para Birimi':c,'Toplam Gelir':g,'Toplam Gider':m,'Net':g-m,'Bekleyen Tahsilat':x.filter(r=>INCOME_TYPES.has(r.type)&&r.status==='Alınmadı').reduce((a,r)=>a+r.amount,0)}});
+    const summary=CURRENCIES.map(c=>{const x=rows.filter(r=>r.currency===c);const g=x.filter(r=>INCOME_TYPES.has(r.type)).reduce((a,r)=>a+Number(r.amount),0);const m=x.filter(r=>r.type==='Tur Masrafı').reduce((a,r)=>a+Number(r.amount),0);return {'Para Birimi':c,'Toplam Gelir':g,'Toplam Gider':m,'Net':g-m,'Bekleyen Tahsilat':x.filter(r=>INCOME_TYPES.has(r.type)&&r.status==='Alınmadı').reduce((a,r)=>a+Number(r.amount),0)}});
     const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),'Kayıtlar'); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summary),'Özet'); XLSX.writeFile(wb,`Tur-Butcesi-${today}.xlsx`);
   };
   return <>
     <header><div className="brand"><div className="brand-mark"><Icon name="wallet" size={22}/></div><div><strong>Tur Bütçem</strong><span>Özel finans çalışma alanı</span></div></div><div className="header-actions"><select className="currency" value={currency} onChange={e=>setCurrency(e.target.value)}>{CURRENCIES.map(c=><option key={c}>{c}</option>)}</select><button className="btn secondary desktop" onClick={exportExcel}><Icon name="download"/>Excel'e aktar</button><button className="btn primary" onClick={()=>setModal(true)}><Icon name="plus"/>Yeni kayıt</button></div></header>
     <main>
       <section className="hero"><div><span className="eyebrow">TUR FİNANSLARI</span><h1>Kazancın net, tahsilatın kontrol altında.</h1><p>Tur gelirlerini, masrafları, bahşişleri ve komisyonları tek yerden yönet.</p></div><button className="btn secondary mobile" onClick={exportExcel}><Icon name="download"/>Excel'e aktar</button></section>
+      {error&&<p className="privacy-note" style={{marginTop:0}}>D1 bağlantı hatası: {error}</p>}
       <section className="dashboard">
         <div className="kpis"><article><span>Toplam gelir</span><strong>{money(income,currency)}</strong><small>{active.filter(r=>INCOME_TYPES.has(r.type)).length} gelir kaydı</small></article><article><span>Tur masrafı</span><strong>{money(expense,currency)}</strong><small>{active.filter(r=>r.type==='Tur Masrafı').length} gider kaydı</small></article><article className="net"><span>Net kazanç</span><strong>{money(income-expense,currency)}</strong><small>Gelir eksi masraf</small></article><article className="pending"><span>Alınmayı bekleyen</span><strong>{money(pending,currency)}</strong><small>{active.filter(r=>INCOME_TYPES.has(r.type)&&r.status==='Alınmadı').length} açık tahsilat</small></article></div>
         <div className="analysis"><div className="section-title"><div><span className="eyebrow">SON 6 AY</span><h2>Gelir ve gider hareketi</h2></div><Icon name="chart" size={24}/></div><MiniChart rows={rows} currency={currency}/></div>
       </section>
       <section className="records"><div className="records-head"><div><span className="eyebrow">KAYITLAR</span><h2>Son hareketler</h2></div><div className="filter"><Icon name="filter" size={16}/><select value={filter} onChange={e=>setFilter(e.target.value)}><option>Tümü</option>{TYPES.map(t=><option key={t}>{t}</option>)}</select></div></div>
-        <div className="table-scroll"><table><thead><tr><th>Tarih</th><th>Tur / Misafir</th><th>Tür</th><th>Durum</th><th className="right">Tutar</th><th/></tr></thead><tbody>{active.sort((a,b)=>b.date.localeCompare(a.date)).map(r=><tr key={r.id}><td>{fmtDate(r.date)}</td><td><strong>{r.tour}</strong><span>{r.guest||r.note||'—'}</span></td><td><span className={`type type-${TYPES.indexOf(r.type)}`}>{r.type}</span></td><td><button className={`status ${['Alındı','Ödendi'].includes(r.status)?'done':'open'}`} onClick={()=>setRows(rows.map(x=>x.id===r.id?{...x,status:INCOME_TYPES.has(x.type)?(x.status==='Alındı'?'Alınmadı':'Alındı'):(x.status==='Ödendi'?'Ödenmedi':'Ödendi')}:x))}>{r.status}</button></td><td className="right amount">{money(r.amount,r.currency)}</td><td><button className="delete" onClick={()=>setRows(rows.filter(x=>x.id!==r.id))} aria-label="Sil"><Icon name="trash" size={17}/></button></td></tr>)}{!active.length&&<tr><td colSpan="6" className="empty">Bu filtrede kayıt yok.</td></tr>}</tbody></table></div>
+        <div className="table-scroll"><table><thead><tr><th>Tarih</th><th>Tur / Misafir</th><th>Tür</th><th>Durum</th><th className="right">Tutar</th><th/></tr></thead><tbody>{active.sort((a,b)=>b.date.localeCompare(a.date)).map(r=><tr key={r.id}><td>{fmtDate(r.date)}</td><td><strong>{r.tour}</strong><span>{r.guest||r.note||'—'}</span></td><td><span className={`type type-${TYPES.indexOf(r.type)}`}>{r.type}</span></td><td><button className={`status ${['Alındı','Ödendi'].includes(r.status)?'done':'open'}`} onClick={()=>toggleStatus(r)}>{r.status}</button></td><td className="right amount">{money(r.amount,r.currency)}</td><td><button className="delete" onClick={()=>removeRecord(r)} aria-label="Sil"><Icon name="trash" size={17}/></button></td></tr>)}{loading&&<tr><td colSpan="6" className="empty">D1 kayıtları yükleniyor...</td></tr>}{!loading&&!active.length&&<tr><td colSpan="6" className="empty">Bu filtrede kayıt yok.</td></tr>}</tbody></table></div>
       </section>
-      <p className="privacy-note">Kayıtlar yalnızca bu tarayıcıda saklanır. Excel yedeğini düzenli olarak indir.</p>
+      <p className="privacy-note">Kayıtlar Cloudflare D1 veritabanında saklanır ve bu siteyi açtığın cihazlardan aynı verilere erişirsin.</p>
     </main>
-    {modal&&<EntryModal currency={currency} onClose={()=>setModal(false)} onSave={r=>{setRows([r,...rows]);setModal(false);setCurrency(r.currency)}}/>}
+    {modal&&<EntryModal currency={currency} onClose={()=>setModal(false)} onSave={saveRecord}/>} 
   </>;
 }
