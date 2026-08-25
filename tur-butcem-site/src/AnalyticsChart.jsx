@@ -34,11 +34,7 @@ function makeBuckets(mode) {
   if (mode === 'daily') {
     for (let i = 13; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-      buckets.push({
-        key: isoDate(d),
-        label: new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short' }).format(d),
-        match: (row) => row.date === isoDate(d),
-      });
+      buckets.push({ key: isoDate(d), label: new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short' }).format(d), match: row => row.date === isoDate(d) });
     }
   }
 
@@ -49,11 +45,7 @@ function makeBuckets(mode) {
       const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
       const startKey = isoDate(start);
       const endKey = isoDate(end);
-      buckets.push({
-        key: startKey,
-        label: `${pad(start.getDate())} ${new Intl.DateTimeFormat('tr-TR', { month: 'short' }).format(start)}`,
-        match: (row) => row.date >= startKey && row.date <= endKey,
-      });
+      buckets.push({ key: startKey, label: `${pad(start.getDate())} ${new Intl.DateTimeFormat('tr-TR', { month: 'short' }).format(start)}`, match: row => row.date >= startKey && row.date <= endKey });
     }
   }
 
@@ -61,18 +53,14 @@ function makeBuckets(mode) {
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const prefix = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
-      buckets.push({
-        key: prefix,
-        label: new Intl.DateTimeFormat('tr-TR', { month: 'short' }).format(d),
-        match: (row) => row.date.startsWith(prefix),
-      });
+      buckets.push({ key: prefix, label: new Intl.DateTimeFormat('tr-TR', { month: 'short' }).format(d), match: row => row.date.startsWith(prefix) });
     }
   }
 
   if (mode === 'yearly') {
     for (let i = 4; i >= 0; i--) {
       const year = String(now.getFullYear() - i);
-      buckets.push({ key: year, label: year, match: (row) => row.date.startsWith(year) });
+      buckets.push({ key: year, label: year, match: row => row.date.startsWith(year) });
     }
   }
 
@@ -83,20 +71,18 @@ export default function AnalyticsChart({ rows, currency }) {
   const [mode, setMode] = useState('monthly');
 
   const data = useMemo(() => {
-    const buckets = makeBuckets(mode);
-    const source = rows.filter((row) => row.currency === currency);
-
-    return buckets.map((bucket) => {
+    const source = rows.filter(row => row.currency === currency);
+    return makeBuckets(mode).map(bucket => {
       const relevant = source.filter(bucket.match);
-      const values = Object.fromEntries(SERIES.map((series) => [
+      const values = Object.fromEntries(SERIES.map(series => [
         series.key,
-        relevant.filter((row) => row.type === series.type).reduce((sum, row) => sum + Number(row.amount || 0), 0),
+        relevant.filter(row => row.type === series.type).reduce((sum, row) => sum + Number(row.amount || 0), 0),
       ]));
       return { ...bucket, ...values };
     });
   }, [rows, currency, mode]);
 
-  const max = Math.max(1, ...data.flatMap((item) => SERIES.map((series) => item[series.key])));
+  const max = Math.max(1, ...data.flatMap(item => SERIES.map(series => item[series.key])));
   const total = SERIES.reduce((acc, series) => {
     acc[series.key] = data.reduce((sum, item) => sum + item[series.key], 0);
     return acc;
@@ -104,29 +90,22 @@ export default function AnalyticsChart({ rows, currency }) {
 
   return <section className="analysis analytics-panel">
     <div className="analytics-head">
-      <div>
-        <span className="eyebrow">FİNANS ANALİZİ</span>
-        <h2>Gelir dağılımı ve hareketler</h2>
-      </div>
+      <div><span className="eyebrow">FİNANS ANALİZİ</span><h2>Gelir dağılımı ve hareketler</h2></div>
       <div className="period-tabs" role="tablist" aria-label="Grafik dönemi">
-        {MODES.map((item) => <button
-          type="button"
-          key={item.key}
-          className={mode === item.key ? 'active' : ''}
-          onClick={() => setMode(item.key)}
-        >{item.label}</button>)}
+        {MODES.map(item => <button type="button" key={item.key} className={mode === item.key ? 'active' : ''} onClick={() => setMode(item.key)}>{item.label}</button>)}
       </div>
     </div>
 
     <div className="analytics-legend">
-      {SERIES.map((series) => <span key={series.key}><i className={series.className}/>{series.label}</span>)}
+      {SERIES.map(series => <span key={series.key}><i className={series.className}/>{series.label}</span>)}
     </div>
 
     <div className="analytics-scroll">
-      <div className={`analytics-chart analytics-${mode}`}>
-        {data.map((item) => <div className="analytics-group" key={item.key}>
+      <div className={`analytics-chart analytics-${mode}`} key={mode}>
+        <div className="analytics-gridlines" aria-hidden="true"><i/><i/><i/><i/></div>
+        {data.map(item => <div className="analytics-group" key={`${mode}-${item.key}`}>
           <div className="analytics-bars">
-            {SERIES.map((series) => {
+            {SERIES.map(series => {
               const value = item[series.key];
               const height = value ? Math.max(5, (value / max) * 100) : 0;
               return <div
@@ -134,16 +113,16 @@ export default function AnalyticsChart({ rows, currency }) {
                 className={`analytics-bar ${series.className}`}
                 style={{ '--bar-height': `${height}%` }}
                 title={`${item.label} · ${series.label}: ${money(value, currency)}`}
-              />;
+              ><span>{value ? money(value, currency) : ''}</span></div>;
             })}
           </div>
-          <span>{item.label}</span>
+          <span className="analytics-label">{item.label}</span>
         </div>)}
       </div>
     </div>
 
     <div className="analytics-summary">
-      {SERIES.map((series) => <div key={series.key}>
+      {SERIES.map(series => <div key={series.key}>
         <span><i className={series.className}/>{series.label}</span>
         <strong>{money(total[series.key], currency)}</strong>
       </div>)}
