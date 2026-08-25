@@ -140,8 +140,16 @@ export default function ICSImportModal({ onClose, onImport }) {
 
   const selected = useMemo(() => items.filter(item => item.selected), [items]);
   const validSelected = selected.filter(item => item.date && item.tour.trim() && Number(item.amount) > 0 && CURRENCIES.includes(item.currency) && TYPES.includes(item.type));
+  const invalidSelected = selected.length - validSelected.length;
 
-  const update = (id, key, value) => setItems(current => current.map(item => item.id === id ? { ...item, [key]: value } : item));
+  const update = (id, key, value) => setItems(current => current.map(item => {
+    if (item.id !== id) return item;
+    if (key === 'type') {
+      const done = ['Alındı', 'Ödendi'].includes(item.status);
+      return { ...item, type: value, status: INCOME_TYPES.has(value) ? (done ? 'Alındı' : 'Alınmadı') : (done ? 'Ödendi' : 'Ödenmedi') };
+    }
+    return { ...item, [key]: value };
+  }));
 
   const handleFile = async (file) => {
     if (!file) return;
@@ -163,7 +171,7 @@ export default function ICSImportModal({ onClose, onImport }) {
   };
 
   const submit = async () => {
-    if (!validSelected.length || saving) return;
+    if (!validSelected.length || invalidSelected || saving) return;
     setSaving(true);
     setError('');
     try {
@@ -197,11 +205,11 @@ export default function ICSImportModal({ onClose, onImport }) {
         <div className="ics-stats">
           <span><strong>{items.length}</strong> etkinlik bulundu</span>
           <span><strong>{selected.length}</strong> seçili</span>
-          <span><strong>{items.filter(x => !x.amount).length}</strong> tutar kontrolü gerekli</span>
+          <span><strong>{items.filter(x => !Number(x.amount)).length}</strong> tutar kontrolü gerekli</span>
         </div>
 
         <div className="ics-preview">
-          {items.map(item => <article className={`ics-row${item.amount ? '' : ' needs-review'}`} key={item.id}>
+          {items.map(item => <article className={`ics-row${Number(item.amount) > 0 ? '' : ' needs-review'}`} key={item.id}>
             <label className="ics-check"><input type="checkbox" checked={item.selected} onChange={e => update(item.id, 'selected', e.target.checked)}/></label>
             <div className="ics-fields">
               <input type="date" value={item.date} onChange={e => update(item.id, 'date', e.target.value)}/>
@@ -210,14 +218,14 @@ export default function ICSImportModal({ onClose, onImport }) {
               <input type="number" min="0" step="0.01" value={item.amount || ''} placeholder="Tutar" onChange={e => update(item.id, 'amount', e.target.value)}/>
               <select value={item.currency} onChange={e => update(item.id, 'currency', e.target.value)}>{CURRENCIES.map(currency => <option key={currency}>{currency}</option>)}</select>
             </div>
-            <div className="ics-row-meta"><span>{item.confidence}</span>{!item.amount && <b>Tutar gir</b>}</div>
+            <div className="ics-row-meta"><span>{item.confidence}</span>{!Number(item.amount) && <b>Tutar gir</b>}</div>
           </article>)}
         </div>
       </>}
 
       <div className="modal-actions ics-actions">
         <button type="button" className="btn secondary" onClick={onClose} disabled={saving}>Vazgeç</button>
-        <button type="button" className="btn primary" disabled={!validSelected.length || saving} onClick={submit}>{saving ? 'D1’e aktarılıyor...' : `${validSelected.length || 0} kaydı D1’e aktar`}</button>
+        <button type="button" className="btn primary" disabled={!validSelected.length || Boolean(invalidSelected) || saving} onClick={submit}>{saving ? 'D1’e aktarılıyor...' : invalidSelected ? 'Seçili kayıtları düzelt' : `${validSelected.length || 0} kaydı D1’e aktar`}</button>
       </div>
     </div>
   </div>;
