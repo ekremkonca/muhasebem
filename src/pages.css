@@ -1,0 +1,5 @@
+.blank-home{min-height:100vh}
+.standalone-page-header{position:sticky;top:0;z-index:20}
+.standalone-calendar-page{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+.standalone-calendar-page .calendar-panel{width:100%}
+@media(max-width:760px){.standalone-calendar-page{padding:16px 12px 40px}.standalone-page-header .header-actions{gap:6px}.standalone-page-header .btn{padding:8px 10px;font-size:12px}}
