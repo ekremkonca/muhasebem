@@ -19,7 +19,7 @@ function Icon({name,size=18}){
 
 const go=path=>window.location.assign(path);
 
-export default function HomePage(){
+export default function HomePage({children=null,contentClassName=''}){
   return <div className="home-page-shell">
     <header className="v7-header home-v7-header">
       <div className="brand home-brand">
@@ -40,6 +40,6 @@ export default function HomePage(){
       </div>
     </header>
     <FontSwitcher/>
-    <main className="home-empty-area"/>
+    <main className={children?(contentClassName||'home-content-area'):'home-empty-area'}>{children}</main>
   </div>;
 }
