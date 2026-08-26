@@ -3,14 +3,12 @@ import'./themes.css';
 import'./privacy.css';
 
 const THEMES=[
- ['classic','Sakin Yeşil','#52796f'],
- ['ocean','Deniz','#4f7f91'],
- ['mist','Sis','#718086'],
- ['sand','Kum','#9a8060'],
- ['lavender','Lavanta','#81789a'],
- ['clay','Toprak','#9b715f'],
- ['forest','Orman','#55765b'],
- ['midnight','Gece','#8493b3']
+ ['light','Açık','#4f6b62'],
+ ['nord','Nord','#5e81ac'],
+ ['sage','Adaçayı','#6f8574'],
+ ['ivory','Fildişi','#8b7d69'],
+ ['slate','Slate','#697785'],
+ ['dark','Koyu','#7f91ab']
 ];
 const THEME_KEY='muhasebe-theme';
 const PRIVACY_KEY='muhasebe-balances-hidden';
@@ -18,7 +16,7 @@ const MONEY_RE=/-?(?:(?:₺|\$|€|£)\s*\d[\d.\u00a0\u202f ]*(?:,\d{1,6})?|\d[\
 let privacyObserver=null;
 const originals=new Map();
 
-const getInitialTheme=()=>{try{const saved=localStorage.getItem(THEME_KEY);return THEMES.some(([id])=>id===saved)?saved:'classic'}catch{return'classic'}};
+const getInitialTheme=()=>{try{const saved=localStorage.getItem(THEME_KEY);return THEMES.some(([id])=>id===saved)?saved:'light'}catch{return'light'}};
 const skipped=node=>Boolean(node?.parentElement?.closest('script,style,input,textarea,select,option,.privacy-trigger'));
 const hasMoney=text=>{MONEY_RE.lastIndex=0;return MONEY_RE.test(text||'')};
 const maskText=node=>{if(!node||node.nodeType!==Node.TEXT_NODE||skipped(node)||!hasMoney(node.data))return;originals.set(node,node.data);MONEY_RE.lastIndex=0;node.data=node.data.replace(MONEY_RE,'••••')};
