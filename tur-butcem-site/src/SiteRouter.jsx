@@ -5,7 +5,6 @@ import AssetsHeaderBridge from'./AssetsHeaderBridge.jsx';
 import CalendarView from'./CalendarView.jsx';
 import FontSwitcher from'./FontSwitcher.jsx';
 import HomePage from'./HomePage.jsx';
-import ThemeSwitcher from'./ThemeSwitcher.jsx';
 import CategoryNavBridge from'./CategoryNavBridge.jsx';
 import{getAuthState,loadRecords,login,setupPin}from'./api.js';
 import'./pages.css';
@@ -20,15 +19,16 @@ function CalendarAuth({configured,onDone}){
 }
 
 function TakvimPage(){
+ document.documentElement.dataset.theme='neon';
+ try{localStorage.setItem('muhasebe-theme','neon')}catch{}
  const[state,setState]=useState({loading:true,configured:false,authenticated:false});
  const[rows,setRows]=useState([]),[error,setError]=useState('');
  const load=async()=>{setError('');try{setRows(await loadRecords())}catch(err){setError(err.message||'Takvim kayıtları yüklenemedi.')}};
- useEffect(()=>{document.documentElement.dataset.theme='neon';try{localStorage.setItem('muhasebe-theme','neon')}catch{}},[]);
  useEffect(()=>{getAuthState().then(s=>setState({loading:false,...s})).catch(()=>setState({loading:false,configured:false,authenticated:false}))},[]);
  useEffect(()=>{if(state.authenticated)load()},[state.authenticated]);
  if(state.loading)return <div className="auth-shell"><div className="auth-card"><h2>Yükleniyor...</h2></div></div>;
  if(!state.authenticated)return <CalendarAuth configured={state.configured} onDone={()=>setState(s=>({...s,configured:true,authenticated:true}))}/>;
- return <div className="takvim-page-shell"><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong><ThemeSwitcher/></div></header><nav className="global-category-nav takvim-category-nav" aria-label="Ana kategoriler"><a href="/anasayfa/">Ana Sayfa</a><a href="/muhasebe/">Muhasebe</a><a href="/varliklar/">Varlıklar</a><a className="active" href="/takvim/">Takvim</a></nav><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></div>;
+ return <div className="takvim-page-shell"><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong></div></header><nav className="global-category-nav takvim-category-nav" aria-label="Ana kategoriler"><a href="/anasayfa/">Ana Sayfa</a><a href="/muhasebe/">Muhasebe</a><a href="/varliklar/">Varlıklar</a><a className="active" href="/takvim/">Takvim</a></nav><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></div>;
 }
 
 function VarliklarPage(){
