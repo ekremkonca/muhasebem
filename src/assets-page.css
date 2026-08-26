@@ -1,60 +1,62 @@
 .assets-nav-button{white-space:nowrap}
 .assets-nav-button.active{background:var(--mint);border-color:var(--green);color:var(--green)}
 .assets-nav-fixed{position:fixed!important;z-index:45;transform:translateX(-100%);margin:0!important;display:flex!important;align-items:center;justify-content:center}
-.assets-fund-page{max-width:1680px;margin:0 auto;padding:26px 28px 56px}
-.assets-fund-shell{min-height:calc(100vh - 132px)}
-.assets-page-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.assets-fund-page{max-width:1680px;margin:0 auto;padding:22px 22px 48px}
+.assets-fund-shell{min-height:calc(100vh - 120px)}
+.assets-page-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
 .assets-back{border:0;background:transparent;color:var(--green);font-weight:800;padding:0;cursor:pointer}
-.fund-refresh{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:11px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 5px 18px rgba(15,23,42,.04)}
+.assets-page-title{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}.assets-page-title strong{color:var(--ink);font-size:12px}
+.assets-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.asset-side{min-width:0;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 94%,transparent);border-radius:20px;padding:14px;box-shadow:0 10px 28px rgba(15,23,42,.04)}
+.fund-side{border-left:2px solid color-mix(in srgb,var(--green) 35%,var(--line))}
+.asset-side-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;min-height:72px}
+.asset-side-head h2{margin:4px 0 0;font-size:clamp(20px,1.6vw,27px);letter-spacing:-.03em}
+.asset-side-head p{margin:5px 0 0;color:var(--muted);font-size:11px;line-height:1.45}
+.deposit-status,.tefas-status{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 9px;font-size:9px;font-weight:900;letter-spacing:.05em;white-space:nowrap}
+.deposit-status i,.tefas-status i{width:7px;height:7px;border-radius:50%;background:var(--amber,#b96616);box-shadow:0 0 0 3px rgba(185,102,22,.1)}
+.tefas-status.live i{background:var(--green);box-shadow:0 0 0 3px rgba(23,107,77,.12)}
+.tefas-status small{font-weight:600;letter-spacing:0;color:var(--muted);margin-left:2px}
+.fund-head-actions{display:flex;align-items:center;gap:6px}
+.fund-refresh{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(15,23,42,.04)}
+.icon-only-refresh{width:34px;height:34px;padding:0}
 .fund-refresh:hover{background:var(--soft,#f5f7f6)}
 .fund-refresh:disabled{opacity:.7;cursor:default}
 .refresh-icon{display:grid;place-items:center}
 .fund-refresh.loading .refresh-icon{animation:fund-spin .8s linear infinite}
 @keyframes fund-spin{to{transform:rotate(360deg)}}
-.assets-fund-heading{margin-bottom:20px}
-.fund-heading-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
-.assets-fund-heading h1{margin-top:8px;font-size:clamp(28px,3.2vw,42px);letter-spacing:-.035em}
-.assets-fund-heading p{margin:9px 0 0;color:var(--muted)}
-.tefas-status{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:8px 11px;font-size:10px;font-weight:900;letter-spacing:.06em;white-space:nowrap}
-.tefas-status i{width:8px;height:8px;border-radius:50%;background:var(--amber,#b96616);box-shadow:0 0 0 4px rgba(185,102,22,.1)}
-.tefas-status.live i{background:var(--green);box-shadow:0 0 0 4px rgba(23,107,77,.12)}
-.tefas-status small{font-weight:600;letter-spacing:0;color:var(--muted);margin-left:4px}
-.fund-warning{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border:1px solid #f2d3a4;background:#fff6e8;border-radius:12px;padding:10px 13px;margin-bottom:14px;font-size:12px;color:#8a5517}
-.fund-warning span{opacity:.85}
-.fund-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
-.fund-kpi{border:1px solid var(--line);background:var(--paper);border-radius:16px;padding:16px;min-width:0;box-shadow:0 8px 24px rgba(15,23,42,.045)}
-.fund-kpi>span{display:block;color:var(--muted);font-size:11px;font-weight:700}
-.fund-kpi strong{display:block;margin:7px 0 5px;font:800 clamp(16px,1.45vw,24px) 'Manrope',sans-serif;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fund-kpi small{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fund-warning{display:flex;gap:7px;align-items:center;flex-wrap:wrap;border:1px solid #f2d3a4;background:#fff6e8;border-radius:10px;padding:8px 10px;margin-bottom:9px;font-size:10px;color:#8a5517}
+.compact-side-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:9px}
+.fund-kpi{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:10px 11px;min-width:0;box-shadow:0 5px 16px rgba(15,23,42,.035)}
+.fund-kpi>span{display:block;color:var(--muted);font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fund-kpi strong{display:block;margin:5px 0 3px;font:800 clamp(13px,1.02vw,18px) 'Manrope',sans-serif;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fund-kpi small{display:block;color:var(--muted);font-size:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fund-kpi.total{background:var(--green);border-color:var(--green);color:#fff}
 .fund-kpi.total>span,.fund-kpi.total small{color:#d8ece3}
 .fund-kpi.positive strong,.fund-details-card .up{color:var(--green)}
 .fund-kpi.negative strong,.fund-details-card .down{color:var(--red,#b94439)}
-.fund-content-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;align-items:stretch}
-.fund-chart-card,.fund-details-card{border:1px solid var(--line);background:var(--paper);border-radius:18px;box-shadow:0 10px 30px rgba(15,23,42,.045)}
-.fund-chart-card{padding:18px;min-width:0}
-.fund-details-card{padding:18px}
-.fund-card-title h2{font-size:24px;margin-top:5px}
-.fund-details-card dl{margin:16px 0 0}
-.fund-details-card dl>div{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 0;border-top:1px solid var(--line)}
-.fund-details-card dt{font-size:11px;color:var(--muted)}
-.fund-details-card dd{margin:0;font-size:12px;font-weight:800;text-align:right}
-.fund-details-card a{color:var(--green);text-decoration:none}
-.fund-chart-wrap{min-height:325px;display:flex;flex-direction:column}
-.fund-chart-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:10px}
-.fund-chart-meta span{display:block;color:var(--muted);font-size:11px}
-.fund-chart-meta strong{display:block;margin-top:4px;font-size:22px}
-.fund-chart-stats{display:flex;gap:14px;text-align:right}
-.fund-chart-stats span{font-size:10px}
-.fund-chart-stats b{color:var(--ink);font-weight:800;margin-left:4px}
-.fund-chart{width:100%;height:255px;overflow:visible;color:var(--green)}
-.fund-grid-line{stroke:var(--line);stroke-width:1;stroke-dasharray:5 7}
-.fund-line{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 5px 8px rgba(23,107,77,.12))}
-.fund-last-point{fill:var(--paper);stroke:currentColor;stroke-width:4}
-.fund-hit{fill:transparent;stroke:transparent;cursor:crosshair}
-.fund-chart-dates{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:1px}
-.fund-chart-empty{min-height:290px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:12px;text-align:center;padding:24px}
-@media(max-width:1300px){.fund-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.fund-content-grid{grid-template-columns:minmax(0,1fr) 300px}}
-@media(max-width:980px){.assets-nav-button{padding:10px 12px;font-size:12px}.assets-fund-page{padding:22px 18px 44px}.fund-content-grid{grid-template-columns:1fr}.fund-details-card{order:2}.fund-heading-row{align-items:flex-start}.tefas-status{margin-top:4px}}
-@media(max-width:720px){.assets-nav-button{font-size:11px;padding:0 9px;height:34px}.assets-fund-page{padding:18px 10px 36px}.fund-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.fund-heading-row{display:block}.tefas-status{width:max-content;margin-top:14px}.assets-page-top{margin-bottom:16px}.fund-refresh{padding:9px 10px}.fund-refresh span:last-child{display:none}.fund-chart-card,.fund-details-card{padding:13px}.fund-chart-stats{display:none}.fund-chart{height:220px}.fund-chart-wrap{min-height:290px}}
-@media(max-width:430px){.fund-kpis{grid-template-columns:1fr 1fr}.fund-kpi{padding:13px}.fund-kpi strong{font-size:16px}.assets-fund-heading h1{font-size:27px}}
+.deposit-kpi strong{color:var(--muted)}
+.fund-chart-card,.compact-details-card,.deposit-chart-placeholder{border:1px solid var(--line);background:var(--paper);border-radius:13px;box-shadow:0 6px 20px rgba(15,23,42,.035)}
+.compact-fund-chart{padding:11px;margin-bottom:9px}
+.fund-chart-wrap{min-height:258px;display:flex;flex-direction:column}
+.fund-chart-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:6px}
+.fund-chart-meta span{display:block;color:var(--muted);font-size:9px}
+.fund-chart-meta strong{display:block;margin-top:3px;font-size:16px}
+.fund-chart-stats{display:flex;gap:10px;text-align:right}
+.fund-chart-stats span{font-size:8.5px}.fund-chart-stats b{color:var(--ink);font-weight:800;margin-left:3px}
+.fund-chart{width:100%;height:205px;overflow:visible;color:var(--green)}
+.fund-grid-line{stroke:var(--line);stroke-width:1;stroke-dasharray:5 7}.fund-line{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 5px 8px rgba(23,107,77,.12))}.fund-last-point{fill:var(--paper);stroke:currentColor;stroke-width:4}.fund-hit{fill:transparent;stroke:transparent;cursor:crosshair}
+.fund-chart-dates{display:flex;justify-content:space-between;color:var(--muted);font-size:8.5px;margin-top:0}
+.fund-chart-empty{min-height:238px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:10px;text-align:center;padding:18px}
+.compact-details-card{padding:10px 11px}
+.fund-card-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.fund-card-title h3{margin:0;font-size:16px}
+.compact-details-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:0}
+.compact-details-grid>div{min-width:0;padding:7px 9px;border-top:1px solid var(--line);border-right:1px solid var(--line)}
+.compact-details-grid>div:nth-child(3n){border-right:0}
+.compact-details-grid dt{font-size:8.5px;color:var(--muted);margin-bottom:3px}.compact-details-grid dd{margin:0;font-size:10.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compact-details-grid a{color:var(--green);text-decoration:none}
+.deposit-chart-placeholder{min-height:280px;margin-bottom:9px;padding:18px;display:grid;place-items:center;text-align:center;background:linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--paper) 85%,var(--soft,#f5f7f6)))}
+.deposit-chart-placeholder h3{margin:7px 0 6px;font-size:18px}.deposit-chart-placeholder p{max-width:520px;margin:0;color:var(--muted);font-size:10px;line-height:1.55}
+.deposit-details .compact-details-grid dd{color:var(--muted)}
+@media(max-width:1180px){.assets-split{grid-template-columns:1fr}.fund-side{border-left:1px solid var(--line)}.compact-side-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.fund-kpi strong{font-size:17px}.deposit-chart-placeholder{min-height:220px}}
+@media(max-width:760px){.assets-nav-button{font-size:11px;padding:0 9px;height:34px}.assets-fund-page{padding:16px 10px 32px}.asset-side{padding:10px}.asset-side-head{display:block;min-height:0}.fund-head-actions,.deposit-status{margin-top:9px;width:max-content}.compact-side-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-details-grid>div:nth-child(3n){border-right:1px solid var(--line)}.compact-details-grid>div:nth-child(2n){border-right:0}.fund-chart-stats{display:none}.fund-chart{height:190px}.assets-page-title{display:none}}
+@media(max-width:430px){.fund-kpi{padding:9px}.fund-kpi strong{font-size:14px}.compact-details-grid{grid-template-columns:1fr}.compact-details-grid>div{border-right:0!important}}
