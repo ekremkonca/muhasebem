@@ -1,0 +1,7 @@
+html body #root .v7-header{padding-left:max(40px,calc((100vw - 1680px)/2 + 40px))!important;padding-right:12px!important}
+html body #root .v7-header>.brand{gap:3px!important;margin-left:0!important;padding-left:0!important;justify-content:flex-start!important}
+html body #root .v7-header .brand-mark{margin-left:0!important}
+html body #root .v7-header .theme-menu{margin-left:0!important;gap:3px!important}
+html body #root .v7-header .theme-trigger{margin-left:0!important}
+@media(max-width:900px){html body #root .v7-header{padding-left:30px!important;padding-right:8px!important}html body #root .v7-header>.brand{gap:2px!important}}
+@media(max-width:720px){html body #root .v7-header{padding-left:22px!important;padding-right:6px!important}html body #root .v7-header>.brand{gap:1px!important}}
