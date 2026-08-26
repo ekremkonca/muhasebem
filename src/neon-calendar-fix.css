@@ -1,0 +1,5 @@
+:root[data-theme="neon"] .compact-day-details{background:var(--soft);color:var(--ink);border-color:var(--line)}
+:root[data-theme="neon"] .compact-day-title{color:var(--muted)}
+:root[data-theme="neon"] .compact-day-title b{background:var(--mint);color:var(--green)}
+:root[data-theme="neon"] .calendar-record-list article{background:var(--paper);color:var(--ink);border-color:var(--line)}
+:root[data-theme="neon"] .calendar-empty{color:var(--muted)}
