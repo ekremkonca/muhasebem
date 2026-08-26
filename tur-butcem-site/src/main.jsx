@@ -18,6 +18,16 @@ if (window.location.pathname.startsWith('/takvim')) {
   calendarTheme.rel = 'stylesheet';
   calendarTheme.href = '/takvim-luxe.css';
   document.head.appendChild(calendarTheme);
+
+  const calendarThemeEnhance = document.createElement('link');
+  calendarThemeEnhance.rel = 'stylesheet';
+  calendarThemeEnhance.href = '/takvim-luxe-enhance.css';
+  document.head.appendChild(calendarThemeEnhance);
+
+  const calendarEnhanceScript = document.createElement('script');
+  calendarEnhanceScript.src = '/takvim-luxe-enhance.js';
+  calendarEnhanceScript.defer = true;
+  document.head.appendChild(calendarEnhanceScript);
 }
 
 createRoot(document.getElementById('root')).render(
