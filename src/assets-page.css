@@ -1,0 +1,12 @@
+.assets-nav-button{white-space:nowrap}
+.assets-nav-button.active{background:var(--mint);border-color:var(--green);color:var(--green)}
+.assets-fund-page{max-width:1680px;margin:0 auto;padding:28px 28px 56px}
+.assets-fund-shell{min-height:calc(100vh - 132px)}
+.assets-back{border:0;background:transparent;color:var(--green);font-weight:800;padding:0;margin:0 0 22px;cursor:pointer}
+.assets-fund-heading{margin-bottom:22px}
+.assets-fund-heading h1{margin-top:8px;font-size:clamp(28px,4vw,44px)}
+.assets-fund-heading p{margin:10px 0 0;color:var(--muted)}
+.assets-empty-state{min-height:280px;border:1px dashed var(--line);border-radius:18px;background:var(--paper);display:grid;place-items:center;align-content:center;gap:8px;text-align:center;padding:28px;color:var(--muted)}
+.assets-empty-state strong{color:var(--ink);font-size:20px}
+@media(max-width:980px){.assets-nav-button{padding:10px 12px;font-size:12px}.assets-fund-page{padding:22px 18px 44px}}
+@media(max-width:720px){.assets-nav-button{font-size:0;width:38px;height:34px;padding:0;position:relative}.assets-nav-button:after{content:'₺';font-size:16px;font-weight:800}.assets-fund-page{padding:18px 10px 36px}}
