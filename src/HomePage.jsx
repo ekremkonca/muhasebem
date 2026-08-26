@@ -1,0 +1,53 @@
+import React from 'react';
+
+function Icon({name,size=18}){
+  const paths={
+    temple:<><path d="M3 21h18M5 18h14M6 18V10h12v8M3 10h18L12 3z"/><path d="M9 10v8m3-8v8m3-8v8"/></>,
+    eye:<><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.7"/></>,
+    settings:<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/></>,
+    backup:<><path d="M4 5h12l4 4v10H4z"/><path d="M8 5v5h8V5M8 19v-5h8v5"/></>,
+    history:<><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></>,
+    box:<><path d="m3 7 9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10"/></>,
+    report:<><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M9 16h6M9 8h3"/></>,
+    download:<path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/>,
+    plus:<path d="M12 5v14M5 12h14"/>,
+    logout:<><path d="M10 5H5v14h5M14 8l4 4-4 4M18 12H9"/></>
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
+}
+
+const go=path=>window.location.assign(path);
+
+export default function HomePage(){
+  return <div className="home-page-shell">
+    <header className="v7-header home-v7-header">
+      <div className="brand home-brand">
+        <div className="brand-mark"><Icon name="temple" size={22}/></div>
+        <strong>Muhasebe <small>V7</small></strong>
+        <button className="home-theme-pill" type="button" onClick={()=>go('/muhasebe/')}><i/>Gece Neon <span>⌄</span></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Gizlilik"><Icon name="eye"/></button>
+      </div>
+      <div className="header-actions home-header-actions">
+        <button className="home-currency" type="button" onClick={()=>go('/muhasebe/')}>TRY <span>⌄</span></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Kur ayarları"><Icon name="settings"/></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Yedekler"><Icon name="backup"/></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="İşlem geçmişi"><Icon name="history"/></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Çöp kutusu"><Icon name="box"/></button>
+        <button className="icon-btn header-tool home-aa" type="button" onClick={()=>go('/muhasebe/')} title="Yazı tipi">Aa</button>
+        <button className="btn secondary desktop" type="button" onClick={()=>go('/muhasebe/')}><Icon name="report"/>Aylık rapor</button>
+        <button className="btn secondary desktop" type="button" onClick={()=>go('/muhasebe/')}><Icon name="download"/>Excel</button>
+        <button className="btn primary" type="button" onClick={()=>go('/muhasebe/')}><Icon name="plus"/>Yeni kayıt</button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
+      </div>
+    </header>
+
+    <nav className="home-category-nav" aria-label="Ana kategoriler">
+      <a className="active" href="/anasayfa/">Ana Sayfa</a>
+      <a href="/muhasebe/">Muhasebe</a>
+      <a href="/varliklar/">Varlıklar</a>
+      <a href="/takvim/">Takvim</a>
+    </nav>
+
+    <main className="home-empty-area"/>
+  </div>;
+}
