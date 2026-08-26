@@ -5,6 +5,7 @@ import AssetsHeaderBridge from'./AssetsHeaderBridge.jsx';
 import CalendarView from'./CalendarView.jsx';
 import FontSwitcher from'./FontSwitcher.jsx';
 import HomePage from'./HomePage.jsx';
+import CategoryNavBridge from'./CategoryNavBridge.jsx';
 import{getAuthState,loadRecords,login,setupPin}from'./api.js';
 import'./pages.css';
 
@@ -25,7 +26,7 @@ function TakvimPage(){
  useEffect(()=>{if(state.authenticated)load()},[state.authenticated]);
  if(state.loading)return <div className="auth-shell"><div className="auth-card"><h2>Yükleniyor...</h2></div></div>;
  if(!state.authenticated)return <CalendarAuth configured={state.configured} onDone={()=>setState(s=>({...s,configured:true,authenticated:true}))}/>;
- return <><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong></div><div className="header-actions"><button className="btn secondary" onClick={()=>go('/anasayfa/')}>Ana Sayfa</button><button className="btn secondary" onClick={()=>go('/muhasebe/')}>Muhasebe</button><button className="btn secondary" onClick={()=>go('/varliklar/')}>Varlıklar / Fon</button></div></header><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></>;
+ return <><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong></div></header><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></>;
 }
 
 function VarliklarPage(){
@@ -59,9 +60,11 @@ function RedirectHome(){useEffect(()=>{window.location.replace('/anasayfa/')},[]
 
 export default function SiteRouter(){
  const path=useMemo(()=>cleanPath(window.location.pathname),[]);
- if(path==='/anasayfa')return <HomePage/>;
- if(path==='/muhasebe')return <MuhasebePage/>;
- if(path==='/varliklar')return <VarliklarPage/>;
- if(path==='/takvim')return <TakvimPage/>;
- return <RedirectHome/>;
+ let page=null;
+ if(path==='/anasayfa')page=<HomePage/>;
+ else if(path==='/muhasebe')page=<MuhasebePage/>;
+ else if(path==='/varliklar')page=<VarliklarPage/>;
+ else if(path==='/takvim')page=<TakvimPage/>;
+ else return <RedirectHome/>;
+ return <>{page}<CategoryNavBridge/></>;
 }
