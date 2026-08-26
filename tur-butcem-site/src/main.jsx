@@ -13,6 +13,13 @@ try{
   if(mode==='dark'||mode==='light')document.documentElement.dataset.mode=mode;
 }catch{}
 
+if (window.location.pathname.startsWith('/takvim')) {
+  const calendarTheme = document.createElement('link');
+  calendarTheme.rel = 'stylesheet';
+  calendarTheme.href = '/takvim-luxe.css';
+  document.head.appendChild(calendarTheme);
+}
+
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <SiteRouter />
