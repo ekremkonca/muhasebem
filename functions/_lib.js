@@ -103,9 +103,27 @@ export async function ensureSchema(db) {
   await purgeExpired(db);
 }
 
+function findD1(env) {
+  const preferred = [env?.DB, env?.db, env?.D1, env?.DATABASE, env?.MUHASEBEM_DB].filter(Boolean);
+  for (const candidate of preferred) {
+    if (candidate && typeof candidate.prepare === 'function' && typeof candidate.batch === 'function') return candidate;
+  }
+  for (const [key, value] of Object.entries(env || {})) {
+    if (key === 'ASSETS') continue;
+    if (value && typeof value.prepare === 'function' && typeof value.batch === 'function') return value;
+  }
+  return null;
+}
+
 export async function getDb(context) {
-  const db = context.env.DB;
-  if (!db) throw Object.assign(new Error('D1 bağlantısı bulunamadı. Cloudflare Pages projesinde D1 binding adını DB olarak ayarla.'), { status: 500 });
+  const db = findD1(context.env);
+  if (!db) {
+    const bindings = Object.entries(context.env || {}).map(([name, value]) => ({
+      name,
+      type: value && typeof value.prepare === 'function' && typeof value.batch === 'function' ? 'D1' : name === 'ASSETS' ? 'ASSETS' : typeof value,
+    }));
+    throw Object.assign(new Error(`D1 bağlantısı bulunamadı. Mevcut bindingler: ${bindings.map(x => `${x.name}:${x.type}`).join(', ') || 'yok'}`), { status: 500 });
+  }
   await ensureSchema(db);
   return db;
 }
