@@ -1,6 +1,6 @@
 import React,{useEffect,useRef,useState}from'react';
 import{createPortal}from'react-dom';
-import'./font-switcher.css';
+import'./styles/font-switcher.css';
 
 const STORAGE_KEY='muhasebe-ui-font';
 const FONTS=[['dm-sans','DM Sans','"DM Sans", "Segoe UI", Arial, sans-serif'],['atkinson','Atkinson Hyperlegible','"Atkinson Hyperlegible Next", "Segoe UI", Arial, sans-serif'],['segoe','Segoe UI','"Segoe UI", Arial, sans-serif'],['system','Sistem UI','system-ui, -apple-system, "Segoe UI", Arial, sans-serif'],['arial','Arial','Arial, Helvetica, sans-serif'],['verdana','Verdana','Verdana, Geneva, sans-serif'],['tahoma','Tahoma','Tahoma, Geneva, sans-serif'],['trebuchet','Trebuchet MS','"Trebuchet MS", Arial, sans-serif'],['calibri','Calibri','Calibri, "Segoe UI", Arial, sans-serif'],['manrope','Manrope','Manrope, "Segoe UI", Arial, sans-serif']];

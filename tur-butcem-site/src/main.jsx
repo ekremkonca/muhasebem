@@ -1,10 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import SiteRouter from './SiteRouter.jsx';
-import './styles.css';
-import './header-left.css';
-import './assets-page.css';
-import './dark-mode.css';
+import './styles/styles.css';
+import './styles/header-left.css';
+import './styles/assets-page.css';
+import './styles/dark-mode.css';
 
 try{
   const theme=localStorage.getItem('muhasebe-theme');

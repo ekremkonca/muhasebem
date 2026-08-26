@@ -1,7 +1,7 @@
 import React,{useEffect,useRef,useState}from'react';
-import'./themes.css';
-import'./neon-calendar-fix.css';
-import'./privacy.css';
+import'./styles/themes.css';
+import'./styles/neon-calendar-fix.css';
+import'./styles/privacy.css';
 
 const THEMES=[
  ['emerald','Zümrüt','#00a86b'],

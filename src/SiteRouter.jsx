@@ -8,7 +8,7 @@ import HomePage from'./HomePage.jsx';
 import CategoryNavBridge from'./CategoryNavBridge.jsx';
 import{getAuthState,loadRecords,login,setupPin}from'./api.js';
 import{SITE_NAV_EVENT}from'./navigation.js';
-import'./pages.css';
+import'./styles/pages.css';
 
 const cleanPath=value=>{let p=(value||'/').replace(/\/+$/,'')||'/';if(p.endsWith('.html'))p=p.slice(0,-5)||'/';return p};
 
