@@ -1,6 +1,5 @@
 'use client';
 import React,{useEffect,useMemo,useRef,useState}from'react';
-import*as XLSX from'xlsx';
 import{createBackup,createRecord,deleteRecord,deleteRecords,exportBackup,getAuthState,loadBackups,loadHistory,loadRecords,loadSettings,login,logout,permanentDeleteRecord,restoreBackup,restoreRecord,saveRates,setupPin,updateRecord,updateRecordStatus}from'./api';
 import AnalyticsChart from'./AnalyticsChart';
 import CalendarView from'./CalendarView';
@@ -70,7 +69,7 @@ function Dashboard({onSignedOut}){const[rows,setRows]=useState([]),[currency,set
  const doBackup=async()=>{await createBackup(`Manuel yedek — ${fmtDateTime(new Date().toISOString())}`);setBackups((await loadBackups()).backups||[])};
  const doRestoreBackup=async b=>{if(!window.confirm(`${b.title} geri yüklensin mi? Mevcut durum önce otomatik yedeklenecek.`))return;await restoreBackup(b.id);await refresh();setToolTab('')};
  const doExportBackup=async b=>{const data=await exportBackup(b.id),blob=new Blob([JSON.stringify(data.backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`Muhasebe-Yedek-${b.created_at.slice(0,10)}.json`;a.click();URL.revokeObjectURL(url)};
- const excel=()=>{const data=rows.map(r=>({'Tarih':r.date,'Tur':r.tour,'Misafir / Kaynak':r.guest,'Acenta':r.agency,'Gemi / Kaynak':r.ship,'Tür':r.type,'Tutar':Number(r.amount||0),'Para Birimi':r.currency,'Durum':r.status,'Not':r.note}));const w=XLSX.utils.book_new();XLSX.utils.book_append_sheet(w,XLSX.utils.json_to_sheet(data),'Kayıtlar');XLSX.writeFile(w,`Muhasebe-${today()}.xlsx`)};
+ const excel=()=>{const columns=[['Tarih','date'],['Tur','tour'],['Misafir / Kaynak','guest'],['Acenta','agency'],['Gemi / Kaynak','ship'],['Tür','type'],['Tutar','amount'],['Para Birimi','currency'],['Durum','status'],['Not','note']];const safe=value=>{const raw=String(value??'');const guarded=/^[=+\-@\t\r]/.test(raw)?`'${raw}`:raw;return`"${guarded.replaceAll('"','""')}"`};const csv='\uFEFF'+[columns.map(([label])=>safe(label)).join(';'),...rows.map(row=>columns.map(([,key])=>safe(key==='amount'?Number(row[key]||0):row[key])).join(';'))].join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=`Muhasebe-${today()}.csv`;a.click();URL.revokeObjectURL(url)};
  const install=async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;setInstallPrompt(null)};
  const signOut=async()=>{await logout();onSignedOut()};
  const pageStart=filteredRows.length?(page-1)*PAGE_SIZE+1:0,pageEnd=Math.min(page*PAGE_SIZE,filteredRows.length);

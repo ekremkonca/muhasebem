@@ -25,8 +25,11 @@ const numberOrNull=value=>{
   return Number.isFinite(parsed)?parsed:null;
 };
 
-export async function onRequestGet({request}){
-  const url=new URL(request.url);
+export async function onRequestGet(context){
+ try{
+  const db=await getDb(context);
+  await requireSession(context,db);
+  const url=new URL(context.request.url);
   const fundCode=(url.searchParams.get('fund')||'ALE').trim().toUpperCase();
   if(!/^[A-Z0-9]{2,5}$/.test(fundCode))return respond({error:'Geçersiz fon kodu.'},400);
 
@@ -75,4 +78,6 @@ export async function onRequestGet({request}){
     sourceUrl:`https://www.tefas.gov.tr/tr/fon-detayli-analiz/${fundCode}`,
     fetchedAt:new Date().toISOString()
   });
+ }catch(error){return errorResponse(error,'TEFAS verisi alınamadı.')}
 }
+import { errorResponse, getDb, requireSession } from '../_lib.js';

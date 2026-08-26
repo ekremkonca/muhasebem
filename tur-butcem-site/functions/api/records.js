@@ -22,6 +22,7 @@ export async function onRequestPost(context) {
     await requireSession(context, db);
     const body = await context.request.json();
     const incoming = Array.isArray(body?.records) ? body.records : [body?.record ?? body];
+    if (incoming.length > 500) return json({ error: 'Tek istekte en fazla 500 kayıt eklenebilir.' }, 413);
     const records = incoming.map(normalizeRecord);
     const statements = records.map((r) => db.prepare(`
       INSERT INTO records (id,date,tour,guest,agency,ship,type,amount,currency,status,note,deleted_at,updated_at)

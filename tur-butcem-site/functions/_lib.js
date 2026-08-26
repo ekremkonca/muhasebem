@@ -1,4 +1,7 @@
-const JSON_HEADERS = { 'content-type': 'application/json; charset=UTF-8' };
+const JSON_HEADERS = {
+  'content-type': 'application/json; charset=UTF-8',
+  'cache-control': 'no-store',
+};
 
 export const json = (data, status = 200, extraHeaders = {}) => new Response(JSON.stringify(data), {
   status,
@@ -87,6 +90,13 @@ export async function ensureSchema(db) {
     id TEXT PRIMARY KEY,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expires_at TEXT NOT NULL
+  )`).run();
+
+  await db.prepare(`CREATE TABLE IF NOT EXISTS login_attempts (
+    client_id TEXT PRIMARY KEY,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    window_started TEXT NOT NULL,
+    blocked_until TEXT DEFAULT NULL
   )`).run();
 
   await db.prepare('CREATE INDEX IF NOT EXISTS idx_records_date ON records(date DESC)').run();
@@ -195,6 +205,10 @@ export function normalizeRecord(input) {
   if (!Number.isFinite(record.amount) || record.amount <= 0) throw Object.assign(new Error('Tutar sıfırdan büyük olmalı.'), { status: 400 });
   if (!['TRY', 'USD', 'EUR', 'GBP'].includes(record.currency)) throw Object.assign(new Error('Geçersiz para birimi.'), { status: 400 });
   if (!['Ödendi', 'Ödenmedi'].includes(record.status)) throw Object.assign(new Error('Geçersiz durum.'), { status: 400 });
+  const limits = { tour: 200, guest: 200, agency: 200, ship: 200, note: 2000 };
+  for (const [field, limit] of Object.entries(limits)) {
+    if (record[field].length > limit) throw Object.assign(new Error(`${field} alanı en fazla ${limit} karakter olabilir.`), { status: 400 });
+  }
   return record;
 }
 
@@ -223,5 +237,6 @@ export async function purgeExpired(db) {
 }
 
 export function errorResponse(error, fallback = 'İşlem tamamlanamadı.') {
-  return json({ error: error?.message || fallback }, Number(error?.status) || 500);
+  const status = Number(error?.status) || 500;
+  return json({ error: status < 500 ? (error?.message || fallback) : fallback }, status);
 }

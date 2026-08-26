@@ -33,7 +33,7 @@ export default function HomePage({children=null,contentClassName=''}){
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="İşlem geçmişi"><Icon name="history"/></button>
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çöp kutusu"><Icon name="box"/></button>
         <button className="btn secondary desktop" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="report"/>Aylık rapor</button>
-        <button className="btn secondary desktop" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="download"/>Excel</button>
+        <button className="btn secondary desktop" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="download"/>CSV</button>
         <button className="btn primary" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="plus"/>Yeni kayıt</button>
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
       </div>
