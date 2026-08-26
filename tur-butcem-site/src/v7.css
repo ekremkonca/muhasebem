@@ -11,8 +11,10 @@
 .custom-range{display:flex;align-items:center;gap:6px}
 .custom-range input{min-height:40px;border:1px solid var(--line,#d9dee7);border-radius:10px;padding:0 8px;background:var(--surface,#fff);color:inherit}
 .v7-kpis{grid-template-columns:repeat(6,minmax(0,1fr))!important;margin-bottom:12px}
-.v7-kpis article{min-width:0}
-.v7-kpis strong{font-size:clamp(16px,1.4vw,25px)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v7-kpis article{min-width:0;min-height:92px!important;padding:13px 15px!important}
+.v7-kpis article>span{font-size:11px!important}
+.v7-kpis strong{font-size:clamp(22px,1.7vw,28px)!important;line-height:1.12;margin:9px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v7-kpis strong>.animated-money{font-size:inherit!important;line-height:inherit;color:inherit}
 .v7-insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
 .v7-insights article{border:1px solid var(--line,#d9dee7);background:var(--surface,#fff);border-radius:14px;padding:14px 16px;min-width:0}
 .v7-insights span,.v7-insights small{display:block;color:var(--muted,#64748b);font-size:11px}
