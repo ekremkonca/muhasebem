@@ -10,7 +10,7 @@ const THEMES=[
  ['fuchsia','Fuşya','#e83e8c'],
  ['coral','Mercan','#ff6b4a'],
  ['sunset','Günbatımı','#ff8a00'],
- ['neon','Gece Neon','#00d4ff']
+ ['neon','Gece Neon','#00b8df']
 ];
 const THEME_KEY='muhasebe-theme';
 const PRIVACY_KEY='muhasebe-balances-hidden';
