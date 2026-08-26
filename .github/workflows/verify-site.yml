@@ -1,0 +1,36 @@
+name: Verify site build
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Build root
+        run: npm install && npm run build
+      - name: Verify root output
+        run: |
+          test -f dist/anasayfa/index.html
+          test -f dist/muhasebe/index.html
+          test -f dist/varliklar/index.html
+          test -f dist/takvim/index.html
+          grep -R "Muhasebe" dist >/dev/null
+      - name: Build Cloudflare root
+        working-directory: tur-butcem-site
+        run: npm install && npm run build
+      - name: Verify Cloudflare output
+        working-directory: tur-butcem-site
+        run: |
+          test -f dist/anasayfa/index.html
+          test -f dist/muhasebe/index.html
+          test -f dist/varliklar/index.html
+          test -f dist/takvim/index.html
+          grep -R "Muhasebe" dist >/dev/null
