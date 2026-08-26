@@ -1,5 +1,9 @@
-Force Cloudflare Pages production deployment after syncing root and tur-butcem-site applications.
+Force Cloudflare Pages production deployment.
 Commit target: main
-Features: D1, animated analytics chart, records calendar.
+Site: rehberlikmuhasebe.pages.dev
+Build command: npm run build
+Output directory: dist
+D1 binding must remain: DB -> muhasebem-db
 
-Redeploy trigger for rehberlikmuhasebe.pages.dev after binding DB -> muhasebem-db.
+Redeploy requested: 2026-08-26
+Reason: publish latest UI fixes (Aa placement, duplicate Muhasebe header removal, latest themes/assets updates).
