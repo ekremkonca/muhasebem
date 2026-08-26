@@ -1,0 +1,14 @@
+{
+  "name": "Rehberlik Muhasebe",
+  "short_name": "Muhasebe",
+  "description": "Tur gelir, masraf, bahşiş ve komisyon takibi",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f8fb",
+  "theme_color": "#111827",
+  "lang": "tr",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
