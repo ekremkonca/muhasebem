@@ -2,46 +2,58 @@ async function parseResponse(response) {
   let data = {};
   try { data = await response.json(); } catch {}
   if (!response.ok) {
-    const details = Array.isArray(data.bindings)
-      ? ` [Bindings: ${data.bindings.map(x => `${x.name}:${x.type}`).join(', ')}]`
-      : '';
-    throw new Error((data.error || `Sunucu hatası (${response.status})`) + details);
+    const error = new Error(data.error || `Sunucu hatası (${response.status})`);
+    error.status = response.status;
+    throw error;
   }
   return data;
 }
- 
-export async function loadRecords() {
-  const data = await fetch('/api/records', { headers: { accept: 'application/json' }, cache: 'no-store' }).then(parseResponse);
+
+const request = (url, options = {}) => fetch(url, {
+  credentials: 'same-origin',
+  cache: 'no-store',
+  headers: { accept: 'application/json', ...(options.body ? { 'content-type': 'application/json' } : {}), ...(options.headers || {}) },
+  ...options,
+}).then(parseResponse);
+
+export const getAuthState = () => request('/api/auth');
+export const setupPin = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'setup', pin }) });
+export const login = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'login', pin }) });
+export const logout = () => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'logout' }) });
+
+export async function loadRecords(trash = false) {
+  const data = await request(`/api/records${trash ? '?trash=1' : ''}`);
   return Array.isArray(data.records) ? data.records : [];
 }
- 
 export async function createRecord(record) {
-  const data = await fetch('/api/records', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ record }) }).then(parseResponse);
+  const data = await request('/api/records', { method: 'POST', body: JSON.stringify({ record }) });
   return data.records?.[0] || record;
 }
- 
 export async function createRecords(records) {
-  const data = await fetch('/api/records', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ records }) }).then(parseResponse);
+  const data = await request('/api/records', { method: 'POST', body: JSON.stringify({ records }) });
   return Array.isArray(data.records) ? data.records : records;
 }
- 
-export async function updateRecordStatus(id, status) {
-  return fetch('/api/records', { method: 'PATCH', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ id, status }) }).then(parseResponse);
-}
-
+export const updateRecordStatus = (id, status) => request('/api/records', { method: 'PATCH', body: JSON.stringify({ id, status }) });
 export async function updateRecord(record) {
-  const data = await fetch('/api/records', { method: 'PATCH', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ record }) }).then(parseResponse);
+  const data = await request('/api/records', { method: 'PATCH', body: JSON.stringify({ record }) });
   return data.record || record;
 }
- 
-export async function deleteRecord(id) {
-  return fetch(`/api/records?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: { accept: 'application/json' } }).then(parseResponse);
+export const deleteRecord = (id) => request(`/api/records?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+export const permanentDeleteRecord = (id) => request(`/api/records?id=${encodeURIComponent(id)}&permanent=1`, { method: 'DELETE' });
+export async function restoreRecord(id) {
+  const data = await request('/api/records', { method: 'PATCH', body: JSON.stringify({ action: 'restore', id }) });
+  return data.record;
 }
- 
 export async function deleteRecords(ids) {
   const unique = [...new Set((ids || []).filter(Boolean))];
-  for (let i = 0; i < unique.length; i += 12) {
-    await Promise.all(unique.slice(i, i + 12).map(deleteRecord));
-  }
+  for (let i = 0; i < unique.length; i += 12) await Promise.all(unique.slice(i, i + 12).map(deleteRecord));
   return unique;
 }
+
+export const loadSettings = () => request('/api/settings');
+export const saveRates = (rates) => request('/api/settings', { method: 'PUT', body: JSON.stringify({ rates }) });
+export const loadBackups = () => request('/api/backups');
+export const createBackup = (title = 'Manuel yedek') => request('/api/backups', { method: 'POST', body: JSON.stringify({ action: 'create', title }) });
+export const restoreBackup = (id) => request('/api/backups', { method: 'POST', body: JSON.stringify({ action: 'restore', id }) });
+export const exportBackup = (id) => request('/api/backups', { method: 'POST', body: JSON.stringify({ action: 'export', id }) });
+export const loadHistory = (limit = 50) => request(`/api/history?limit=${limit}`);
