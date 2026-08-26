@@ -1,4 +1,4 @@
-# Tur Bütçem — Cloudflare Pages
+
 
 Cloudflare Pages için hazırlanmış React/Vite sürümü.
 
