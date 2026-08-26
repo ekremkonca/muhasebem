@@ -1,4 +1,6 @@
 import {useEffect} from 'react';
+import {getAuthState} from './api.js';
+import {navigateTo,SITE_NAV_EVENT} from './navigation.js';
 
 const LINKS=[
   ['/anasayfa/','Ana Sayfa','anasayfa'],
@@ -24,6 +26,13 @@ const buildNav=()=>{
     a.href=href;
     a.textContent=label;
     a.dataset.page=key;
+    a.addEventListener('pointerenter',()=>{if(key!=='anasayfa')getAuthState().catch(()=>{})},{passive:true});
+    a.addEventListener('click',e=>{
+      if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+      e.preventDefault();
+      if(key!=='anasayfa')getAuthState().catch(()=>{});
+      navigateTo(href);
+    });
     nav.appendChild(a);
   }
   return nav;
@@ -56,10 +65,12 @@ export default function CategoryNavBridge(){
     });
     observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});
     window.addEventListener('popstate',sync);
+    window.addEventListener(SITE_NAV_EVENT,sync);
     return()=>{
       cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener('popstate',sync);
+      window.removeEventListener(SITE_NAV_EVENT,sync);
       document.querySelector('.global-category-nav-host')?.remove();
     };
   },[]);

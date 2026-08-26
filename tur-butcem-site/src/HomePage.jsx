@@ -1,6 +1,7 @@
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import FontSwitcher from './FontSwitcher.jsx';
+import {navigateTo} from './navigation.js';
 
 function Icon({name,size=18}){
   const paths={
@@ -17,8 +18,6 @@ function Icon({name,size=18}){
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
-const go=path=>window.location.assign(path);
-
 export default function HomePage({children=null,contentClassName=''}){
   return <div className="home-page-shell">
     <header className="v7-header home-v7-header">
@@ -28,15 +27,15 @@ export default function HomePage({children=null,contentClassName=''}){
         <ThemeSwitcher/>
       </div>
       <div className="header-actions home-header-actions">
-        <button className="home-currency" type="button" onClick={()=>go('/muhasebe/')}>TRY <span>⌄</span></button>
-        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Kur ayarları"><Icon name="settings"/></button>
-        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Yedekler"><Icon name="backup"/></button>
-        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="İşlem geçmişi"><Icon name="history"/></button>
-        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Çöp kutusu"><Icon name="box"/></button>
-        <button className="btn secondary desktop" type="button" onClick={()=>go('/muhasebe/')}><Icon name="report"/>Aylık rapor</button>
-        <button className="btn secondary desktop" type="button" onClick={()=>go('/muhasebe/')}><Icon name="download"/>Excel</button>
-        <button className="btn primary" type="button" onClick={()=>go('/muhasebe/')}><Icon name="plus"/>Yeni kayıt</button>
-        <button className="icon-btn header-tool" type="button" onClick={()=>go('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
+        <button className="home-currency" type="button" onClick={()=>navigateTo('/muhasebe/')}>TRY <span>⌄</span></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Kur ayarları"><Icon name="settings"/></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Yedekler"><Icon name="backup"/></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="İşlem geçmişi"><Icon name="history"/></button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çöp kutusu"><Icon name="box"/></button>
+        <button className="btn secondary desktop" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="report"/>Aylık rapor</button>
+        <button className="btn secondary desktop" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="download"/>Excel</button>
+        <button className="btn primary" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="plus"/>Yeni kayıt</button>
+        <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
       </div>
     </header>
     <FontSwitcher/>

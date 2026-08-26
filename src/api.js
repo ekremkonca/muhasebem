@@ -27,11 +27,28 @@ const request = (url, options = {}) => fetch(url, {
   ...options,
 }).then(parseResponse);
 
+const AUTH_CACHE_MS = 15000;
+let authCache = null;
+let authCacheAt = 0;
+let authInFlight = null;
+const setAuthCache = data => {
+  if(data && typeof data === 'object'){
+    authCache={...data,configured:data.configured ?? (data.authenticated ? true : (authCache?.configured ?? false))};
+  }else authCache=null;
+  authCacheAt=Date.now();
+  return authCache ?? data;
+};
+
 export const getHealth = () => request('/api/health');
-export const getAuthState = () => request('/api/auth');
-export const setupPin = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'setup', pin }) });
-export const login = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'login', pin }) });
-export const logout = () => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'logout' }) });
+export const getAuthState = (fresh = false) => {
+  if (!fresh && authCache && Date.now() - authCacheAt < AUTH_CACHE_MS) return Promise.resolve(authCache);
+  if (!fresh && authInFlight) return authInFlight;
+  authInFlight = request('/api/auth').then(setAuthCache).finally(() => { authInFlight = null; });
+  return authInFlight;
+};
+export const setupPin = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'setup', pin }) }).then(setAuthCache);
+export const login = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'login', pin }) }).then(setAuthCache);
+export const logout = () => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'logout' }) }).then(setAuthCache);
 
 export async function loadRecords(trash = false) {
   const data = await request(`/api/records${trash ? '?trash=1' : ''}`);
