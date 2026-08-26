@@ -1,0 +1,5 @@
+.v7-header{padding-left:8px!important;padding-right:14px!important}
+.v7-header .brand{gap:7px!important;margin-left:0!important}
+.v7-header .theme-menu{margin-left:0!important;gap:4px!important}
+@media(max-width:900px){.v7-header{padding-left:6px!important;padding-right:10px!important}}
+@media(max-width:620px){.v7-header{padding-left:4px!important;padding-right:8px!important}.v7-header .brand{gap:5px!important}}
