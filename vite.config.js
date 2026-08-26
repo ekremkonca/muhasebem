@@ -8,10 +8,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         root: resolve(process.cwd(), 'index.html'),
-        anasayfa: resolve(process.cwd(), 'anasayfa.html'),
-        muhasebe: resolve(process.cwd(), 'muhasebe.html'),
-        varliklar: resolve(process.cwd(), 'varliklar.html'),
-        takvim: resolve(process.cwd(), 'takvim.html')
+        anasayfa: resolve(process.cwd(), 'anasayfa/index.html'),
+        muhasebe: resolve(process.cwd(), 'muhasebe/index.html'),
+        varliklar: resolve(process.cwd(), 'varliklar/index.html'),
+        takvim: resolve(process.cwd(), 'takvim/index.html')
       }
     }
   }
