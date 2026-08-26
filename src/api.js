@@ -1,6 +1,17 @@
 async function parseResponse(response) {
+  const contentType = response.headers.get('content-type') || '';
+  const raw = await response.text();
   let data = {};
-  try { data = await response.json(); } catch {}
+  if (contentType.includes('application/json')) {
+    try { data = raw ? JSON.parse(raw) : {}; } catch {}
+  }
+
+  if (!contentType.includes('application/json')) {
+    const error = new Error(`API yanıtı geçersiz (${response.status}). Cloudflare Pages Functions deployment kontrol edilmeli.`);
+    error.status = response.status;
+    throw error;
+  }
+
   if (!response.ok) {
     const error = new Error(data.error || `Sunucu hatası (${response.status})`);
     error.status = response.status;
@@ -16,6 +27,7 @@ const request = (url, options = {}) => fetch(url, {
   ...options,
 }).then(parseResponse);
 
+export const getHealth = () => request('/api/health');
 export const getAuthState = () => request('/api/auth');
 export const setupPin = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'setup', pin }) });
 export const login = (pin) => request('/api/auth', { method: 'POST', body: JSON.stringify({ action: 'login', pin }) });
