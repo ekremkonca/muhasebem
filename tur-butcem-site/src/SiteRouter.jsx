@@ -23,12 +23,12 @@ function TakvimPage(){
  const[state,setState]=useState({loading:true,configured:false,authenticated:false});
  const[rows,setRows]=useState([]),[error,setError]=useState('');
  const load=async()=>{setError('');try{setRows(await loadRecords())}catch(err){setError(err.message||'Takvim kayıtları yüklenemedi.')}};
- useEffect(()=>{try{document.documentElement.dataset.theme=localStorage.getItem('muhasebe-theme')||'neon'}catch{document.documentElement.dataset.theme='neon'}},[]);
+ useEffect(()=>{document.documentElement.dataset.theme='neon';try{localStorage.setItem('muhasebe-theme','neon')}catch{}},[]);
  useEffect(()=>{getAuthState().then(s=>setState({loading:false,...s})).catch(()=>setState({loading:false,configured:false,authenticated:false}))},[]);
  useEffect(()=>{if(state.authenticated)load()},[state.authenticated]);
  if(state.loading)return <div className="auth-shell"><div className="auth-card"><h2>Yükleniyor...</h2></div></div>;
  if(!state.authenticated)return <CalendarAuth configured={state.configured} onDone={()=>setState(s=>({...s,configured:true,authenticated:true}))}/>;
- return <div className="takvim-page-shell"><header className="v7-header standalone-page-header"><div className="brand"><div className="brand-mark">T</div><strong>Takvim <small>EXTRA</small></strong><ThemeSwitcher/></div><div className="header-actions"><FontSwitcher/></div></header><nav className="global-category-nav takvim-direct-nav" aria-label="Ana kategoriler"><a href="/anasayfa/">Ana Sayfa</a><a href="/muhasebe/">Muhasebe</a><a href="/varliklar/">Varlıklar</a><a className="active" href="/takvim/">Takvim</a></nav><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></div>;
+ return <div className="takvim-page-shell"><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong><ThemeSwitcher/></div></header><nav className="global-category-nav takvim-category-nav" aria-label="Ana kategoriler"><a href="/anasayfa/">Ana Sayfa</a><a href="/muhasebe/">Muhasebe</a><a href="/varliklar/">Varlıklar</a><a className="active" href="/takvim/">Takvim</a></nav><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></div>;
 }
 
 function VarliklarPage(){
@@ -62,11 +62,9 @@ function RedirectHome(){useEffect(()=>{window.location.replace('/anasayfa/')},[]
 
 export default function SiteRouter(){
  const path=useMemo(()=>cleanPath(window.location.pathname),[]);
+ if(path==='/anasayfa')return <><HomePage/><CategoryNavBridge/></>;
+ if(path==='/muhasebe')return <><MuhasebePage/><CategoryNavBridge/></>;
+ if(path==='/varliklar')return <><VarliklarPage/><CategoryNavBridge/></>;
  if(path==='/takvim')return <TakvimPage/>;
- let page=null;
- if(path==='/anasayfa')page=<HomePage/>;
- else if(path==='/muhasebe')page=<MuhasebePage/>;
- else if(path==='/varliklar')page=<VarliklarPage/>;
- else return <RedirectHome/>;
- return <>{page}<CategoryNavBridge/></>;
+ return <RedirectHome/>;
 }
