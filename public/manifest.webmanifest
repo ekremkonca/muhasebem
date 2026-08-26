@@ -2,7 +2,7 @@
   "name": "Rehberlik Muhasebe",
   "short_name": "Muhasebe",
   "description": "Tur gelir, masraf, bahşiş ve komisyon takibi",
-  "start_url": "/anasayfa",
+  "start_url": "/anasayfa/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f7f8fb",
