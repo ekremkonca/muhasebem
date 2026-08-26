@@ -9,12 +9,10 @@ export default function AssetsHeaderBridge(){
    const active=isAssets();
    const header=document.querySelector('.v7-header');
    const actions=header?.querySelector('.header-actions');
-   const theme=header?.querySelector('.theme-menu');
    const mark=header?.querySelector('.brand-mark');
    const title=header?.querySelector('.brand>strong');
    if(header)header.hidden=false;
    if(actions)actions.hidden=active;
-   if(theme)theme.hidden=active;
    [mark,title].filter(Boolean).forEach(el=>{
     el.style.cursor='pointer';
     el.setAttribute('role','link');
@@ -40,7 +38,7 @@ export default function AssetsHeaderBridge(){
   const observer=new MutationObserver(sync);observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});
   document.addEventListener('click',goHome);document.addEventListener('keydown',goHome);
   window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);window.addEventListener('assetsviewchange',sync);
-  return()=>{cancelAnimationFrame(frame);observer.disconnect();document.removeEventListener('click',goHome);document.removeEventListener('keydown',goHome);window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);window.removeEventListener('assetsviewchange',sync);const header=document.querySelector('.v7-header');const actions=header?.querySelector('.header-actions');const theme=header?.querySelector('.theme-menu');if(actions)actions.hidden=false;if(theme)theme.hidden=false};
+  return()=>{cancelAnimationFrame(frame);observer.disconnect();document.removeEventListener('click',goHome);document.removeEventListener('keydown',goHome);window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);window.removeEventListener('assetsviewchange',sync);const header=document.querySelector('.v7-header');const actions=header?.querySelector('.header-actions');if(actions)actions.hidden=false};
  },[]);
  return null;
 }
