@@ -37,11 +37,34 @@ function FundSide(){
 function AssetsDashboard({onClose}){return <main className="assets-fund-page"><section className="assets-fund-shell"><div className="assets-page-top"><button type="button" className="assets-back" onClick={onClose}>← Muhasebeye dön</button><div className="assets-page-title"><span className="eyebrow">VARLIKLAR / FON</span><strong>Mevduat ve fon karşılaştırması</strong></div></div><div className="assets-split"><DepositPlaceholder/><FundSide/></div></section></main>}
 
 export default function AssetsNav(){
- const[active,setActive]=useState(()=>location.hash===ROUTE),[position,setPosition]=useState(null),buttonRef=useRef(null);
- useEffect(()=>{const sync=()=>setActive(location.hash===ROUTE);window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync)}},[]);
- useEffect(()=>{const dashboard=document.querySelector('.main-dashboard.v7-dashboard');if(dashboard)dashboard.hidden=active;return()=>{if(dashboard)dashboard.hidden=false}},[active]);
- useEffect(()=>{let frame;const place=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{const currency=document.querySelector('.v7-header .currency');if(!currency){setPosition(null);return}const r=currency.getBoundingClientRect();setPosition({left:r.left-8,top:r.top,height:r.height})})};place();const observer=new MutationObserver(place);observer.observe(document.body,{childList:true,subtree:true});window.addEventListener('resize',place);window.addEventListener('scroll',place,{passive:true});return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('resize',place);window.removeEventListener('scroll',place)}},[]);
+ const[active,setActive]=useState(false),[position,setPosition]=useState(null),buttonRef=useRef(null);
+ useEffect(()=>{
+  if(location.hash===ROUTE)history.replaceState(null,'',`${location.pathname}${location.search}`);
+  const sync=()=>setActive(location.hash===ROUTE);
+  window.addEventListener('hashchange',sync);
+  window.addEventListener('popstate',sync);
+  return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync)};
+ },[]);
+ useEffect(()=>{
+  const dashboard=document.querySelector('.main-dashboard.v7-dashboard');
+  const header=document.querySelector('.v7-header');
+  if(dashboard)dashboard.hidden=active;
+  if(header)header.hidden=active;
+  document.documentElement.dataset.assetsPage=active?'1':'0';
+  return()=>{if(dashboard)dashboard.hidden=false;if(header)header.hidden=false;delete document.documentElement.dataset.assetsPage};
+ },[active]);
+ useEffect(()=>{
+  if(active){setPosition(null);return}
+  let frame;
+  const place=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{const currency=document.querySelector('.v7-header .currency');if(!currency){setPosition(null);return}const r=currency.getBoundingClientRect();setPosition({left:r.left-8,top:r.top,height:r.height})})};
+  place();
+  const observer=new MutationObserver(place);
+  observer.observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('resize',place);
+  window.addEventListener('scroll',place,{passive:true});
+  return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('resize',place);window.removeEventListener('scroll',place)};
+ },[active]);
  const open=()=>{history.pushState(null,'',`${location.pathname}${location.search}${ROUTE}`);setActive(true);window.scrollTo({top:0,behavior:'auto'})};
  const close=()=>{history.pushState(null,'',`${location.pathname}${location.search}`);setActive(false);window.scrollTo({top:0,behavior:'auto'})};
- return <>{position&&<button ref={buttonRef} type="button" className={`btn secondary assets-nav-button assets-nav-fixed${active?' active':''}`} style={{left:position.left,top:position.top,height:position.height}} onClick={open}>VARLIKLAR / FON</button>}{active&&<AssetsDashboard onClose={close}/>}</>;
+ return <>{!active&&position&&<button ref={buttonRef} type="button" className="btn secondary assets-nav-button assets-nav-fixed" style={{left:position.left,top:position.top,height:position.height}} onClick={open}>VARLIKLAR / FON</button>}{active&&<AssetsDashboard onClose={close}/>}</>;
 }
