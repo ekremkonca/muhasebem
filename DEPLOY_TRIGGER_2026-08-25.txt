@@ -5,5 +5,5 @@ Build command: npm run build
 Output directory: dist
 D1 binding must remain: DB -> muhasebem-db
 
-Redeploy requested: 2026-08-26 19:10 TRT
-Reason: publish Gece Neon surface fixes and improved cyan readability.
+Redeploy requested: 2026-08-26 19:16 TRT
+Reason: publish Gece Neon calendar detail and record-list surface fix.
