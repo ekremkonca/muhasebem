@@ -5,6 +5,7 @@ import AssetsHeaderBridge from'./AssetsHeaderBridge.jsx';
 import CalendarView from'./CalendarView.jsx';
 import FontSwitcher from'./FontSwitcher.jsx';
 import HomePage from'./HomePage.jsx';
+import ThemeSwitcher from'./ThemeSwitcher.jsx';
 import CategoryNavBridge from'./CategoryNavBridge.jsx';
 import{getAuthState,loadRecords,login,setupPin}from'./api.js';
 import'./pages.css';
@@ -22,11 +23,12 @@ function TakvimPage(){
  const[state,setState]=useState({loading:true,configured:false,authenticated:false});
  const[rows,setRows]=useState([]),[error,setError]=useState('');
  const load=async()=>{setError('');try{setRows(await loadRecords())}catch(err){setError(err.message||'Takvim kayıtları yüklenemedi.')}};
+ useEffect(()=>{try{document.documentElement.dataset.theme=localStorage.getItem('muhasebe-theme')||'emerald'}catch{}},[]);
  useEffect(()=>{getAuthState().then(s=>setState({loading:false,...s})).catch(()=>setState({loading:false,configured:false,authenticated:false}))},[]);
  useEffect(()=>{if(state.authenticated)load()},[state.authenticated]);
  if(state.loading)return <div className="auth-shell"><div className="auth-card"><h2>Yükleniyor...</h2></div></div>;
  if(!state.authenticated)return <CalendarAuth configured={state.configured} onDone={()=>setState(s=>({...s,configured:true,authenticated:true}))}/>;
- return <><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong></div></header><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></>;
+ return <><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong><ThemeSwitcher/></div></header><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></>;
 }
 
 function VarliklarPage(){
