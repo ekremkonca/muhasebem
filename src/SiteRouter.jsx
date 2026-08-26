@@ -1,13 +1,14 @@
 import React,{useEffect,useMemo,useState}from'react';
 import App from'./App.jsx';
 import AssetsNav from'./AssetsNav.jsx';
+import AssetsHeaderBridge from'./AssetsHeaderBridge.jsx';
 import CalendarView from'./CalendarView.jsx';
 import FontSwitcher from'./FontSwitcher.jsx';
 import{getAuthState,loadRecords,login,setupPin}from'./api.js';
 import'./pages.css';
 
-const cleanPath=value=>{const p=(value||'/').replace(/\/+$/,'');return p||'/'};
-const go=path=>{window.location.href=path};
+const cleanPath=value=>{let p=(value||'/').replace(/\/+$/,'')||'/';if(p.endsWith('.html'))p=p.slice(0,-5)||'/';return p};
+const go=path=>window.location.assign(path);
 
 function CalendarAuth({configured,onDone}){
  const[pin,setPin]=useState(''),[confirm,setConfirm]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
@@ -23,22 +24,44 @@ function TakvimPage(){
  useEffect(()=>{if(state.authenticated)load()},[state.authenticated]);
  if(state.loading)return <div className="auth-shell"><div className="auth-card"><h2>Yükleniyor...</h2></div></div>;
  if(!state.authenticated)return <CalendarAuth configured={state.configured} onDone={()=>setState(s=>({...s,configured:true,authenticated:true}))}/>;
- return <><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong></div><div className="header-actions"><button className="btn secondary" onClick={()=>go('/muhasebe')}>Muhasebe</button><button className="btn secondary" onClick={()=>go('/varliklar')}>Varlıklar / Fon</button></div></header><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></>;
+ return <><header className="v7-header standalone-page-header"><div className="brand"><strong>Takvim <small>EXTRA</small></strong></div><div className="header-actions"><button className="btn secondary" onClick={()=>go('/anasayfa')}>Ana Sayfa</button><button className="btn secondary" onClick={()=>go('/muhasebe')}>Muhasebe</button><button className="btn secondary" onClick={()=>go('/varliklar')}>Varlıklar / Fon</button></div></header><main className="standalone-calendar-page">{error&&<p className="system-error">{error}</p>}<CalendarView rows={rows}/></main></>;
 }
 
 function VarliklarPage(){
- useEffect(()=>{const timer=setTimeout(()=>{const clean=`/varliklar${window.location.search}`;history.replaceState(history.state,'',`${clean}#varliklar-fon`);window.dispatchEvent(new HashChangeEvent('hashchange'));requestAnimationFrame(()=>history.replaceState(history.state,'',clean))},0);return()=>clearTimeout(timer)},[]);
- const capture=e=>{if(e.target.closest?.('.assets-back')){e.preventDefault();e.stopPropagation();go('/muhasebe')}};
- return <div onClickCapture={capture}><AssetsNav/></div>;
+ useEffect(()=>{
+  let activated=false;
+  const activate=()=>{
+   if(activated)return;
+   const button=document.querySelector('.assets-nav-button');
+   if(!button)return;
+   activated=true;
+   button.click();
+   setTimeout(()=>history.replaceState(history.state,'','/varliklar'),0);
+  };
+  const intercept=e=>{
+   if(!e.target.closest?.('.assets-back'))return;
+   e.preventDefault();
+   e.stopPropagation();
+   go('/muhasebe');
+  };
+  const observer=new MutationObserver(activate);
+  observer.observe(document.body,{childList:true,subtree:true,attributes:true});
+  document.addEventListener('click',intercept,true);
+  activate();
+  return()=>{observer.disconnect();document.removeEventListener('click',intercept,true)};
+ },[]);
+ return <><App/><AssetsNav/><FontSwitcher/><AssetsHeaderBridge/></>;
 }
 
 function MuhasebePage(){return <><App/><FontSwitcher/></>}
-function BlankHome(){return <main className="blank-home" aria-label="Ana sayfa"/>}
+function AnaSayfa(){return <main className="blank-home" aria-label="Ana sayfa"/>}
+function RedirectHome(){useEffect(()=>{window.location.replace('/anasayfa')},[]);return null}
 
 export default function SiteRouter(){
  const path=useMemo(()=>cleanPath(window.location.pathname),[]);
+ if(path==='/anasayfa')return <AnaSayfa/>;
  if(path==='/muhasebe')return <MuhasebePage/>;
  if(path==='/varliklar')return <VarliklarPage/>;
  if(path==='/takvim')return <TakvimPage/>;
- return <BlankHome/>;
+ return <RedirectHome/>;
 }
