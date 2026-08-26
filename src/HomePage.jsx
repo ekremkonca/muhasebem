@@ -40,14 +40,6 @@ export default function HomePage(){
       </div>
     </header>
     <FontSwitcher/>
-
-    <nav className="home-category-nav" aria-label="Ana kategoriler">
-      <a className="active" href="/anasayfa/">Ana Sayfa</a>
-      <a href="/muhasebe/">Muhasebe</a>
-      <a href="/varliklar/">Varlıklar</a>
-      <a href="/takvim/">Takvim</a>
-    </nav>
-
     <main className="home-empty-area"/>
   </div>;
 }
