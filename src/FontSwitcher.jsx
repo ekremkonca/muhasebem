@@ -3,27 +3,19 @@ import'./font-switcher.css';
 
 const STORAGE_KEY='muhasebe-ui-font';
 const FONTS=[
- ['manrope','Manrope','Manrope, "Segoe UI", Arial, sans-serif'],
- ['inter','Inter','Inter, "Segoe UI", Arial, sans-serif'],
+ ['dm-sans','DM Sans','"DM Sans", "Segoe UI", Arial, sans-serif'],
+ ['atkinson','Atkinson Hyperlegible','"Atkinson Hyperlegible Next", "Segoe UI", Arial, sans-serif'],
  ['segoe','Segoe UI','"Segoe UI", Arial, sans-serif'],
+ ['system','Sistem UI','system-ui, -apple-system, "Segoe UI", Arial, sans-serif'],
  ['arial','Arial','Arial, Helvetica, sans-serif'],
- ['helvetica','Helvetica','Helvetica, Arial, sans-serif'],
  ['verdana','Verdana','Verdana, Geneva, sans-serif'],
  ['tahoma','Tahoma','Tahoma, Geneva, sans-serif'],
  ['trebuchet','Trebuchet MS','"Trebuchet MS", Arial, sans-serif'],
- ['calibri','Calibri','Calibri, "Segoe UI", sans-serif'],
- ['century','Century Gothic','"Century Gothic", Arial, sans-serif'],
- ['franklin','Franklin Gothic','"Franklin Gothic Medium", Arial, sans-serif'],
- ['georgia','Georgia','Georgia, "Times New Roman", serif'],
- ['times','Times New Roman','"Times New Roman", Times, serif'],
- ['garamond','Garamond','Garamond, Georgia, serif'],
- ['cambria','Cambria','Cambria, Georgia, serif'],
- ['palatino','Palatino','"Palatino Linotype", Palatino, serif'],
- ['book','Book Antiqua','"Book Antiqua", Palatino, serif'],
- ['courier','Courier New','"Courier New", Courier, monospace']
+ ['calibri','Calibri','Calibri, "Segoe UI", Arial, sans-serif'],
+ ['manrope','Manrope','Manrope, "Segoe UI", Arial, sans-serif']
 ];
 
-const getInitial=()=>{try{return localStorage.getItem(STORAGE_KEY)||'manrope'}catch{return'manrope'}};
+const getInitial=()=>{try{const saved=localStorage.getItem(STORAGE_KEY);return FONTS.some(([id])=>id===saved)?saved:'dm-sans'}catch{return'dm-sans'}};
 const findReportButton=()=>[...document.querySelectorAll('.v7-header button')].find(b=>b.textContent?.trim().toLocaleLowerCase('tr-TR').includes('aylık rapor'));
 
 export default function FontSwitcher(){
