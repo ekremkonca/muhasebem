@@ -4,7 +4,7 @@ import'./privacy.css';
 
 const THEMES=[['classic','Klasik','#176b4d'],['ocean','Okyanus','#0f6d8c'],['midnight','Gece','#7c9cff'],['graphite','Grafit','#68727d'],['forest','Orman','#347a43'],['emerald','Zümrüt','#0f9f7a'],['lavender','Lavanta','#7c5cc4'],['rose','Gül','#c44f79'],['sunset','Gün Batımı','#e06b4f'],['amber','Kehribar','#b97a18'],['cobalt','Kobalt','#315fc6'],['teal','Turkuaz','#138a8a'],['burgundy','Bordo','#8f3c53'],['sand','Kum','#9a7443'],['violet','Menekşe','#7048bd']];
 const PRIVACY_KEY='muhasebe-balances-hidden';
-const MONEY_RE=/-?(?:(?:₺|\$|€|£)\s*\d[\d.\u00a0\u202f ]*(?:,\d{1,2})?|\d[\d.\u00a0\u202f ]*(?:,\d{1,2})?\s*(?:₺|\$|€|£))/g;
+const MONEY_RE=/-?(?:(?:₺|\$|€|£)\s*\d[\d.\u00a0\u202f ]*(?:,\d{1,6})?|\d[\d.\u00a0\u202f ]*(?:,\d{1,6})?\s*(?:TL|₺|\$|€|£))/gi;
 let privacyObserver=null;
 const originals=new Map();
 
