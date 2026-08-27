@@ -52,7 +52,7 @@
 .asset-editor-error{margin:12px 26px 0!important}
 .asset-editor-actions{position:sticky;bottom:0;z-index:2;margin:22px 0 0!important;padding:16px 26px!important;border-top:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(16px)}
 .asset-edit-btn{min-height:44px!important;padding:0 19px!important;border-radius:13px!important;font-size:13px!important;transition:.18s ease}
-.asset-edit-btn.primary{background:linear-gradient(135deg,#0f6b54,#109a74)!important;box-shadow:0 10px 24px rgba(15,107,84,.22)}
+.asset-edit-btn.primary{background:linear-gradient(135deg,color-mix(in srgb,var(--green) 76%,#000),var(--green))!important;box-shadow:0 10px 24px rgba(15,107,84,.22)}
 .asset-edit-btn.primary:hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(15,107,84,.28)}
 .asset-edit-btn.secondary:hover{background:var(--soft)!important}
 
@@ -75,9 +75,9 @@
 .fund-movement-row button:hover{background:color-mix(in srgb,#c94b4b 13%,transparent)!important}
 
 :root[data-mode="dark"] .asset-editor-modal{background:linear-gradient(180deg,#0e1c22,#0a151a)!important;border-color:#24464a!important;box-shadow:0 36px 120px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03) inset!important}
-:root[data-mode="dark"] .asset-editor-head{background:linear-gradient(135deg,#0b3f35,#075d4a 56%,#08795e)!important}
+:root[data-mode="dark"] .asset-editor-head{background:linear-gradient(135deg,color-mix(in srgb,var(--green) 45%,#081016),color-mix(in srgb,var(--green) 68%,#081016) 56%,var(--green))!important}
 :root[data-mode="dark"] .asset-form-grid label{background:#102228!important;border-color:#244047!important;color:#9bb1b7!important}
-:root[data-mode="dark"] .asset-form-grid label:focus-within{background:#123128!important;border-color:#2f8a70!important}
+:root[data-mode="dark"] .asset-form-grid label:focus-within{background:#123128!important;border-color:var(--green)!important}
 :root[data-mode="dark"] .asset-form-grid input,:root[data-mode="dark"] .asset-form-grid select{background:transparent!important;border:0!important;color:#f2f7f8!important}
 :root[data-mode="dark"] .asset-editor-note{background:linear-gradient(180deg,#113027,#10242a)!important;border-color:#285147!important;color:#b8c9cd!important}
 :root[data-mode="dark"] .asset-editor-actions{background:rgba(10,21,26,.9)!important;border-color:#243a41!important}
