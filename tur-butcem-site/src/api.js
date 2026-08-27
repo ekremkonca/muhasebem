@@ -150,8 +150,12 @@ export const exportBackup = (id) =>
     method: "POST",
     body: JSON.stringify({ action: "export", id }),
   });
+export const deleteBackup = (id) =>
+  request(`/api/backups?id=${encodeURIComponent(id)}`, { method: "DELETE" });
 export const loadHistory = (limit = 50) =>
   request(`/api/history?limit=${limit}`);
+export const deleteHistory = (id) =>
+  request(`/api/history?id=${encodeURIComponent(id)}`, { method: "DELETE" });
 
 export async function loadEvents() {
   const data = await request("/api/events");
