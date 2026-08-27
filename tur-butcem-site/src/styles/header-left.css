@@ -139,3 +139,12 @@ html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-ch
  html body #root .v7-header>.brand>.system-shortcuts{width:210px!important;gap:4px!important}
  html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card{min-height:34px!important;padding:5px 7px!important;font-size:9px!important}
 }
+
+/* Match system tools exactly to palette/privacy/night icon sizing. */
+html body #root .v7-header>.brand{grid-template-columns:140px 72px 72px!important;min-width:300px!important}
+html body #root .v7-header>.brand>.system-shortcuts{grid-column:3!important;grid-row:1 / span 2!important;width:72px!important;height:68px!important;display:grid!important;grid-template-columns:34px 34px!important;grid-template-rows:32px 32px!important;gap:4px!important}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card{width:34px!important;height:32px!important;min-width:34px!important;min-height:32px!important;padding:0!important;display:grid!important;place-items:center!important;border-radius:10px!important}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card span{display:none!important}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-child(3){grid-column:1!important}
+@media(max-width:900px){html body #root .v7-header>.brand{grid-template-columns:128px 66px 72px!important;min-width:278px!important}html body #root .v7-header>.brand>.system-shortcuts{width:72px!important}}
+@media(max-width:720px){html body #root .v7-header>.brand{grid-template-columns:112px 34px 72px!important;min-width:228px!important}html body #root .v7-header>.brand>.system-shortcuts{width:72px!important;height:68px!important;gap:4px!important}}
