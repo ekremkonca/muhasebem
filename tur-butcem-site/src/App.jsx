@@ -514,16 +514,8 @@ function ReportModal({ rows, currency, convert, onExcel, onClose }) {
           </button>
         </div>
         <div className="report-grid">
-          <article className="income-kpi">
+          <article>
             <span>Gelir</span>
-            <select
-              className="kpi-currency"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              aria-label="Gösterim para birimi"
-            >
-              {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
-            </select>
             <strong>{money(income, currency)}</strong>
           </article>
           <article>
@@ -1282,8 +1274,16 @@ function Dashboard({ onSignedOut }) {
           )}
         </section>
         <div className="kpis compact v7-kpis">
-          <article>
+          <article className="income-kpi">
             <span>Gelir</span>
+            <select
+              className="kpi-currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              aria-label="Gösterim para birimi"
+            >
+              {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
+            </select>
             <strong>
               <AnimatedMoney value={income} currency={currency} />
             </strong>
