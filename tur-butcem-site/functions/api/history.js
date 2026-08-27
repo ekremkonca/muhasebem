@@ -12,3 +12,17 @@ export async function onRequestGet(context) {
     return errorResponse(error, 'İşlem geçmişi okunamadı.');
   }
 }
+
+
+export async function onRequestDelete(context) {
+  try {
+    const db = await getDb(context);
+    await requireSession(context, db);
+    const id = String(new URL(context.request.url).searchParams.get("id") || "");
+    if (!id) return json({ error: "Geçmiş kaydı kimliği gerekli." }, 400);
+    const result = await db.prepare("DELETE FROM audit_log WHERE id=?").bind(id).run();
+    return json({ ok: true, deleted: Number(result.meta?.changes || 0) });
+  } catch (error) {
+    return errorResponse(error, "İşlem geçmişi kalıcı olarak silinemedi.");
+  }
+}
