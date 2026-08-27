@@ -1145,13 +1145,6 @@ function Dashboard({ onSignedOut }) {
             Muhasebe <small>V7</small>
           </strong>
           <ThemeSwitcher />
-        </div>
-        <div className="header-actions">
-          {installPrompt && (
-            <button className="btn secondary desktop" onClick={install}>
-              Uygulamayı kur
-            </button>
-          )}
           <div className="system-shortcuts" aria-label="Sistem araçları">
             <button
               className="system-shortcut-card"
@@ -1178,6 +1171,14 @@ function Dashboard({ onSignedOut }) {
               <span>Çöp kutusu</span>
             </button>
           </div>
+        </div>
+        <div className="header-actions">
+          {installPrompt && (
+            <button className="btn secondary desktop" onClick={install}>
+              Uygulamayı kur
+            </button>
+          )}
+
           <button
             className="btn secondary"
             onClick={() => setReportOpen(true)}
