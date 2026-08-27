@@ -89,3 +89,11 @@
 .insight-corner-button:hover{background:var(--mint)}
 .mini-actions .danger{color:var(--red,#b42318);border-color:color-mix(in srgb,var(--red,#b42318) 35%,var(--line))}
 .report-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Compact 2-column system shortcut cards */
+.system-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(126px,1fr));gap:7px;order:2}
+.system-shortcut-card{min-height:40px;display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--line);border-radius:11px;background:var(--paper);color:var(--ink);font-size:11px;font-weight:850;cursor:pointer;white-space:nowrap;transition:.16s ease}
+.system-shortcut-card svg{color:var(--green);flex:0 0 auto}
+.system-shortcut-card:hover{border-color:var(--green);background:var(--mint);transform:translateY(-1px)}
+.system-shortcut-card:nth-child(3){grid-column:1 / -1}
+@media(max-width:720px){.system-shortcuts{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));order:5}.system-shortcut-card{justify-content:center}.system-shortcut-card:nth-child(3){grid-column:1 / -1}}
