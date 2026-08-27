@@ -81,3 +81,11 @@
 @media(max-width:720px){.v7-dashboard{padding:10px}.v7-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.v7-insights{grid-template-columns:1fr 1fr}.v7-right{grid-template-columns:1fr}.searchbox{min-width:100%}.rate-grid{grid-template-columns:1fr}.report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.system-list article{align-items:flex-start}.header-tool{width:34px;height:34px}.v7-header .brand strong{display:none}}
 @media(max-width:480px){.v7-insights{grid-template-columns:1fr}.v7-kpis{grid-template-columns:1fr 1fr!important}.custom-range{width:100%}.custom-range input{min-width:0;flex:1}.undo-toast{left:10px;right:10px;transform:none;bottom:10px;justify-content:space-between}.report-grid{grid-template-columns:1fr 1fr}}
 @media print{body *{visibility:hidden!important}.report-backdrop,.report-backdrop *{visibility:visible!important}.report-backdrop{position:absolute!important;inset:0!important;background:#fff!important}.report-modal{position:absolute;left:0;top:0;max-width:none!important;width:100%!important;max-height:none!important;overflow:visible!important;border:0!important;box-shadow:none!important}.no-print{display:none!important}.report-grid article{break-inside:avoid}}
+
+/* Contextual accounting controls */
+.v7-kpis .income-kpi,.v7-insights .rates-insight{position:relative}
+.kpi-currency{position:absolute;top:10px;right:10px;width:auto;min-width:72px;padding:5px 24px 5px 8px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font-weight:800;font-size:11px}
+.insight-corner-button{position:absolute;top:9px;right:9px;width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--green);cursor:pointer}
+.insight-corner-button:hover{background:var(--mint)}
+.mini-actions .danger{color:var(--red,#b42318);border-color:color-mix(in srgb,var(--red,#b42318) 35%,var(--line))}
+.report-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
