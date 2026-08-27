@@ -1,0 +1,175 @@
+/* Global interactive theme hover layer.
+   Finance/data surfaces react to the currently selected app palette.
+   Hover is enabled only on devices with a real hover-capable pointer. */
+
+:root{
+  --theme-hover-bg:color-mix(in srgb,var(--paper) 88%,var(--mint));
+  --theme-hover-bg-strong:color-mix(in srgb,var(--paper) 80%,var(--mint));
+  --theme-hover-border:color-mix(in srgb,var(--green) 42%,var(--line));
+  --theme-hover-shadow:0 12px 28px color-mix(in srgb,var(--green) 13%,transparent),0 2px 8px rgba(15,23,42,.05);
+  --theme-hover-shadow-soft:0 8px 20px color-mix(in srgb,var(--green) 9%,transparent);
+}
+
+/* Smoothness without changing layout. */
+#root :where(
+  .v7-kpis article,
+  .v7-insights article,
+  .analytics-summary>div,
+  .receivable-list article,
+  .system-list article,
+  .report-grid article,
+  .fund-kpi,
+  .asset-side,
+  .fund-chart-card,
+  .compact-details-card,
+  .deposit-chart-placeholder,
+  .compact-details-grid>div,
+  .fund-movement-row,
+  .calendar-day,
+  .selected-day-summary article,
+  .calendar-event-card,
+  .calendar-record-list article,
+  .month-agenda-item,
+  .calendar-event-empty,
+  .upcoming-empty
+){
+  transition:background-color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease,color .18s ease;
+}
+
+#root table tbody td{
+  transition:background-color .18s ease,border-color .18s ease,color .18s ease;
+}
+
+@media (hover:hover) and (pointer:fine){
+  /* Muhasebe: KPI and insight cards */
+  #root .v7-kpis article:not(.net):hover,
+  #root .v7-insights article:hover,
+  #root .analytics-summary>div:hover,
+  #root .report-grid article:hover{
+    transform:translateY(-2px);
+    background:var(--theme-hover-bg)!important;
+    border-color:var(--theme-hover-border)!important;
+    box-shadow:var(--theme-hover-shadow)!important;
+  }
+
+  /* Existing full-color Net card keeps white text but reacts more strongly. */
+  #root .v7-kpis article.net:hover{
+    transform:translateY(-2px);
+    background:linear-gradient(135deg,var(--green),var(--green2))!important;
+    border-color:color-mix(in srgb,var(--green2) 72%,#fff)!important;
+    box-shadow:0 14px 32px color-mix(in srgb,var(--green) 28%,transparent)!important;
+  }
+
+  /* Muhasebe: lists and table rows */
+  #root .receivable-list article:hover,
+  #root .system-list article:hover{
+    background:var(--theme-hover-bg)!important;
+    border-color:var(--theme-hover-border)!important;
+    box-shadow:var(--theme-hover-shadow-soft)!important;
+    transform:translateX(2px);
+  }
+
+  #root table tbody tr:hover td{
+    background:var(--theme-hover-bg)!important;
+    border-color:color-mix(in srgb,var(--green) 18%,var(--line))!important;
+  }
+  #root table tbody tr:hover td:first-child{
+    box-shadow:inset 3px 0 0 var(--green);
+  }
+
+  /* Varliklar: main shells, KPIs and financial cards */
+  #root .assets-fund-page .asset-side:hover{
+    border-color:color-mix(in srgb,var(--green) 30%,var(--line))!important;
+    box-shadow:0 14px 34px color-mix(in srgb,var(--green) 9%,transparent)!important;
+  }
+
+  #root .assets-fund-page .fund-kpi:not(.total):hover{
+    transform:translateY(-2px);
+    background:var(--theme-hover-bg)!important;
+    border-color:var(--theme-hover-border)!important;
+    box-shadow:var(--theme-hover-shadow)!important;
+  }
+
+  #root .assets-fund-page .fund-kpi.total:hover{
+    transform:translateY(-2px);
+    background:linear-gradient(135deg,var(--green),var(--green2))!important;
+    border-color:color-mix(in srgb,var(--green2) 72%,#fff)!important;
+    box-shadow:0 14px 32px color-mix(in srgb,var(--green) 28%,transparent)!important;
+  }
+
+  #root .assets-fund-page .fund-chart-card:hover,
+  #root .assets-fund-page .compact-details-card:hover,
+  #root .assets-fund-page .deposit-chart-placeholder:hover{
+    transform:translateY(-2px);
+    background:var(--theme-hover-bg)!important;
+    border-color:var(--theme-hover-border)!important;
+    box-shadow:var(--theme-hover-shadow)!important;
+  }
+
+  #root .assets-fund-page .compact-details-grid>div:hover{
+    position:relative;
+    z-index:1;
+    background:var(--theme-hover-bg-strong)!important;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--green) 30%,transparent);
+  }
+  #root .assets-fund-page .compact-details-grid>div:hover dt{
+    color:color-mix(in srgb,var(--green) 72%,var(--muted))!important;
+  }
+  #root .assets-fund-page .compact-details-grid>div:hover dd{
+    color:var(--green)!important;
+  }
+
+  #root .fund-movement-row:hover{
+    transform:translateX(2px);
+    background:var(--theme-hover-bg)!important;
+    border-color:var(--theme-hover-border)!important;
+    box-shadow:var(--theme-hover-shadow-soft)!important;
+  }
+
+  /* Calendar: date cells and agenda/data cards */
+  #root .standalone-calendar-page .calendar-day:not(.selected):not(.today):hover{
+    transform:translateY(-3px)!important;
+    background:var(--theme-hover-bg)!important;
+    border-color:var(--theme-hover-border)!important;
+    box-shadow:var(--theme-hover-shadow)!important;
+  }
+
+  #root .standalone-calendar-page .selected-day-summary article:hover,
+  #root .standalone-calendar-page .calendar-event-card:hover,
+  #root .standalone-calendar-page .calendar-record-list article:hover,
+  #root .standalone-calendar-page .month-agenda-item:hover,
+  #root .standalone-calendar-page .calendar-event-empty:hover,
+  #root .standalone-calendar-page .upcoming-empty:hover{
+    transform:translateY(-2px);
+    background:var(--theme-hover-bg)!important;
+    border-color:var(--theme-hover-border)!important;
+    box-shadow:var(--theme-hover-shadow)!important;
+  }
+
+  #root .standalone-calendar-page .calendar-event-card:hover strong,
+  #root .standalone-calendar-page .calendar-record-list article:hover strong,
+  #root .standalone-calendar-page .month-agenda-item:hover strong{
+    color:var(--green)!important;
+  }
+}
+
+/* Dark mode: keep the same palette reaction without washing surfaces out. */
+:root[data-mode="dark"]{
+  --theme-hover-bg:color-mix(in srgb,var(--paper) 82%,var(--mint));
+  --theme-hover-bg-strong:color-mix(in srgb,var(--paper) 74%,var(--mint));
+  --theme-hover-border:color-mix(in srgb,var(--green) 52%,var(--line));
+  --theme-hover-shadow:0 12px 30px color-mix(in srgb,var(--green) 16%,transparent),0 3px 12px rgba(0,0,0,.22);
+  --theme-hover-shadow-soft:0 8px 22px color-mix(in srgb,var(--green) 12%,transparent);
+}
+
+@media (prefers-reduced-motion:reduce){
+  #root :where(
+    .v7-kpis article,.v7-insights article,.analytics-summary>div,.receivable-list article,.system-list article,
+    .report-grid article,.fund-kpi,.asset-side,.fund-chart-card,.compact-details-card,.deposit-chart-placeholder,
+    .compact-details-grid>div,.fund-movement-row,.calendar-day,.selected-day-summary article,.calendar-event-card,
+    .calendar-record-list article,.month-agenda-item,.calendar-event-empty,.upcoming-empty
+  ){
+    transition:none!important;
+    transform:none!important;
+  }
+}
