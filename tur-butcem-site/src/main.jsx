@@ -6,7 +6,7 @@ import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 
-const PUBLIC_ASSET_VERSION='20260827-1';
+const PUBLIC_ASSET_VERSION='20260827-2';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
 try{
@@ -28,27 +28,21 @@ if (window.location.pathname.startsWith('/varliklar')) {
   document.head.appendChild(assetsEditorPremium);
 }
 
-if (window.location.pathname.startsWith('/takvim')) {
-  const calendarTheme = document.createElement('link');
-  calendarTheme.rel = 'stylesheet';
-  calendarTheme.href = versioned('/takvim-luxe.css');
-  document.head.appendChild(calendarTheme);
-
-  const calendarThemeEnhance = document.createElement('link');
-  calendarThemeEnhance.rel = 'stylesheet';
-  calendarThemeEnhance.href = versioned('/takvim-luxe-enhance.css');
-  document.head.appendChild(calendarThemeEnhance);
-
-  const calendarGridTheme = document.createElement('link');
-  calendarGridTheme.rel = 'stylesheet';
-  calendarGridTheme.href = versioned('/takvim-luxe-grid.css');
-  document.head.appendChild(calendarGridTheme);
-
-  const calendarEnhanceScript = document.createElement('script');
-  calendarEnhanceScript.src = versioned('/takvim-luxe-enhance.js');
-  calendarEnhanceScript.defer = true;
-  document.head.appendChild(calendarEnhanceScript);
+// Calendar assets are intentionally loaded for every SPA entry point.
+// Their CSS is scoped to .standalone-calendar-page, so they do not affect other pages.
+// This prevents the old base calendar from appearing when navigating to /takvim
+// without a full browser reload.
+for (const href of ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-grid.css']) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = versioned(href);
+  document.head.appendChild(link);
 }
+
+const calendarEnhanceScript = document.createElement('script');
+calendarEnhanceScript.src = versioned('/takvim-luxe-enhance.js');
+calendarEnhanceScript.defer = true;
+document.head.appendChild(calendarEnhanceScript);
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
