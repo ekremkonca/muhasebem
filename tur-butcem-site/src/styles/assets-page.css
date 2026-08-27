@@ -60,3 +60,25 @@
 @media(max-width:1180px){.assets-split{grid-template-columns:1fr}.fund-side{border-left:1px solid var(--line)}.compact-side-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.fund-kpi strong{font-size:17px}.deposit-chart-placeholder{min-height:220px}}
 @media(max-width:760px){.assets-nav-button{font-size:11px;padding:0 9px;height:34px}.assets-fund-page{padding:16px 10px 32px}.asset-side{padding:10px}.asset-side-head{display:block;min-height:0}.fund-head-actions,.deposit-status{margin-top:9px;width:max-content}.compact-side-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-details-grid>div:nth-child(3n){border-right:1px solid var(--line)}.compact-details-grid>div:nth-child(2n){border-right:0}.fund-chart-stats{display:none}.fund-chart{height:190px}.assets-page-title{display:none}}
 @media(max-width:430px){.fund-kpi{padding:9px}.fund-kpi strong{font-size:14px}.compact-details-grid{grid-template-columns:1fr}.compact-details-grid>div{border-right:0!important}}
+
+/* Readability pass: slightly larger text and clearer monetary values */
+.assets-fund-page .assets-page-title{font-size:14px}.assets-fund-page .assets-page-title strong{font-size:14px}
+.assets-fund-page .asset-side-head p{font-size:13px;line-height:1.55}
+.assets-fund-page .deposit-status,.assets-fund-page .tefas-status{font-size:11px;padding:8px 10px}
+.assets-fund-page .fund-warning{font-size:12px;line-height:1.45}
+.assets-fund-page .fund-kpi{padding:12px 13px}
+.assets-fund-page .fund-kpi>span{font-size:11px}
+.assets-fund-page .fund-kpi strong{margin:6px 0 4px;font-size:clamp(17px,1.25vw,22px)}
+.assets-fund-page .fund-kpi small{font-size:10px}
+.assets-fund-page .fund-chart-meta span{font-size:11px}
+.assets-fund-page .fund-chart-meta strong{font-size:19px}
+.assets-fund-page .fund-chart-stats span{font-size:10px}
+.assets-fund-page .fund-chart-dates{font-size:10px}
+.assets-fund-page .fund-chart-empty{font-size:12px}
+.assets-fund-page .fund-card-title h3{font-size:18px}
+.assets-fund-page .compact-details-grid dt{font-size:10.5px;margin-bottom:4px}
+.assets-fund-page .compact-details-grid dd{font-size:13px}
+.assets-fund-page .deposit-chart-placeholder p{font-size:12px}
+@media(max-width:1180px){.assets-fund-page .fund-kpi strong{font-size:20px}}
+@media(max-width:760px){.assets-fund-page .assets-nav-button{font-size:12px}.assets-fund-page .fund-kpi strong{font-size:18px}.assets-fund-page .compact-details-grid dd{font-size:13px}}
+@media(max-width:430px){.assets-fund-page .fund-kpi strong{font-size:17px}}
