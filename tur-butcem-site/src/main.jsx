@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import SiteRouter from './SiteRouter.jsx';
+import FontSizeSwitcher from './FontSizeSwitcher.jsx';
 import './styles/styles.css';
 import './styles/header-left.css';
 import './styles/assets-page.css';
@@ -52,6 +53,7 @@ document.head.appendChild(calendarEnhanceScript);
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <SiteRouter />
+    <FontSizeSwitcher />
   </React.StrictMode>
 );
 
