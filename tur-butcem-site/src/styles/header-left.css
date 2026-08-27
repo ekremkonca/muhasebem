@@ -148,3 +148,28 @@ html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card span{d
 html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-child(3){grid-column:1!important}
 @media(max-width:900px){html body #root .v7-header>.brand{grid-template-columns:128px 66px 72px!important;min-width:278px!important}html body #root .v7-header>.brand>.system-shortcuts{width:72px!important}}
 @media(max-width:720px){html body #root .v7-header>.brand{grid-template-columns:112px 34px 72px!important;min-width:228px!important}html body #root .v7-header>.brand>.system-shortcuts{width:72px!important;height:68px!important;gap:4px!important}}
+
+/* Final exact tool map: eye/trash and backup/history, all centered. */
+html body #root .v7-header>.brand{grid-template-columns:140px 72px 72px!important;min-width:300px!important}
+html body #root .v7-header>.brand>.system-shortcuts{
+ grid-column:3!important;grid-row:1 / span 2!important;
+ width:72px!important;height:68px!important;
+ display:grid!important;grid-template-columns:34px 34px!important;grid-template-rows:32px 32px!important;
+ gap:4px!important;transform:translateX(-38px)!important;z-index:3!important;
+}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card{
+ width:34px!important;height:32px!important;min-width:34px!important;min-height:32px!important;
+ margin:0!important;padding:0!important;display:grid!important;place-items:center!important;
+ align-items:center!important;justify-content:center!important;text-align:center!important;
+ border-color:color-mix(in srgb,var(--green) 62%,var(--line))!important;
+ background:var(--green)!important;color:#fff!important;
+}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card svg{
+ display:block!important;margin:auto!important;color:#fff!important;stroke:#fff!important;
+ align-self:center!important;justify-self:center!important;
+}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-child(1){grid-column:2!important;grid-row:1!important}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-child(2){grid-column:2!important;grid-row:2!important}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-child(3){grid-column:1!important;grid-row:2!important}
+@media(max-width:900px){html body #root .v7-header>.brand{grid-template-columns:128px 66px 72px!important;min-width:278px!important}}
+@media(max-width:720px){html body #root .v7-header>.brand{grid-template-columns:112px 34px 72px!important;min-width:228px!important}html body #root .v7-header>.brand>.system-shortcuts{transform:translateX(-38px)!important}}
