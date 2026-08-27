@@ -180,18 +180,6 @@ function TakvimPage() {
 
 function VarliklarPage() {
   useEffect(() => {
-    let activated = false;
-    const activate = () => {
-      if (activated) return;
-      const button = document.querySelector(".assets-nav-button");
-      if (!button) return;
-      activated = true;
-      button.click();
-      setTimeout(
-        () => history.replaceState(history.state, "", "/varliklar/"),
-        0,
-      );
-    };
     const intercept = (e) => {
       if (!e.target.closest?.(".assets-back")) return;
       e.preventDefault();
@@ -199,18 +187,8 @@ function VarliklarPage() {
       window.history.pushState({}, "", "/muhasebe/");
       window.dispatchEvent(new Event(SITE_NAV_EVENT));
     };
-    const observer = new MutationObserver(activate);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-    });
     document.addEventListener("click", intercept, true);
-    activate();
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("click", intercept, true);
-    };
+    return () => document.removeEventListener("click", intercept, true);
   }, []);
   return (
     <>
