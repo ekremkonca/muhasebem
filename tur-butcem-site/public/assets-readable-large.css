@@ -28,6 +28,43 @@
 .assets-fund-page .deposit-chart-placeholder h3{font-size:21px!important}
 .assets-fund-page .deposit-chart-placeholder p{font-size:14px!important;line-height:1.65!important}
 
+/* Deposit editor + ALE portfolio movements */
+.assets-fund-page .asset-head-actions,
+.assets-fund-page .fund-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.assets-fund-page .asset-edit-trigger{height:36px;padding:0 13px;border:1px solid color-mix(in srgb,var(--green) 32%,var(--line));border-radius:11px;background:color-mix(in srgb,var(--mint) 74%,var(--paper));color:var(--green);font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap}
+.assets-fund-page .asset-edit-trigger:hover{background:var(--mint);border-color:var(--green)}
+.assets-fund-page .asset-settings-warning{margin-bottom:12px}
+
+.asset-modal-backdrop{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;background:rgba(3,12,16,.62);backdrop-filter:blur(10px)}
+.asset-editor-modal{width:min(760px,100%);max-height:min(88vh,820px);overflow:auto;border:1px solid var(--line);border-radius:24px;background:var(--paper);color:var(--ink);padding:22px;box-shadow:0 28px 90px rgba(0,0,0,.32)}
+.asset-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.asset-editor-head h3{margin:4px 0 0;font-size:24px;line-height:1.15}
+.asset-modal-close{width:38px;height:38px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--ink);font-size:24px;line-height:1;cursor:pointer}
+.asset-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.asset-form-grid label{display:grid;gap:7px;color:var(--muted);font-size:12px;font-weight:800}
+.asset-form-grid input,.asset-form-grid select{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;background:var(--surface,var(--paper));color:var(--ink);padding:0 12px;font:700 14px/1.2 inherit;outline:none}
+.asset-form-grid input:focus,.asset-form-grid select:focus{border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 16%,transparent)}
+.asset-editor-note{margin-top:14px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--soft);color:var(--muted);font-size:12px;line-height:1.5}
+.asset-editor-error{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#fff0f0;color:#a83b3b;font-size:12px;font-weight:800}
+.asset-editor-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:17px}
+.asset-edit-btn{min-height:40px;padding:0 16px;border-radius:11px;border:1px solid var(--line);font-weight:900;cursor:pointer}
+.asset-edit-btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.asset-edit-btn.secondary{background:var(--paper);color:var(--ink)}
+.asset-edit-btn:disabled,.asset-modal-close:disabled,.asset-edit-trigger:disabled{opacity:.6;cursor:not-allowed}
+.fund-movement-history{display:grid;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.fund-movement-history>strong{font-size:13px}
+.fund-movement-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.fund-movement-row span{min-width:0;display:grid;gap:3px}.fund-movement-row b{font-size:13px}.fund-movement-row small{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fund-movement-row button{border:1px solid color-mix(in srgb,#c94b4b 38%,var(--line));border-radius:9px;background:transparent;color:#c94b4b;padding:6px 9px;font-size:11px;font-weight:900;cursor:pointer}
+
+:root[data-mode="dark"] .asset-editor-modal{background:#0e1b21;border-color:#29414b}
+:root[data-mode="dark"] .asset-editor-note,
+:root[data-mode="dark"] .fund-movement-row,
+:root[data-mode="dark"] .asset-modal-close{background:#13252d;border-color:#29414b}
+:root[data-mode="dark"] .asset-form-grid input,
+:root[data-mode="dark"] .asset-form-grid select{background:#0b171d!important;border-color:#29414b!important;color:#edf7fa!important}
+:root[data-mode="dark"] .asset-editor-error{background:#321d21;color:#ffb3bc}
+
 @media(max-width:1180px){
   .assets-fund-page .fund-kpi strong{font-size:25px!important}
 }
@@ -42,10 +79,18 @@
   .assets-fund-page .fund-kpi small{font-size:11.5px!important}
   .assets-fund-page .compact-details-grid dt{font-size:11.5px!important}
   .assets-fund-page .compact-details-grid dd{font-size:15px!important}
+  .assets-fund-page .asset-side-head{display:block!important}
+  .assets-fund-page .asset-head-actions,.assets-fund-page .fund-head-actions{justify-content:flex-start;margin-top:10px}
+  .asset-modal-backdrop{padding:10px;align-items:end}
+  .asset-editor-modal{max-height:92vh;border-radius:20px 20px 14px 14px;padding:17px}
+  .asset-form-grid{grid-template-columns:1fr}
+  .asset-editor-head h3{font-size:21px}
 }
 
 @media(max-width:430px){
   .assets-fund-page .fund-kpi strong{font-size:22px!important}
   .assets-fund-page .fund-kpi>span{font-size:12px!important}
   .assets-fund-page .fund-kpi small{font-size:11px!important}
+  .asset-editor-actions{display:grid;grid-template-columns:1fr 1fr}
+  .asset-edit-btn{width:100%}
 }
