@@ -3,7 +3,7 @@ import{createPortal}from'react-dom';
 import'./styles/font-size-switcher.css';
 
 const STORAGE_KEY='muhasebe-ui-font-offset';
-const VALUES=[0,1,2,3,5,7,8,9,10,13];
+const VALUES=Array.from({length:14},(_,i)=>i);
 const getSaved=()=>{try{const n=Number(localStorage.getItem(STORAGE_KEY));return VALUES.includes(n)?n:0}catch{return 0}};
 const shouldSkip=el=>!el||el.closest?.('.font-size-switcher,.font-panel')||['SCRIPT','STYLE','NOSCRIPT','SVG','PATH','CIRCLE','LINE','POLYLINE','POLYGON'].includes(el.tagName);
 const hasOwnText=el=>[...el.childNodes].some(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim())||['INPUT','TEXTAREA','SELECT','BUTTON','OPTION','LABEL'].includes(el.tagName);
