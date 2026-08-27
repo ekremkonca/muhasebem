@@ -259,9 +259,7 @@ function AuthScreen({ configured, onDone }) {
   return (
     <div className="auth-shell">
       <form className="auth-card" onSubmit={submit}>
-        <div className="brand-mark auth-mark">
-          <Icon name="temple" size={28} />
-        </div>
+        <img className="auth-logo-image" src="/ek-logo-clean.png" alt="EK" />
         <span className="eyebrow">MUHASEBE V7</span>
         <h1>{configured ? "Giriş" : "İlk güvenlik kurulumu"}</h1>
         <p>
@@ -1128,8 +1126,8 @@ function Dashboard({ onSignedOut }) {
     <>
       <header className="v7-header">
         <div className="brand">
-          <div className="brand-mark">
-            <Icon name="temple" size={22} />
+          <div className="brand-mark brand-logo-mark">
+            <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
           </div>
           <strong>
             Muhasebe <small>V7</small>
