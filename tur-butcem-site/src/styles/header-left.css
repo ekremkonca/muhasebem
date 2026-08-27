@@ -1,33 +1,27 @@
-/* V8 left header branding + compact controls */
+/* V8 header: EK brand + compact palette/privacy/mode controls */
 html body #root .v7-header{
-  min-height:86px!important;
+  min-height:88px!important;
   height:auto!important;
   padding-left:max(34px,calc((100vw - 1680px)/2 + 34px))!important;
   padding-right:12px!important;
 }
-
 html body #root .v7-header>.brand{
   display:grid!important;
-  grid-template-columns:94px 72px!important;
-  grid-template-rows:58px 24px!important;
+  grid-template-columns:92px 72px!important;
+  grid-template-rows:62px 22px!important;
   column-gap:8px!important;
   row-gap:0!important;
   align-items:center!important;
   justify-content:flex-start!important;
-  min-width:174px!important;
+  min-width:172px!important;
   margin:0!important;
   padding:0!important;
 }
-
-/* EK logo: the source image has large transparent margins.
-   Render it oversized inside a clipped viewport so the actual EK mark fills the header. */
 html body #root .v7-header .brand-mark{
-  --ek-logo-w:124px;
-  --ek-logo-h:128px;
   grid-column:1!important;
   grid-row:1!important;
-  width:94px!important;
-  height:58px!important;
+  width:92px!important;
+  height:62px!important;
   margin:0!important;
   padding:0!important;
   display:flex!important;
@@ -35,41 +29,34 @@ html body #root .v7-header .brand-mark{
   justify-content:center!important;
   border:0!important;
   border-radius:0!important;
-  background-image:url('/ek-logo.webp?v=20260827-13')!important;
-  background-repeat:no-repeat!important;
-  background-position:center!important;
-  background-size:var(--ek-logo-w) var(--ek-logo-h)!important;
+  background:none!important;
+  background-color:transparent!important;
+  background-image:none!important;
   box-shadow:none!important;
   color:transparent!important;
-  overflow:hidden!important;
+  overflow:visible!important;
   position:relative!important;
 }
-html body #root .v7-header .brand-mark.v8-logo-loaded{background-image:none!important}
 html body #root .v7-header .brand-mark>svg{display:none!important}
 html body #root .v7-header .v8-brand-logo-img{
   display:block!important;
-  position:absolute!important;
-  left:50%!important;
-  top:50%!important;
-  width:var(--ek-logo-w)!important;
-  height:var(--ek-logo-h)!important;
+  width:92px!important;
+  height:62px!important;
   max-width:none!important;
   max-height:none!important;
   object-fit:contain!important;
   object-position:center!important;
-  transform:translate(-50%,-50%)!important;
   opacity:1!important;
   visibility:visible!important;
-  filter:drop-shadow(0 3px 5px rgba(0,0,0,.16))!important;
+  background:transparent!important;
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.18))!important;
   pointer-events:none!important;
   user-select:none!important;
 }
-
-/* Replace legacy “Muhasebe V7” visually with the new two-line brand name. */
 html body #root .v7-header>.brand>strong{
   grid-column:1!important;
   grid-row:2!important;
-  width:94px!important;
+  width:92px!important;
   margin:0!important;
   padding:0!important;
   display:flex!important;
@@ -83,27 +70,8 @@ html body #root .v7-header>.brand>strong{
   white-space:nowrap!important;
 }
 html body #root .v7-header>.brand>strong small{display:none!important}
-html body #root .v7-header>.brand>strong::before{
-  content:'Finans';
-  display:block;
-  font-size:12px!important;
-  line-height:1.05!important;
-  font-weight:850!important;
-  letter-spacing:.01em!important;
-  color:var(--ink)!important;
-}
-html body #root .v7-header>.brand>strong::after{
-  content:'Kişisel';
-  display:block;
-  margin-top:1px;
-  font-size:10px!important;
-  line-height:1.05!important;
-  font-weight:700!important;
-  letter-spacing:.055em!important;
-  color:var(--muted)!important;
-}
-
-/* Palette + eye on top, sun/moon directly under the palette. */
+html body #root .v7-header>.brand>strong::before{content:'Finans';display:block;font-size:12px!important;line-height:1.05!important;font-weight:850!important;letter-spacing:.01em!important;color:var(--ink)!important}
+html body #root .v7-header>.brand>strong::after{content:'Kişisel';display:block;margin-top:1px;font-size:10px!important;line-height:1.05!important;font-weight:700!important;letter-spacing:.055em!important;color:var(--muted)!important}
 html body #root .v7-header .v8-theme-menu{
   grid-column:2!important;
   grid-row:1 / span 2!important;
@@ -120,90 +88,35 @@ html body #root .v7-header .v8-theme-menu{
   overflow:visible!important;
   position:relative!important;
 }
-
 html body #root .v7-header .theme-icon-trigger,
 html body #root .v7-header .v8-privacy-trigger,
 html body #root .v7-header .v8-mode-trigger{
-  width:34px!important;
-  height:32px!important;
-  min-width:34px!important;
-  min-height:32px!important;
-  margin:0!important;
-  padding:0!important;
-  display:grid!important;
-  place-items:center!important;
-  border:1px solid var(--line)!important;
-  border-radius:10px!important;
-  background:var(--paper)!important;
-  color:var(--ink)!important;
-  box-shadow:0 3px 10px rgba(15,23,42,.045)!important;
-  cursor:pointer!important;
-  transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease,color .16s ease!important;
+  width:34px!important;height:32px!important;min-width:34px!important;min-height:32px!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important;border:1px solid var(--line)!important;border-radius:10px!important;background:var(--paper)!important;color:var(--ink)!important;box-shadow:0 3px 10px rgba(15,23,42,.045)!important;cursor:pointer!important;transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease,color .16s ease!important
 }
 html body #root .v7-header .theme-icon-trigger{grid-column:1!important;grid-row:1!important;position:relative!important}
 html body #root .v7-header .v8-privacy-trigger{grid-column:2!important;grid-row:1!important}
 html body #root .v7-header .v8-mode-trigger{grid-column:1!important;grid-row:2!important}
-
 html body #root .v7-header .theme-icon-trigger:hover,
 html body #root .v7-header .v8-privacy-trigger:hover,
-html body #root .v7-header .v8-mode-trigger:hover{
-  transform:translateY(-1px)!important;
-  border-color:color-mix(in srgb,var(--green) 48%,var(--line))!important;
-  background:color-mix(in srgb,var(--paper) 88%,var(--mint))!important;
-  color:var(--green)!important;
-  box-shadow:0 7px 16px color-mix(in srgb,var(--green) 11%,transparent)!important;
-}
+html body #root .v7-header .v8-mode-trigger:hover{transform:translateY(-1px)!important;border-color:color-mix(in srgb,var(--green) 48%,var(--line))!important;background:color-mix(in srgb,var(--paper) 88%,var(--mint))!important;color:var(--green)!important;box-shadow:0 7px 16px color-mix(in srgb,var(--green) 11%,transparent)!important}
 html body #root .v7-header .v8-privacy-trigger.active,
-html body #root .v7-header .v8-mode-trigger.active{
-  border-color:color-mix(in srgb,var(--green) 52%,var(--line))!important;
-  color:var(--green)!important;
-  background:color-mix(in srgb,var(--paper) 84%,var(--mint))!important;
-}
-
-html body #root .v7-header .theme-current-dot{
-  position:absolute!important;
-  right:4px!important;
-  bottom:4px!important;
-  width:6px!important;
-  height:6px!important;
-  margin:0!important;
-  border:1px solid var(--paper)!important;
-  border-radius:50%!important;
-  background:var(--theme-dot)!important;
-  box-shadow:0 0 0 1px rgba(0,0,0,.08)!important;
-  pointer-events:none!important;
-}
-
-html body #root .v7-header .v8-theme-panel{
-  top:calc(100% + 7px)!important;
-  left:0!important;
-  width:184px!important;
-  z-index:90!important;
-}
-
-:root[data-mode='dark'] body #root .v7-header .theme-icon-trigger,
-:root[data-mode='dark'] body #root .v7-header .v8-privacy-trigger,
-:root[data-mode='dark'] body #root .v7-header .v8-mode-trigger{
-  background:var(--paper)!important;
-  border-color:var(--line)!important;
-  color:var(--ink)!important;
-}
-
+html body #root .v7-header .v8-mode-trigger.active{border-color:color-mix(in srgb,var(--green) 52%,var(--line))!important;color:var(--green)!important;background:color-mix(in srgb,var(--paper) 84%,var(--mint))!important}
+html body #root .v7-header .theme-current-dot{position:absolute!important;right:4px!important;bottom:4px!important;width:6px!important;height:6px!important;margin:0!important;border:1px solid var(--paper)!important;border-radius:50%!important;background:var(--theme-dot)!important;box-shadow:0 0 0 1px rgba(0,0,0,.08)!important;pointer-events:none!important}
+html body #root .v7-header .v8-theme-panel{top:calc(100% + 7px)!important;left:0!important;width:184px!important;z-index:90!important}
 @media(max-width:900px){
   html body #root .v7-header{padding-left:22px!important;padding-right:8px!important}
-  html body #root .v7-header>.brand{grid-template-columns:82px 66px!important;grid-template-rows:50px 22px!important;min-width:156px!important;column-gap:6px!important}
-  html body #root .v7-header .brand-mark{--ek-logo-w:109px;--ek-logo-h:113px;width:82px!important;height:50px!important}
-  html body #root .v7-header>.brand>strong{width:82px!important}
+  html body #root .v7-header>.brand{grid-template-columns:80px 66px!important;grid-template-rows:54px 20px!important;min-width:152px!important;column-gap:6px!important}
+  html body #root .v7-header .brand-mark,html body #root .v7-header .v8-brand-logo-img{width:80px!important;height:54px!important}
+  html body #root .v7-header>.brand>strong{width:80px!important}
   html body #root .v7-header>.brand>strong::before{font-size:11px!important}
   html body #root .v7-header>.brand>strong::after{font-size:9px!important}
   html body #root .v7-header .v8-theme-menu{transform:scale(.94);transform-origin:left center}
 }
-
 @media(max-width:720px){
   html body #root .v7-header{padding-left:14px!important;padding-right:6px!important}
-  html body #root .v7-header>.brand{grid-template-columns:70px 34px!important;grid-template-rows:44px 20px!important;min-width:112px!important;column-gap:5px!important}
-  html body #root .v7-header .brand-mark{--ek-logo-w:94px;--ek-logo-h:97px;width:70px!important;height:44px!important}
-  html body #root .v7-header>.brand>strong{width:70px!important}
+  html body #root .v7-header>.brand{grid-template-columns:68px 34px!important;grid-template-rows:46px 18px!important;min-width:108px!important;column-gap:5px!important}
+  html body #root .v7-header .brand-mark,html body #root .v7-header .v8-brand-logo-img{width:68px!important;height:46px!important}
+  html body #root .v7-header>.brand>strong{display:flex!important;width:68px!important}
   html body #root .v7-header>.brand>strong::before{font-size:10px!important}
   html body #root .v7-header>.brand>strong::after{font-size:8px!important}
   html body #root .v7-header .v8-theme-menu{width:34px!important;grid-template-columns:34px!important;grid-template-rows:30px 30px 30px!important;height:98px!important;gap:3px!important;transform:scale(.86);transform-origin:left center}
