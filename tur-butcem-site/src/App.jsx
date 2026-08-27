@@ -1152,27 +1152,32 @@ function Dashboard({ onSignedOut }) {
               Uygulamayı kur
             </button>
           )}
-          <button
-            className="icon-btn header-tool"
-            onClick={() => reloadSide("backups")}
-            title="Yedekler"
-          >
-            <Icon name="backup" />
-          </button>
-          <button
-            className="icon-btn header-tool"
-            onClick={() => reloadSide("history")}
-            title="İşlem geçmişi"
-          >
-            <Icon name="history" />
-          </button>
-          <button
-            className="icon-btn header-tool"
-            onClick={() => reloadSide("trash")}
-            title="Çöp kutusu"
-          >
-            <Icon name="box" />
-          </button>
+          <div className="system-shortcuts" aria-label="Sistem araçları">
+            <button
+              className="system-shortcut-card"
+              onClick={() => reloadSide("backups")}
+              title="Yedekler"
+            >
+              <Icon name="backup" />
+              <span>Yedekler</span>
+            </button>
+            <button
+              className="system-shortcut-card"
+              onClick={() => reloadSide("history")}
+              title="İşlem geçmişi"
+            >
+              <Icon name="history" />
+              <span>İşlem geçmişi</span>
+            </button>
+            <button
+              className="system-shortcut-card"
+              onClick={() => reloadSide("trash")}
+              title="Çöp kutusu"
+            >
+              <Icon name="box" />
+              <span>Çöp kutusu</span>
+            </button>
+          </div>
           <button
             className="btn secondary"
             onClick={() => setReportOpen(true)}
