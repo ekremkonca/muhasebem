@@ -6,7 +6,7 @@ import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 
-const PUBLIC_ASSET_VERSION='20260827-11';
+const PUBLIC_ASSET_VERSION='20260827-12';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
 try{
@@ -63,6 +63,12 @@ const interactiveThemeHover = document.createElement('link');
 interactiveThemeHover.rel = 'stylesheet';
 interactiveThemeHover.href = versioned('/interactive-theme-hover.css');
 document.head.appendChild(interactiveThemeHover);
+
+// V8 brand image is mounted as a real IMG so it cannot disappear behind CSS backgrounds.
+const headerBrandScript = document.createElement('script');
+headerBrandScript.src = versioned('/header-brand-v8.js');
+headerBrandScript.defer = true;
+document.head.appendChild(headerBrandScript);
 
 const calendarEnhanceScript = document.createElement('script');
 calendarEnhanceScript.src = versioned('/takvim-luxe-enhance.js');
