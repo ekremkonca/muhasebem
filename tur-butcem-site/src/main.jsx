@@ -13,6 +13,13 @@ try{
   if(mode==='dark'||mode==='light')document.documentElement.dataset.mode=mode;
 }catch{}
 
+if (window.location.pathname.startsWith('/varliklar')) {
+  const assetsReadable = document.createElement('link');
+  assetsReadable.rel = 'stylesheet';
+  assetsReadable.href = '/assets-readable-large.css';
+  document.head.appendChild(assetsReadable);
+}
+
 if (window.location.pathname.startsWith('/takvim')) {
   const calendarTheme = document.createElement('link');
   calendarTheme.rel = 'stylesheet';
