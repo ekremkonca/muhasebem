@@ -6,7 +6,7 @@ import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 
-const PUBLIC_ASSET_VERSION='20260827-2';
+const PUBLIC_ASSET_VERSION='20260827-3';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
 try{
@@ -27,6 +27,13 @@ if (window.location.pathname.startsWith('/varliklar')) {
   assetsEditorPremium.href = versioned('/assets-editor-premium.css');
   document.head.appendChild(assetsEditorPremium);
 }
+
+// Deposit accrual runs for every SPA entry point so /varliklar works
+// correctly even when reached without a full browser reload.
+const depositLiveScript = document.createElement('script');
+depositLiveScript.src = versioned('/assets-deposit-live.js');
+depositLiveScript.defer = true;
+document.head.appendChild(depositLiveScript);
 
 // Calendar assets are intentionally loaded for every SPA entry point.
 // Their CSS is scoped to .standalone-calendar-page, so they do not affect other pages.
