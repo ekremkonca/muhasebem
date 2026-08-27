@@ -22,7 +22,9 @@ export default function HomePage({children=null,contentClassName=''}){
   return <div className="home-page-shell">
     <header className="v7-header home-v7-header">
       <div className="brand home-brand">
-        <div className="brand-mark"><Icon name="temple" size={22}/></div>
+        <div className="brand-mark brand-logo-mark">
+          <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
+        </div>
         <strong>Muhasebe <small>V7</small></strong>
         <ThemeSwitcher/>
       </div>
