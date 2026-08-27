@@ -1,13 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import SiteRouter from './SiteRouter.jsx';
-import FontSizeSwitcher from './FontSizeSwitcher.jsx';
 import './styles/styles.css';
 import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 
-const PUBLIC_ASSET_VERSION='20260827-4';
+const PUBLIC_ASSET_VERSION='20260827-5';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
 try{
@@ -15,6 +14,14 @@ try{
   const mode=localStorage.getItem('muhasebe-color-mode');
   if(theme)document.documentElement.dataset.theme=theme;
   if(mode==='dark'||mode==='light')document.documentElement.dataset.mode=mode;
+
+  // Font size switching was removed. Clear all legacy preferences so the
+  // fixed typography system is the only source of text sizing.
+  localStorage.removeItem('muhasebe-ui-font-offset');
+  localStorage.removeItem('muhasebe-ui-font-scale-v2');
+  delete document.documentElement.dataset.fontOffset;
+  delete document.documentElement.dataset.fontScale;
+  document.documentElement.style.removeProperty('--app-font-offset');
 }catch{}
 
 // Asset styles are scoped to the assets page/editor and are loaded for every SPA entry.
@@ -45,6 +52,12 @@ for (const href of ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-
   document.head.appendChild(link);
 }
 
+// Fixed typography is loaded last so it consistently normalizes all page-specific layers.
+const fixedTypography = document.createElement('link');
+fixedTypography.rel = 'stylesheet';
+fixedTypography.href = versioned('/fixed-typography.css');
+document.head.appendChild(fixedTypography);
+
 const calendarEnhanceScript = document.createElement('script');
 calendarEnhanceScript.src = versioned('/takvim-luxe-enhance.js');
 calendarEnhanceScript.defer = true;
@@ -53,7 +66,6 @@ document.head.appendChild(calendarEnhanceScript);
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <SiteRouter />
-    <FontSizeSwitcher />
   </React.StrictMode>
 );
 
