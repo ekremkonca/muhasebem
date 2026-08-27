@@ -1,7 +1,6 @@
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import FontSwitcher from './FontSwitcher.jsx';
-import FontSizeSwitcher from './FontSizeSwitcher.jsx';
 import {navigateTo} from './navigation.js';
 
 function Icon({name,size=18}){
@@ -39,7 +38,6 @@ export default function HomePage({children=null,contentClassName=''}){
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
       </div>
     </header>
-    <FontSizeSwitcher/>
     <FontSwitcher/>
     <main className={children?(contentClassName||'home-content-area'):'home-empty-area'}>{children}</main>
   </div>;
