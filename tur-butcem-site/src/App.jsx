@@ -1174,7 +1174,7 @@ function Dashboard({ onSignedOut }) {
             <Icon name="box" />
           </button>
           <button
-            className="btn secondary desktop"
+            className="btn secondary"
             onClick={() => setReportOpen(true)}
           >
             <Icon name="report" />
