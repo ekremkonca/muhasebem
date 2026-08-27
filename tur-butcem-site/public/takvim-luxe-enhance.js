@@ -2,7 +2,6 @@
   if (!location.pathname.startsWith('/takvim')) return;
 
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const num = (v) => Number(String(v ?? '').match(/-?\d+/)?.[0] || 0);
   const money = (v) => {
     const n = Number(String(v ?? '').replace(/[^0-9,.-]/g,'').replace(/\./g,'').replace(',','.'));
     return Number.isFinite(n) ? n : 0;
@@ -13,9 +12,6 @@
     const map = {ocak:'Oca',şubat:'Şub',mart:'Mar',nisan:'Nis',mayıs:'May',haziran:'Haz',temmuz:'Tem',ağustos:'Ağu',eylül:'Eyl',ekim:'Eki',kasım:'Kas',aralık:'Ara'};
     calendar.dataset.currentMonthShort = map[key] || label.split(' ')[0] || '';
   };
-  const dayCount = (day) => [...day.querySelectorAll('.calendar-event-pills i')].reduce(
-    (sum, pill) => sum + (pill.classList.contains('event-more') ? num(pill.textContent) : 1), 0,
-  );
   const activeDays = (calendar) => [...calendar.querySelectorAll('.calendar-grid .calendar-day')].filter(d => !d.classList.contains('muted'));
   const selectedNet = (calendar) => [...calendar.querySelectorAll('.compact-record-list article')].reduce((sum,row) => {
     const label = row.querySelector('.calendar-record-amount span')?.textContent || '';
@@ -23,40 +19,9 @@
     return sum + (label.includes('Gider') ? -amount : amount);
   }, 0);
 
-  function ensureStats(calendar) {
-    const toolbar = calendar.querySelector('.calendar-toolbar');
-    if (!toolbar) return;
-    let box = calendar.querySelector('.calendar-luxe-stats');
-    if (!box) {
-      box = document.createElement('div');
-      box.className = 'calendar-luxe-stats';
-      toolbar.insertAdjacentElement('afterend', box);
-    }
-    const days = activeDays(calendar);
-    const total = days.reduce((s,d) => s + dayCount(d), 0);
-    const recordDays = days.filter(d => d.querySelector('.calendar-dots i')).length;
-    const cancelled = calendar.querySelectorAll('.calendar-event-pills .is-cancelled').length;
-    const busiest = days.map(d => ({count:dayCount(d), day:d.querySelector('.day-number')?.textContent?.trim() || '—'})).sort((a,b)=>b.count-a.count)[0] || {count:0,day:'—'};
-    const title = esc(calendar.querySelector('.calendar-day-title h3')?.textContent?.trim() || 'Seçili gün');
-    const plans = calendar.querySelectorAll('.calendar-event-card').length;
-    const net = selectedNet(calendar);
-    box.innerHTML = `
-      <article class="calendar-stat-card stat-primary"><small>Bu Ay Toplam Plan</small><strong>${total}</strong><span>Takvim görünümündeki tüm etkinlikler</span></article>
-      <article class="calendar-stat-card stat-emerald"><small>Seçili Gün Özeti</small><strong>${plans} plan</strong><span>${title} · net ${net < 0 ? '-' : ''}${Math.abs(Math.round(net)).toLocaleString('tr-TR')}</span></article>
-      <article class="calendar-stat-card stat-violet"><small>En Yoğun Gün</small><strong>${busiest.day}</strong><span>${busiest.count} etkinlik yoğunluğu</span></article>
-      <article class="calendar-stat-card stat-rose"><small>Kayıt / Risk</small><strong>${recordDays} gün</strong><span>${cancelled} iptal · kayıtlı iş günü</span></article>`;
-  }
-
-  function ensureLegend(calendar) {
-    let box = calendar.querySelector('.calendar-legend-glass');
-    if (!box) {
-      box = document.createElement('div');
-      box.className = 'calendar-legend-glass';
-      calendar.querySelector('.calendar-luxe-stats')?.insertAdjacentElement('afterend', box);
-    }
-    box.innerHTML = `
-      <div class="calendar-legend-group"><b>Durumlar</b><span class="legend-chip is-planned"><i></i>Planlandı</span><span class="legend-chip is-confirmed"><i></i>Kesinleşti</span><span class="legend-chip is-completed"><i></i>Tamamlandı</span><span class="legend-chip is-cancelled"><i></i>İptal</span></div>
-      <div class="calendar-legend-group"><b>Kategoriler</b><span class="legend-chip series-income"><i></i>Gelir</span><span class="legend-chip series-expense"><i></i>Gider</span><span class="legend-chip series-tip"><i></i>Bahşiş</span><span class="legend-chip series-commission"><i></i>Komisyon</span></div>`;
+  function removeTopExtras(calendar) {
+    calendar.querySelector('.calendar-luxe-stats')?.remove();
+    calendar.querySelector('.calendar-legend-glass')?.remove();
   }
 
   function applyLayout(calendar) {
@@ -112,9 +77,8 @@
     observer?.disconnect();
     try {
       monthShort(calendar);
+      removeTopExtras(calendar);
       applyLayout(calendar);
-      ensureStats(calendar);
-      ensureLegend(calendar);
       ensureSelectedSummary(calendar);
       ensureAgenda(calendar);
     } finally { observe(); }
