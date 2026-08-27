@@ -3,7 +3,6 @@ import App from "./App.jsx";
 import AssetsNav from "./AssetsNav.jsx";
 import AssetsHeaderBridge from "./AssetsHeaderBridge.jsx";
 import CalendarView from "./CalendarView.jsx";
-import FontSwitcher from "./FontSwitcher.jsx";
 import HomePage from "./HomePage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
 import {
@@ -217,7 +216,6 @@ function VarliklarPage() {
     <>
       <App />
       <AssetsNav />
-      <FontSwitcher />
       <AssetsHeaderBridge />
     </>
   );
@@ -227,7 +225,6 @@ function MuhasebePage() {
   return (
     <>
       <App />
-      <FontSwitcher />
     </>
   );
 }
