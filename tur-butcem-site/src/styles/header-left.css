@@ -173,3 +173,21 @@ html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-ch
 html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:nth-child(3){grid-column:1!important;grid-row:2!important}
 @media(max-width:900px){html body #root .v7-header>.brand{grid-template-columns:128px 66px 72px!important;min-width:278px!important}}
 @media(max-width:720px){html body #root .v7-header>.brand{grid-template-columns:112px 34px 72px!important;min-width:228px!important}html body #root .v7-header>.brand>.system-shortcuts{transform:translateX(-38px)!important}}
+
+/* System boxes visually match palette, privacy and night controls on every page. */
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card{
+ border:1px solid var(--line)!important;
+ background:var(--paper)!important;
+ color:var(--ink)!important;
+ box-shadow:0 3px 10px rgba(15,23,42,.045)!important;
+}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card svg{
+ color:currentColor!important;stroke:currentColor!important;
+}
+html body #root .v7-header>.brand>.system-shortcuts .system-shortcut-card:hover{
+ transform:translateY(-1px)!important;
+ border-color:color-mix(in srgb,var(--green) 48%,var(--line))!important;
+ background:color-mix(in srgb,var(--paper) 88%,var(--mint))!important;
+ color:var(--green)!important;
+ box-shadow:0 7px 16px color-mix(in srgb,var(--green) 11%,transparent)!important;
+}
