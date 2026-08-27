@@ -24,6 +24,11 @@ if (window.location.pathname.startsWith('/takvim')) {
   calendarThemeEnhance.href = '/takvim-luxe-enhance.css';
   document.head.appendChild(calendarThemeEnhance);
 
+  const calendarGridTheme = document.createElement('link');
+  calendarGridTheme.rel = 'stylesheet';
+  calendarGridTheme.href = '/takvim-luxe-grid.css';
+  document.head.appendChild(calendarGridTheme);
+
   const calendarEnhanceScript = document.createElement('script');
   calendarEnhanceScript.src = '/takvim-luxe-enhance.js';
   calendarEnhanceScript.defer = true;
