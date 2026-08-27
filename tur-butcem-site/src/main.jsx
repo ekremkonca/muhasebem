@@ -6,7 +6,7 @@ import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 
-const PUBLIC_ASSET_VERSION='20260827-5';
+const PUBLIC_ASSET_VERSION='20260827-6';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
 try{
@@ -45,7 +45,7 @@ document.head.appendChild(assetsControlsScript);
 
 // Calendar assets are intentionally loaded for every SPA entry point.
 // Their CSS is scoped to .standalone-calendar-page, so they do not affect other pages.
-for (const href of ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-grid.css']) {
+for (const href of ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-grid.css','/takvim-theme-sync.css']) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = versioned(href);
