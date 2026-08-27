@@ -1,0 +1,78 @@
+/* Modern manual controls for /varliklar */
+.assets-fund-page .asset-action-modern{
+  min-height:54px!important;padding:7px 10px 7px 8px!important;gap:10px!important;border-radius:16px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
+  border:1px solid color-mix(in srgb,var(--green) 28%,var(--line))!important;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 78%,var(--paper)),color-mix(in srgb,var(--paper) 96%,var(--mint)))!important;
+  box-shadow:0 9px 24px rgba(12,89,67,.09)!important;color:var(--ink)!important;text-align:left!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+.assets-fund-page .asset-action-modern:hover{transform:translateY(-2px)!important;box-shadow:0 14px 30px rgba(12,89,67,.15)!important;border-color:color-mix(in srgb,var(--green) 55%,var(--line))!important}
+.assets-fund-page .asset-action-icon{display:grid;place-items:center;width:39px;height:39px;flex:0 0 39px;border-radius:12px;background:linear-gradient(135deg,#0d7458,#12a17b);color:#fff;font-size:18px;font-weight:900;box-shadow:0 8px 18px rgba(13,116,88,.22)}
+.assets-fund-page .asset-action-copy{display:grid;gap:2px;min-width:126px}
+.assets-fund-page .asset-action-copy b{font-size:13px;line-height:1.15;font-weight:900;letter-spacing:-.01em;color:var(--ink)}
+.assets-fund-page .asset-action-copy small{font-size:10.5px;line-height:1.2;font-weight:700;color:var(--muted)}
+.assets-fund-page .asset-action-arrow{margin-left:2px;font-size:22px;line-height:1;color:var(--green);opacity:.8}
+.assets-fund-page .fund-action-modern .asset-action-icon{background:linear-gradient(135deg,#155f7a,#167f78)}
+
+.asset-editor-subtitle{max-width:620px;margin:7px 0 0;color:rgba(255,255,255,.76);font-size:12px;line-height:1.45;font-weight:650}
+.asset-field-caption{display:block;color:var(--muted);font-size:10.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+.asset-field-help{display:block;margin-top:1px;color:var(--muted);font-size:10px;font-weight:650;line-height:1.3;text-transform:none;letter-spacing:0;opacity:.82}
+
+.deposit-editor-modern .asset-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+.deposit-editor-modern .asset-form-grid label{min-height:96px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;padding:13px 15px!important}
+.deposit-editor-modern .asset-form-grid input{font-size:17px!important;font-weight:850!important}
+.deposit-editor-modern .asset-editor-actions{justify-content:space-between!important}
+.deposit-editor-modern .asset-edit-btn.primary{min-width:190px!important}
+
+.asset-field-hidden{display:none!important}
+.fund-trade-modern .asset-editor-modal>form,.fund-trade-modern>form{padding-top:22px!important}
+.fund-trade-modern .asset-form-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+.fund-trade-modern .fund-trade-field{min-height:100px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+.fund-trade-modern .fund-trade-field input{font-size:17px!important;font-weight:850!important}
+
+.fund-trade-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1;margin:0 0 4px}
+.fund-trade-tabs button{min-height:76px;display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:17px;background:var(--paper);color:var(--ink);cursor:pointer;text-align:left;transition:.18s ease;box-shadow:0 7px 20px rgba(6,49,39,.04)}
+.fund-trade-tabs button:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--green) 32%,var(--line));box-shadow:0 10px 24px rgba(6,49,39,.08)}
+.fund-trade-tabs .trade-sign{display:grid;place-items:center;width:43px;height:43px;flex:0 0 43px;border-radius:13px;background:var(--soft);font-size:23px;font-weight:900;color:var(--green)}
+.fund-trade-tabs button>span:last-child{display:grid;gap:3px}.fund-trade-tabs b{font-size:15px;font-weight:900}.fund-trade-tabs small{font-size:11px;color:var(--muted);font-weight:700}
+.fund-trade-tabs button.active{border-color:color-mix(in srgb,var(--green) 62%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 76%,var(--paper)),var(--paper));box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 8%,transparent),0 12px 28px rgba(9,83,62,.11)}
+.fund-trade-tabs button.active .trade-sign{background:linear-gradient(135deg,#0e7459,#12a079);color:#fff;box-shadow:0 8px 18px rgba(14,116,89,.2)}
+.fund-trade-tabs button[data-trade="sell"].active{border-color:color-mix(in srgb,#d16969 56%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,#fff0f0 58%,var(--paper)),var(--paper))}
+.fund-trade-tabs button[data-trade="sell"].active .trade-sign{background:linear-gradient(135deg,#b95252,#d76d6d);color:#fff}
+
+.fund-trade-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0 0;padding:12px;border:1px solid color-mix(in srgb,var(--green) 14%,var(--line));border-radius:16px;background:linear-gradient(180deg,color-mix(in srgb,var(--soft) 62%,var(--paper)),var(--paper))}
+.fund-trade-summary span{display:grid;gap:5px;padding:10px 12px;border-radius:12px;background:var(--paper);border:1px solid color-mix(in srgb,var(--line) 78%,transparent)}
+.fund-trade-summary small{font-size:9.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.fund-trade-summary b{font-size:13px;font-weight:900;color:var(--ink)}
+.fund-trade-modern .asset-editor-note{margin-top:13px!important}
+.fund-trade-modern .asset-editor-actions{justify-content:space-between!important}
+.fund-trade-modern .asset-edit-btn.primary{min-width:200px!important}
+
+:root[data-mode="dark"] .assets-fund-page .asset-action-modern{background:linear-gradient(135deg,#15332b,#10252a)!important;border-color:#2c5d50!important;box-shadow:none!important}
+:root[data-mode="dark"] .assets-fund-page .asset-action-copy b{color:#edf7fa}
+:root[data-mode="dark"] .fund-trade-tabs button{background:#102128;border-color:#29434a;color:#edf7fa;box-shadow:none}
+:root[data-mode="dark"] .fund-trade-tabs button.active{background:linear-gradient(135deg,#14352c,#10252a);border-color:#347762}
+:root[data-mode="dark"] .fund-trade-tabs button[data-trade="sell"].active{background:linear-gradient(135deg,#352326,#102128);border-color:#74484c}
+:root[data-mode="dark"] .fund-trade-tabs .trade-sign{background:#173139}
+:root[data-mode="dark"] .fund-trade-summary{background:#0e1d23;border-color:#294249}
+:root[data-mode="dark"] .fund-trade-summary span{background:#102128;border-color:#263f46}
+:root[data-mode="dark"] .fund-trade-summary b{color:#edf7fa}
+
+@media(max-width:900px){
+  .assets-fund-page .asset-action-modern{min-height:50px!important}.assets-fund-page .asset-action-copy{min-width:112px}
+  .fund-trade-modern .asset-form-grid{grid-template-columns:1fr 1fr!important}
+  .fund-trade-summary{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:760px){
+  .assets-fund-page .asset-action-modern{width:100%;max-width:280px!important}
+  .deposit-editor-modern .asset-form-grid,.fund-trade-modern .asset-form-grid{grid-template-columns:1fr!important}
+  .deposit-editor-modern .asset-form-grid label,.fund-trade-modern .fund-trade-field{min-height:88px!important}
+  .fund-trade-tabs{grid-template-columns:1fr 1fr!important}
+  .fund-trade-summary{grid-template-columns:1fr!important}
+  .asset-editor-subtitle{font-size:11.5px}
+}
+@media(max-width:430px){
+  .fund-trade-tabs{grid-template-columns:1fr!important}
+  .fund-trade-tabs button{min-height:68px}
+}
