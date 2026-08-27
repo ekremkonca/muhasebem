@@ -28,13 +28,9 @@ export default function HomePage({children=null,contentClassName=''}){
         <ThemeSwitcher/>
       </div>
       <div className="header-actions home-header-actions">
-        <button className="home-currency" type="button" onClick={()=>navigateTo('/muhasebe/')}>TRY <span>⌄</span></button>
-        <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Kur ayarları"><Icon name="settings"/></button>
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Yedekler"><Icon name="backup"/></button>
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="İşlem geçmişi"><Icon name="history"/></button>
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çöp kutusu"><Icon name="box"/></button>
-        <button className="btn secondary desktop" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="report"/>Aylık rapor</button>
-        <button className="btn secondary desktop" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="download"/>CSV</button>
         <button className="btn primary" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="plus"/>Yeni kayıt</button>
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
       </div>
