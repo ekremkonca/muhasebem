@@ -1,0 +1,84 @@
+/* Fixed typography system: compact, readable and finance-first. */
+:root{
+  --ui-text:14px;
+  --ui-small:11.5px;
+  --ui-label:11px;
+  --ui-control:13px;
+  --ui-section:19px;
+  --ui-card-title:16px;
+  --ui-money:24px;
+  --ui-money-strong:27px;
+}
+
+body,#root{font-size:var(--ui-text);line-height:1.45}
+#root .btn,#root button,#root input,#root select,#root textarea{font-size:var(--ui-control)}
+#root .eyebrow{font-size:var(--ui-label);line-height:1.25}
+#root .v7-header .brand strong,#root .home-v7-header .brand strong{font-size:16px}
+#root .v7-header .brand strong small{font-size:10px}
+#root .font-trigger{font-size:12px!important}
+#root .font-panel button{font-size:13px!important}
+
+/* Muhasebe dashboard */
+#root .v7-kpis article>span{font-size:11.5px!important}
+#root .v7-kpis strong{font-size:clamp(22px,1.55vw,26px)!important;line-height:1.12!important}
+#root .v7-insights span,#root .v7-insights small{font-size:11.5px!important}
+#root .v7-insights strong{font-size:15.5px!important}
+#root .panel-title h2,#root .section-title h2,#root .records h2{font-size:19px!important}
+#root th{font-size:11px!important}
+#root td{font-size:13.5px!important}
+#root td span{font-size:11.5px!important}
+#root td .amount,#root td.amount,#root .amount{font-size:14.5px!important}
+#root .status,#root .type{font-size:11.5px!important}
+#root .searchbox input,#root .filter select,#root .custom-range input{font-size:13px!important}
+
+/* Varlıklar / Fon */
+#root .assets-fund-page{font-size:13.5px}
+#root .assets-fund-page .asset-side-head h2{font-size:clamp(21px,1.5vw,25px)!important}
+#root .assets-fund-page .asset-side-head p{font-size:12.5px!important;line-height:1.5!important}
+#root .assets-fund-page .deposit-status,#root .assets-fund-page .tefas-status{font-size:10.5px!important}
+#root .assets-fund-page .fund-kpi>span{font-size:11px!important}
+#root .assets-fund-page .fund-kpi strong{font-size:clamp(22px,1.55vw,26px)!important;line-height:1.12!important}
+#root .assets-fund-page .fund-kpi small{font-size:10.5px!important}
+#root .assets-fund-page .fund-chart-meta span{font-size:11px!important}
+#root .assets-fund-page .fund-chart-meta strong{font-size:19px!important}
+#root .assets-fund-page .fund-card-title h3{font-size:17px!important}
+#root .assets-fund-page .compact-details-grid dt{font-size:10.5px!important}
+#root .assets-fund-page .compact-details-grid dd{font-size:13.5px!important}
+#root .assets-fund-page .fund-warning{font-size:12px!important}
+#root .assets-fund-page .asset-edit-trigger{font-size:12px!important}
+#root .asset-editor-head h3{font-size:23px!important}
+#root .asset-editor-subtitle{font-size:12.5px!important;line-height:1.5!important}
+#root .asset-form-grid label,#root .asset-field-caption{font-size:11px!important}
+#root .asset-field-help{font-size:10.5px!important}
+#root .asset-form-grid input,#root .asset-form-grid select{font-size:15px!important}
+
+/* Takvim */
+#root .standalone-calendar-page{font-size:13.5px}
+#root .standalone-calendar-page .modern-calendar-nav strong{font-size:18px!important}
+#root .standalone-calendar-page .calendar-weekdays{font-size:11px!important}
+#root .standalone-calendar-page .day-number{font-size:13px!important}
+#root .standalone-calendar-page .calendar-event-pills i{font-size:9.5px!important}
+#root .standalone-calendar-page .calendar-day-title{font-size:20px!important}
+#root .standalone-calendar-page .selected-day-summary small{font-size:10.5px!important}
+#root .standalone-calendar-page .selected-day-summary strong{font-size:18px!important}
+#root .standalone-calendar-page .event-card-time{font-size:12px!important}
+#root .standalone-calendar-page .calendar-event-card strong{font-size:13.5px!important}
+#root .standalone-calendar-page .calendar-event-card small{font-size:11.5px!important}
+#root .standalone-calendar-page .month-agenda-head{font-size:10.5px!important}
+#root .standalone-calendar-page .month-agenda-item time strong{font-size:16px!important}
+#root .standalone-calendar-page .month-agenda-copy strong{font-size:12.5px!important}
+#root .standalone-calendar-page .month-agenda-copy small{font-size:10.5px!important}
+
+/* Dialogs and forms */
+#root .modal h2,#root .system-panel-head h2{font-size:20px!important}
+#root .form-grid label,#root .rate-grid label{font-size:11.5px!important}
+#root .form-grid input,#root .form-grid select,#root .rate-grid input{font-size:14px!important}
+#root .report-table th,#root .report-table td{font-size:12px!important}
+#root .report-grid strong{font-size:18px!important}
+
+@media(max-width:760px){
+  :root{--ui-text:13.5px;--ui-control:13px}
+  #root .v7-kpis strong,#root .assets-fund-page .fund-kpi strong{font-size:22px!important}
+  #root .assets-fund-page .asset-side-head h2{font-size:21px!important}
+  #root .standalone-calendar-page .calendar-day-title{font-size:19px!important}
+}
