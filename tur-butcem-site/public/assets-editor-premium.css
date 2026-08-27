@@ -23,7 +23,7 @@
 }
 .asset-editor-head{
   position:sticky;top:0;z-index:3;margin:0!important;padding:23px 26px 20px!important;
-  background:linear-gradient(135deg,#0f5b49 0%,#0c7b62 55%,#159978 100%)!important;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--green) 72%,#000) 0%,var(--green) 55%,color-mix(in srgb,var(--green) 68%,#fff) 100%)!important;
   color:#fff!important;border-bottom:1px solid rgba(255,255,255,.14);overflow:hidden;
 }
 .asset-editor-head:after{content:"";position:absolute;inset:-70% auto auto 52%;width:280px;height:180px;transform:rotate(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);pointer-events:none}
