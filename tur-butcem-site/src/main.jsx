@@ -6,7 +6,7 @@ import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 
-const PUBLIC_ASSET_VERSION='20260827-8';
+const PUBLIC_ASSET_VERSION='20260827-9';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
 try{
