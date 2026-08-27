@@ -1,0 +1,61 @@
+.standalone-calendar-page .calendar-modern {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, .9fr);
+}
+
+.standalone-calendar-page .modern-calendar-head,
+.standalone-calendar-page .calendar-toolbar,
+.standalone-calendar-page .calendar-luxe-stats,
+.standalone-calendar-page .calendar-legend-glass {
+  grid-column: 1 / -1;
+}
+
+.standalone-calendar-page .modern-calendar-wrap.glass-panel {
+  grid-column: 1;
+  min-width: 0;
+  margin: 18px 9px 22px 22px;
+  border: 1px solid rgba(255,255,255,.30);
+  background: linear-gradient(180deg, rgba(255,255,255,.68), rgba(255,255,255,.48));
+  backdrop-filter: blur(20px);
+  box-shadow: 0 16px 44px rgba(12,34,27,.10), inset 0 1px 0 rgba(255,255,255,.65);
+  border-radius: 24px;
+}
+
+.standalone-calendar-page .calendar-day-details.calendar-agenda-panel {
+  grid-column: 2;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  margin: 18px 22px 22px 9px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.30);
+  border-top: 1px solid rgba(255,255,255,.30);
+  background: linear-gradient(180deg, rgba(255,255,255,.68), rgba(255,255,255,.48));
+  backdrop-filter: blur(20px);
+  box-shadow: 0 16px 44px rgba(12,34,27,.10), inset 0 1px 0 rgba(255,255,255,.65);
+  border-radius: 24px;
+}
+
+@media (max-width: 1120px) {
+  .standalone-calendar-page .calendar-modern {
+    grid-template-columns: 1fr;
+  }
+
+  .standalone-calendar-page .modern-calendar-wrap.glass-panel,
+  .standalone-calendar-page .calendar-day-details.calendar-agenda-panel {
+    grid-column: 1;
+    margin: 18px 22px 0;
+  }
+
+  .standalone-calendar-page .calendar-day-details.calendar-agenda-panel {
+    margin-bottom: 22px;
+  }
+}
+
+@media (max-width: 760px) {
+  .standalone-calendar-page .modern-calendar-wrap.glass-panel,
+  .standalone-calendar-page .calendar-day-details.calendar-agenda-panel {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+}
