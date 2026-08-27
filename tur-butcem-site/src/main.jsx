@@ -6,7 +6,7 @@ import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 
-const PUBLIC_ASSET_VERSION='20260827-6';
+const PUBLIC_ASSET_VERSION='20260827-7';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
 try{
@@ -52,11 +52,17 @@ for (const href of ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-
   document.head.appendChild(link);
 }
 
-// Fixed typography is loaded last so it consistently normalizes all page-specific layers.
+// Fixed typography normalizes all page-specific layers.
 const fixedTypography = document.createElement('link');
 fixedTypography.rel = 'stylesheet';
 fixedTypography.href = versioned('/fixed-typography.css');
 document.head.appendChild(fixedTypography);
+
+// Final interaction layer: data cards and rows react to the selected theme palette.
+const interactiveThemeHover = document.createElement('link');
+interactiveThemeHover.rel = 'stylesheet';
+interactiveThemeHover.href = versioned('/interactive-theme-hover.css');
+document.head.appendChild(interactiveThemeHover);
 
 const calendarEnhanceScript = document.createElement('script');
 calendarEnhanceScript.src = versioned('/takvim-luxe-enhance.js');
