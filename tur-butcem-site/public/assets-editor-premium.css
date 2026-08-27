@@ -1,0 +1,98 @@
+/* Premium editor layer for /varliklar */
+.assets-fund-page .asset-edit-trigger{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:38px;padding:0 14px;border:1px solid color-mix(in srgb,var(--green) 34%,var(--line));
+  border-radius:999px;background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 90%,transparent),color-mix(in srgb,var(--mint) 72%,var(--paper)));
+  color:var(--green);font-size:12px;font-weight:900;letter-spacing:.02em;box-shadow:0 8px 20px rgba(9,76,59,.08);transition:.18s ease;
+}
+.assets-fund-page .asset-edit-trigger:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(9,76,59,.14);border-color:color-mix(in srgb,var(--green) 60%,var(--line));}
+.assets-fund-page .asset-edit-trigger:active{transform:translateY(0)}
+
+.asset-modal-backdrop{
+  background:
+    radial-gradient(circle at 18% 14%,rgba(32,201,151,.18),transparent 30%),
+    radial-gradient(circle at 82% 82%,rgba(78,205,245,.12),transparent 28%),
+    rgba(2,10,13,.72)!important;
+  backdrop-filter:blur(16px) saturate(120%)!important;
+}
+.asset-editor-modal{
+  width:min(900px,100%)!important;max-height:min(90vh,900px)!important;padding:0!important;overflow:auto!important;
+  border:1px solid color-mix(in srgb,var(--green) 24%,var(--line))!important;border-radius:28px!important;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 98%,var(--mint)) 0%,var(--paper) 100%)!important;
+  box-shadow:0 36px 120px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.35) inset!important;
+}
+.asset-editor-head{
+  position:sticky;top:0;z-index:3;margin:0!important;padding:23px 26px 20px!important;
+  background:linear-gradient(135deg,#0f5b49 0%,#0c7b62 55%,#159978 100%)!important;
+  color:#fff!important;border-bottom:1px solid rgba(255,255,255,.14);overflow:hidden;
+}
+.asset-editor-head:after{content:"";position:absolute;inset:-70% auto auto 52%;width:280px;height:180px;transform:rotate(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);pointer-events:none}
+.asset-editor-head .eyebrow{color:rgba(255,255,255,.72)!important;font-size:11px!important;letter-spacing:.14em!important}
+.asset-editor-head h3{margin-top:6px!important;color:#fff!important;font-size:26px!important;letter-spacing:-.025em}
+.asset-modal-close{position:relative;z-index:1;width:40px!important;height:40px!important;border-color:rgba(255,255,255,.2)!important;background:rgba(255,255,255,.1)!important;color:#fff!important;backdrop-filter:blur(8px);transition:.18s ease}
+.asset-modal-close:hover{background:rgba(255,255,255,.18)!important;transform:rotate(4deg)}
+
+.asset-editor-modal>form,.fund-movement-modal>form{padding:24px 26px 0}
+.asset-form-grid{gap:12px!important}
+.asset-form-grid label{
+  position:relative;gap:8px!important;padding:13px 14px 12px;border:1px solid color-mix(in srgb,var(--green) 12%,var(--line));
+  border-radius:16px;background:color-mix(in srgb,var(--soft) 64%,var(--paper));font-size:11px!important;letter-spacing:.045em;text-transform:uppercase;
+  transition:.18s ease;
+}
+.asset-form-grid label:focus-within{border-color:color-mix(in srgb,var(--green) 55%,var(--line));background:color-mix(in srgb,var(--mint) 44%,var(--paper));box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 9%,transparent),0 10px 24px rgba(8,75,57,.07)}
+.asset-form-grid input,.asset-form-grid select{
+  height:42px!important;padding:0 1px!important;border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;font-size:16px!important;font-weight:850!important;letter-spacing:-.01em;color:var(--ink)!important;
+}
+.asset-form-grid select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--green) 50%),linear-gradient(135deg,var(--green) 50%,transparent 50%)!important;background-position:calc(100% - 8px) 18px,calc(100% - 3px) 18px!important;background-size:5px 5px,5px 5px!important;background-repeat:no-repeat!important;padding-right:18px!important}
+.asset-form-grid input::placeholder{color:color-mix(in srgb,var(--muted) 68%,transparent);font-weight:650}
+
+.asset-editor-note{margin:16px 26px 0!important;padding:13px 15px!important;border-radius:14px!important;border-color:color-mix(in srgb,var(--green) 16%,var(--line))!important;background:linear-gradient(180deg,color-mix(in srgb,var(--mint) 58%,var(--paper)),color-mix(in srgb,var(--soft) 68%,var(--paper)))!important;font-size:12px!important}
+.asset-editor-note:before{content:"✓";display:inline-grid;place-items:center;width:20px;height:20px;margin-right:8px;border-radius:999px;background:var(--green);color:#fff;font-weight:900;vertical-align:-2px}
+.asset-editor-error{margin:12px 26px 0!important}
+.asset-editor-actions{position:sticky;bottom:0;z-index:2;margin:22px 0 0!important;padding:16px 26px!important;border-top:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(16px)}
+.asset-edit-btn{min-height:44px!important;padding:0 19px!important;border-radius:13px!important;font-size:13px!important;transition:.18s ease}
+.asset-edit-btn.primary{background:linear-gradient(135deg,#0f6b54,#109a74)!important;box-shadow:0 10px 24px rgba(15,107,84,.22)}
+.asset-edit-btn.primary:hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(15,107,84,.28)}
+.asset-edit-btn.secondary:hover{background:var(--soft)!important}
+
+.fund-movement-modal{width:min(980px,100%)!important}
+.fund-movement-modal .asset-editor-head h3{font-size:21px!important;font-weight:760!important;color:rgba(255,255,255,.92)!important}
+.fund-movement-modal .asset-form-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.fund-movement-modal .asset-form-grid label:first-child{grid-column:span 2;background:linear-gradient(180deg,color-mix(in srgb,var(--mint) 58%,var(--paper)),color-mix(in srgb,var(--soft) 70%,var(--paper)))}
+.fund-movement-modal .asset-form-grid label:last-child{grid-column:span 2}
+
+.fund-movement-history{
+  margin:22px 26px 26px!important;padding:18px!important;border:1px solid color-mix(in srgb,var(--green) 14%,var(--line))!important;border-radius:18px!important;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--soft) 54%,var(--paper)),var(--paper));gap:10px!important;
+}
+.fund-movement-history>strong{display:flex;align-items:center;justify-content:space-between;font-size:14px!important;letter-spacing:-.01em}
+.fund-movement-history>strong:after{content:"SON HAREKETLER";font-size:9px;letter-spacing:.12em;color:var(--muted);font-weight:900}
+.fund-movement-row{padding:12px 13px!important;border-radius:14px!important;background:var(--paper)!important;box-shadow:0 7px 18px rgba(8,39,32,.045);transition:.16s ease}
+.fund-movement-row:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--green) 24%,var(--line))!important;box-shadow:0 10px 24px rgba(8,39,32,.08)}
+.fund-movement-row b{font-size:14px!important}.fund-movement-row small{font-size:11.5px!important}
+.fund-movement-row button{min-width:58px;padding:7px 10px!important;border-radius:10px!important;background:color-mix(in srgb,#c94b4b 7%,transparent)!important}
+.fund-movement-row button:hover{background:color-mix(in srgb,#c94b4b 13%,transparent)!important}
+
+:root[data-mode="dark"] .asset-editor-modal{background:linear-gradient(180deg,#0e1c22,#0a151a)!important;border-color:#24464a!important;box-shadow:0 36px 120px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03) inset!important}
+:root[data-mode="dark"] .asset-editor-head{background:linear-gradient(135deg,#0b3f35,#075d4a 56%,#08795e)!important}
+:root[data-mode="dark"] .asset-form-grid label{background:#102228!important;border-color:#244047!important;color:#9bb1b7!important}
+:root[data-mode="dark"] .asset-form-grid label:focus-within{background:#123128!important;border-color:#2f8a70!important}
+:root[data-mode="dark"] .asset-form-grid input,:root[data-mode="dark"] .asset-form-grid select{background:transparent!important;border:0!important;color:#f2f7f8!important}
+:root[data-mode="dark"] .asset-editor-note{background:linear-gradient(180deg,#113027,#10242a)!important;border-color:#285147!important;color:#b8c9cd!important}
+:root[data-mode="dark"] .asset-editor-actions{background:rgba(10,21,26,.9)!important;border-color:#243a41!important}
+:root[data-mode="dark"] .fund-movement-history{background:linear-gradient(180deg,#0f2026,#0b171c)!important;border-color:#223c42!important}
+:root[data-mode="dark"] .fund-movement-row{background:#102128!important;border-color:#213b42!important;box-shadow:none!important}
+:root[data-mode="dark"] .asset-edit-btn.secondary{background:#12242a!important;color:#edf7fa!important;border-color:#2a444b!important}
+:root[data-mode="dark"] .assets-fund-page .asset-edit-trigger{background:linear-gradient(180deg,#17362d,#102a24)!important;border-color:#2d6655!important;color:#7fe0be!important}
+
+@media(max-width:760px){
+  .asset-editor-modal,.fund-movement-modal{width:100%!important;max-height:94vh!important;border-radius:24px 24px 0 0!important}
+  .asset-editor-head{padding:20px 18px 17px!important}.asset-editor-head h3{font-size:22px!important}
+  .asset-editor-modal>form,.fund-movement-modal>form{padding:18px 16px 0}
+  .asset-form-grid,.fund-movement-modal .asset-form-grid{grid-template-columns:1fr!important}
+  .fund-movement-modal .asset-form-grid label:first-child,.fund-movement-modal .asset-form-grid label:last-child{grid-column:auto!important}
+  .asset-editor-note{margin:14px 16px 0!important}.asset-editor-error{margin:10px 16px 0!important}
+  .asset-editor-actions{padding:14px 16px!important}
+  .fund-movement-history{margin:18px 16px 20px!important;padding:14px!important}
+}
