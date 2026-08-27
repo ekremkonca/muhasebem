@@ -2,6 +2,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   createBackup,
+  deleteBackup,
+  deleteHistory,
   createEvent,
   createRecord,
   deleteEvent,
@@ -467,7 +469,7 @@ function EntryModal({ record, onClose, onSave, currency }) {
   );
 }
 
-function ReportModal({ rows, currency, convert, onClose }) {
+function ReportModal({ rows, currency, convert, onExcel, onClose }) {
   const [month, setMonth] = useState(today().slice(0, 7));
   const monthRows = rows.filter((r) => r.date.startsWith(month));
   const paid = monthRows.filter((r) => r.status === "Ödendi");
@@ -506,10 +508,22 @@ function ReportModal({ rows, currency, convert, onClose }) {
             <Icon name="report" />
             Yazdır / PDF
           </button>
+          <button className="btn secondary" onClick={onExcel}>
+            <Icon name="download" />
+            Excel
+          </button>
         </div>
         <div className="report-grid">
-          <article>
+          <article className="income-kpi">
             <span>Gelir</span>
+            <select
+              className="kpi-currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              aria-label="Gösterim para birimi"
+            >
+              {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
+            </select>
             <strong>{money(income, currency)}</strong>
           </article>
           <article>
@@ -577,7 +591,9 @@ function SystemPanel({
   onCreateBackup,
   onRestoreBackup,
   onExportBackup,
+  onDeleteBackup,
   history,
+  onDeleteHistory,
   trash,
   onRestoreTrash,
   onPurgeTrash,
@@ -663,6 +679,7 @@ function SystemPanel({
                 <div className="mini-actions">
                   <button onClick={() => onExportBackup(b)}>JSON</button>
                   <button onClick={() => onRestoreBackup(b)}>Geri yükle</button>
+                  <button className="danger" onClick={() => onDeleteBackup(b)}>Kalıcı sil</button>
                 </div>
               </article>
             ))}
@@ -680,6 +697,9 @@ function SystemPanel({
                   {fmtDateTime(h.created_at)}
                   {h.record_id ? ` · ${h.record_id.slice(0, 8)}` : ""}
                 </span>
+              </div>
+              <div className="mini-actions">
+                <button className="danger" onClick={() => onDeleteHistory(h)}>Kalıcı sil</button>
               </div>
             </article>
           ))}
@@ -1135,27 +1155,11 @@ function Dashboard({ onSignedOut }) {
           <ThemeSwitcher />
         </div>
         <div className="header-actions">
-          <select
-            className="currency"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
           {installPrompt && (
             <button className="btn secondary desktop" onClick={install}>
               Uygulamayı kur
             </button>
           )}
-          <button
-            className="icon-btn header-tool"
-            onClick={() => reloadSide("rates")}
-            title="Kur ayarları"
-          >
-            <Icon name="settings" />
-          </button>
           <button
             className="icon-btn header-tool"
             onClick={() => reloadSide("backups")}
@@ -1183,10 +1187,6 @@ function Dashboard({ onSignedOut }) {
           >
             <Icon name="report" />
             Aylık rapor
-          </button>
-          <button className="btn secondary desktop" onClick={excel}>
-            <Icon name="download" />
-            Excel
           </button>
           <button
             className="btn primary"
@@ -1221,7 +1221,17 @@ function Dashboard({ onSignedOut }) {
           onCreateBackup={doBackup}
           onRestoreBackup={doRestoreBackup}
           onExportBackup={doExportBackup}
+          onDeleteBackup={async (backup) => {
+            if (!window.confirm("Bu yedek kalıcı olarak silinsin mi?")) return;
+            await deleteBackup(backup.id);
+            setBackups((items) => items.filter((item) => item.id !== backup.id));
+          }}
           history={history}
+          onDeleteHistory={async (entry) => {
+            if (!window.confirm("Bu işlem geçmişten kalıcı olarak silinsin mi?")) return;
+            await deleteHistory(entry.id);
+            setHistory((items) => items.filter((item) => item.id !== entry.id));
+          }}
           trash={trash}
           onRestoreTrash={restoreTrashItem}
           onPurgeTrash={purgeTrashItem}
@@ -1326,8 +1336,16 @@ function Dashboard({ onSignedOut }) {
             </strong>
             <small>Mevcut ay karşılaştırması</small>
           </article>
-          <article>
+          <article className="rates-insight">
             <span>Kur güncellemesi</span>
+            <button
+              className="insight-corner-button"
+              onClick={() => reloadSide("rates")}
+              title="Kur ayarları"
+              aria-label="Kur ayarlarını aç"
+            >
+              <Icon name="settings" size={16} />
+            </button>
             <strong>
               USD {Number(rates.USD).toFixed(2)} · EUR{" "}
               {Number(rates.EUR).toFixed(2)}
@@ -1602,6 +1620,7 @@ function Dashboard({ onSignedOut }) {
           rows={rows}
           currency={currency}
           convert={converted}
+          onExcel={excel}
           onClose={() => setReportOpen(false)}
         />
       )}{" "}
