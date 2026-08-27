@@ -1,0 +1,51 @@
+/* Strong readability override for /varliklar */
+.assets-fund-page .assets-page-title{font-size:16px!important}
+.assets-fund-page .assets-page-title strong{font-size:16px!important}
+.assets-fund-page .asset-side-head h2{font-size:clamp(24px,1.9vw,31px)!important}
+.assets-fund-page .asset-side-head p{font-size:14px!important;line-height:1.6!important}
+.assets-fund-page .deposit-status,
+.assets-fund-page .tefas-status{font-size:12px!important;padding:9px 12px!important}
+.assets-fund-page .tefas-status small{font-size:11px!important}
+.assets-fund-page .fund-warning{font-size:13px!important;line-height:1.5!important;padding:10px 12px!important}
+
+.assets-fund-page .compact-side-kpis{gap:10px!important}
+.assets-fund-page .fund-kpi{padding:15px 16px!important;min-height:108px}
+.assets-fund-page .fund-kpi>span{font-size:13px!important;line-height:1.35!important}
+.assets-fund-page .fund-kpi strong{margin:8px 0 6px!important;font-size:clamp(22px,1.7vw,28px)!important;line-height:1.08!important;letter-spacing:-.025em!important}
+.assets-fund-page .fund-kpi small{font-size:12px!important;line-height:1.35!important}
+
+.assets-fund-page .fund-chart-meta span{font-size:13px!important}
+.assets-fund-page .fund-chart-meta strong{font-size:23px!important}
+.assets-fund-page .fund-chart-stats span{font-size:12px!important}
+.assets-fund-page .fund-chart-stats b{font-size:13px!important}
+.assets-fund-page .fund-chart-dates{font-size:11.5px!important}
+.assets-fund-page .fund-chart-empty{font-size:14px!important}
+
+.assets-fund-page .fund-card-title h3{font-size:21px!important}
+.assets-fund-page .compact-details-grid>div{padding:10px 12px!important}
+.assets-fund-page .compact-details-grid dt{font-size:12px!important;line-height:1.35!important;margin-bottom:5px!important}
+.assets-fund-page .compact-details-grid dd{font-size:15px!important;line-height:1.4!important}
+.assets-fund-page .deposit-chart-placeholder h3{font-size:21px!important}
+.assets-fund-page .deposit-chart-placeholder p{font-size:14px!important;line-height:1.65!important}
+
+@media(max-width:1180px){
+  .assets-fund-page .fund-kpi strong{font-size:25px!important}
+}
+
+@media(max-width:760px){
+  .assets-fund-page .assets-nav-button{font-size:13px!important}
+  .assets-fund-page .asset-side-head h2{font-size:25px!important}
+  .assets-fund-page .asset-side-head p{font-size:14px!important}
+  .assets-fund-page .fund-kpi{padding:14px!important}
+  .assets-fund-page .fund-kpi>span{font-size:12.5px!important}
+  .assets-fund-page .fund-kpi strong{font-size:23px!important}
+  .assets-fund-page .fund-kpi small{font-size:11.5px!important}
+  .assets-fund-page .compact-details-grid dt{font-size:11.5px!important}
+  .assets-fund-page .compact-details-grid dd{font-size:15px!important}
+}
+
+@media(max-width:430px){
+  .assets-fund-page .fund-kpi strong{font-size:22px!important}
+  .assets-fund-page .fund-kpi>span{font-size:12px!important}
+  .assets-fund-page .fund-kpi small{font-size:11px!important}
+}
