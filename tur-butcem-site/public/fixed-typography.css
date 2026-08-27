@@ -1,3 +1,6 @@
+/* Permanent site typography */
+:root{--app-font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;}
+html,body,button,input,select,textarea,#root,#root *{font-family:var(--app-font-family)!important;}
 /* Fixed typography system: compact, readable and finance-first. */
 :root{
   --ui-text:14px;
