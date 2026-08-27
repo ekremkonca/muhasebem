@@ -1,6 +1,4 @@
 (() => {
-  if (!location.pathname.startsWith('/takvim')) return;
-
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money = (v) => {
     const n = Number(String(v ?? '').replace(/[^0-9,.-]/g,'').replace(/\./g,'').replace(',','.'));
@@ -88,5 +86,6 @@
   observe();
   addEventListener('load', schedule);
   addEventListener('popstate', schedule);
+  document.addEventListener('click', () => setTimeout(schedule, 0), true);
   schedule();
 })();
