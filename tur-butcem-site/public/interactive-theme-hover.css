@@ -1,13 +1,22 @@
 /* Global interactive theme hover layer.
-   Finance/data surfaces react clearly to the currently selected app palette.
-   Hover is enabled only on devices with a real hover-capable pointer. */
+   Data surfaces fill with the selected palette's primary color on hover.
+   No translucent/tinted hover backgrounds. */
 
 :root{
-  --theme-hover-bg:color-mix(in srgb,var(--paper) 76%,var(--green) 24%);
-  --theme-hover-bg-strong:color-mix(in srgb,var(--paper) 68%,var(--green) 32%);
-  --theme-hover-border:color-mix(in srgb,var(--green) 66%,var(--line));
-  --theme-hover-shadow:0 14px 32px color-mix(in srgb,var(--green) 19%,transparent),0 3px 10px rgba(15,23,42,.06);
-  --theme-hover-shadow-soft:0 9px 22px color-mix(in srgb,var(--green) 13%,transparent);
+  --theme-hover-solid:var(--green);
+  --theme-hover-solid-2:var(--green2);
+  --theme-hover-fg:#fff;
+  --theme-hover-muted:rgba(255,255,255,.78);
+  --theme-hover-border:var(--green2);
+  --theme-hover-shadow:0 16px 36px color-mix(in srgb,var(--green) 30%,transparent),0 4px 12px rgba(15,23,42,.10);
+  --theme-hover-shadow-soft:0 10px 26px color-mix(in srgb,var(--green) 24%,transparent);
+}
+
+/* Bright palettes use dark foreground for better contrast. */
+:root[data-theme="sunset"],
+:root[data-theme="neon"]{
+  --theme-hover-fg:#102018;
+  --theme-hover-muted:rgba(16,32,24,.72);
 }
 
 #root :where(
@@ -32,169 +41,167 @@
   .calendar-event-empty,
   .upcoming-empty
 ){
-  transition:background-color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease,color .18s ease;
+  transition:background-color .20s ease,background .20s ease,border-color .20s ease,box-shadow .20s ease,transform .20s ease,color .20s ease;
 }
 
 #root table tbody td{
-  transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease;
+  transition:background-color .20s ease,border-color .20s ease,color .20s ease,box-shadow .20s ease;
 }
 
 @media (hover:hover) and (pointer:fine){
-  /* Muhasebe KPI + insight cards */
-  #root .v7-kpis article:not(.net):hover,
+  /* MUHASEBE — full solid theme color */
+  #root .v7-kpis article:hover,
   #root .v7-insights article:hover,
   #root .analytics-summary>div:hover,
   #root .report-grid article:hover{
     transform:translateY(-3px);
-    background:var(--theme-hover-bg)!important;
+    background:var(--theme-hover-solid)!important;
     border-color:var(--theme-hover-border)!important;
+    color:var(--theme-hover-fg)!important;
     box-shadow:var(--theme-hover-shadow)!important;
   }
 
-  #root .v7-kpis article:not(.net):hover>span,
-  #root .v7-insights article:hover>span,
-  #root .v7-insights article:hover>small{
-    color:color-mix(in srgb,var(--green) 72%,var(--ink))!important;
+  #root .v7-kpis article:hover :where(span,strong,small,.animated-money),
+  #root .v7-insights article:hover :where(span,strong,small),
+  #root .analytics-summary>div:hover :where(span,strong,small),
+  #root .report-grid article:hover :where(span,strong,small){
+    color:var(--theme-hover-fg)!important;
+  }
+  #root .v7-kpis article:hover :where(span,small),
+  #root .v7-insights article:hover :where(span,small),
+  #root .analytics-summary>div:hover :where(span,small),
+  #root .report-grid article:hover :where(span,small){
+    opacity:.82;
   }
 
-  #root .v7-kpis article:not(.net):hover strong,
-  #root .v7-insights article:hover strong,
-  #root .analytics-summary>div:hover strong,
-  #root .report-grid article:hover strong{
-    color:var(--green)!important;
-  }
-
-  /* Existing full-color Net card keeps the full palette treatment. */
-  #root .v7-kpis article.net:hover{
-    transform:translateY(-3px) scale(1.008);
-    background:linear-gradient(135deg,var(--green),var(--green2))!important;
-    border-color:color-mix(in srgb,var(--green2) 72%,#fff)!important;
-    box-shadow:0 16px 36px color-mix(in srgb,var(--green) 30%,transparent)!important;
-  }
-
-  /* Muhasebe lists and table rows */
   #root .receivable-list article:hover,
   #root .system-list article:hover{
-    background:var(--theme-hover-bg)!important;
+    background:var(--theme-hover-solid)!important;
     border-color:var(--theme-hover-border)!important;
+    color:var(--theme-hover-fg)!important;
     box-shadow:var(--theme-hover-shadow-soft)!important;
     transform:translateX(3px);
   }
+  #root .receivable-list article:hover *,
+  #root .system-list article:hover *{
+    color:var(--theme-hover-fg)!important;
+  }
 
+  /* Whole record row becomes the selected solid palette color. */
   #root table tbody tr:hover td{
-    background:color-mix(in srgb,var(--paper) 80%,var(--green) 20%)!important;
-    border-color:color-mix(in srgb,var(--green) 28%,var(--line))!important;
+    background:var(--theme-hover-solid)!important;
+    border-color:color-mix(in srgb,var(--theme-hover-solid-2) 72%,var(--theme-hover-solid))!important;
+    color:var(--theme-hover-fg)!important;
+  }
+  #root table tbody tr:hover td :where(strong,span,.amount){
+    color:var(--theme-hover-fg)!important;
   }
   #root table tbody tr:hover td:first-child{
-    box-shadow:inset 4px 0 0 var(--green);
+    box-shadow:inset 4px 0 0 var(--theme-hover-solid-2);
   }
-  #root table tbody tr:hover .amount,
-  #root table tbody tr:hover td strong{
-    color:var(--green)!important;
+  #root table tbody tr:hover .type,
+  #root table tbody tr:hover .status{
+    border-color:color-mix(in srgb,var(--theme-hover-fg) 30%,transparent)!important;
+    color:var(--theme-hover-fg)!important;
   }
 
-  /* Varliklar: main shells, KPIs and financial cards */
+  /* VARLIKLAR — financial data cards fill completely */
   #root .assets-fund-page .asset-side:hover{
-    background:color-mix(in srgb,var(--paper) 92%,var(--green) 8%)!important;
-    border-color:color-mix(in srgb,var(--green) 42%,var(--line))!important;
-    box-shadow:0 16px 38px color-mix(in srgb,var(--green) 12%,transparent)!important;
+    border-color:var(--theme-hover-solid)!important;
+    box-shadow:0 16px 38px color-mix(in srgb,var(--green) 16%,transparent)!important;
   }
 
-  #root .assets-fund-page .fund-kpi:not(.total):hover{
-    transform:translateY(-3px);
-    background:var(--theme-hover-bg)!important;
-    border-color:var(--theme-hover-border)!important;
-    box-shadow:var(--theme-hover-shadow)!important;
-  }
-  #root .assets-fund-page .fund-kpi:not(.total):hover>span,
-  #root .assets-fund-page .fund-kpi:not(.total):hover small{
-    color:color-mix(in srgb,var(--green) 72%,var(--ink))!important;
-  }
-  #root .assets-fund-page .fund-kpi:not(.total):hover strong{
-    color:var(--green)!important;
-  }
-
-  #root .assets-fund-page .fund-kpi.total:hover{
-    transform:translateY(-3px) scale(1.008);
-    background:linear-gradient(135deg,var(--green),var(--green2))!important;
-    border-color:color-mix(in srgb,var(--green2) 72%,#fff)!important;
-    box-shadow:0 16px 36px color-mix(in srgb,var(--green) 30%,transparent)!important;
-  }
-
+  #root .assets-fund-page .fund-kpi:hover,
   #root .assets-fund-page .fund-chart-card:hover,
   #root .assets-fund-page .compact-details-card:hover,
   #root .assets-fund-page .deposit-chart-placeholder:hover{
     transform:translateY(-3px);
-    background:var(--theme-hover-bg)!important;
+    background:var(--theme-hover-solid)!important;
     border-color:var(--theme-hover-border)!important;
+    color:var(--theme-hover-fg)!important;
     box-shadow:var(--theme-hover-shadow)!important;
   }
 
-  #root .assets-fund-page .fund-chart-card:hover .fund-chart-meta strong,
+  #root .assets-fund-page .fund-kpi:hover :where(span,strong,small),
+  #root .assets-fund-page .fund-chart-card:hover :where(span,strong,b),
   #root .assets-fund-page .compact-details-card:hover .fund-card-title h3,
-  #root .assets-fund-page .deposit-chart-placeholder:hover h3{
-    color:var(--green)!important;
+  #root .assets-fund-page .deposit-chart-placeholder:hover :where(h3,p){
+    color:var(--theme-hover-fg)!important;
+  }
+  #root .assets-fund-page .fund-kpi:hover :where(span,small),
+  #root .assets-fund-page .deposit-chart-placeholder:hover p{
+    opacity:.82;
+  }
+
+  #root .assets-fund-page .fund-chart-card:hover .fund-chart{
+    color:var(--theme-hover-fg)!important;
+  }
+  #root .assets-fund-page .fund-chart-card:hover .fund-grid-line{
+    stroke:color-mix(in srgb,var(--theme-hover-fg) 28%,transparent)!important;
+  }
+  #root .assets-fund-page .fund-chart-card:hover .fund-last-point{
+    fill:var(--theme-hover-solid)!important;
+    stroke:var(--theme-hover-fg)!important;
   }
 
   #root .assets-fund-page .compact-details-grid>div:hover{
     position:relative;
-    z-index:1;
-    background:var(--theme-hover-bg-strong)!important;
-    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--green) 48%,transparent);
+    z-index:2;
+    background:var(--theme-hover-solid)!important;
+    color:var(--theme-hover-fg)!important;
+    box-shadow:inset 0 0 0 1px var(--theme-hover-solid-2),var(--theme-hover-shadow-soft)!important;
   }
-  #root .assets-fund-page .compact-details-grid>div:hover dt{
-    color:color-mix(in srgb,var(--green) 74%,var(--ink))!important;
+  #root .assets-fund-page .compact-details-grid>div:hover :where(dt,dd,a){
+    color:var(--theme-hover-fg)!important;
   }
-  #root .assets-fund-page .compact-details-grid>div:hover dd{
-    color:var(--green)!important;
-  }
+  #root .assets-fund-page .compact-details-grid>div:hover dt{opacity:.78}
 
   #root .fund-movement-row:hover{
     transform:translateX(3px);
-    background:var(--theme-hover-bg)!important;
+    background:var(--theme-hover-solid)!important;
     border-color:var(--theme-hover-border)!important;
+    color:var(--theme-hover-fg)!important;
     box-shadow:var(--theme-hover-shadow-soft)!important;
   }
+  #root .fund-movement-row:hover :where(b,small,span){color:var(--theme-hover-fg)!important}
 
-  /* Calendar: date cells and agenda/data cards */
-  #root .standalone-calendar-page .calendar-day:not(.selected):not(.today):hover{
-    transform:translateY(-3px)!important;
-    background:var(--theme-hover-bg)!important;
-    border-color:var(--theme-hover-border)!important;
-    box-shadow:var(--theme-hover-shadow)!important;
-  }
-  #root .standalone-calendar-page .calendar-day:not(.selected):not(.today):hover .day-number{
-    color:var(--green)!important;
-    border-color:color-mix(in srgb,var(--green) 50%,transparent)!important;
-  }
-
+  /* TAKVIM — day cells and agenda data cards use the same solid palette fill. */
+  #root .standalone-calendar-page .calendar-day:not(.selected):not(.today):hover,
   #root .standalone-calendar-page .selected-day-summary article:hover,
   #root .standalone-calendar-page .calendar-event-card:hover,
   #root .standalone-calendar-page .calendar-record-list article:hover,
   #root .standalone-calendar-page .month-agenda-item:hover,
   #root .standalone-calendar-page .calendar-event-empty:hover,
   #root .standalone-calendar-page .upcoming-empty:hover{
-    transform:translateY(-3px);
-    background:var(--theme-hover-bg)!important;
+    transform:translateY(-3px)!important;
+    background:var(--theme-hover-solid)!important;
     border-color:var(--theme-hover-border)!important;
+    color:var(--theme-hover-fg)!important;
     box-shadow:var(--theme-hover-shadow)!important;
   }
 
-  #root .standalone-calendar-page .calendar-event-card:hover strong,
-  #root .standalone-calendar-page .calendar-record-list article:hover strong,
-  #root .standalone-calendar-page .month-agenda-item:hover strong,
-  #root .standalone-calendar-page .selected-day-summary article:hover strong{
-    color:var(--green)!important;
+  #root .standalone-calendar-page .calendar-day:not(.selected):not(.today):hover *,
+  #root .standalone-calendar-page .selected-day-summary article:hover *,
+  #root .standalone-calendar-page .calendar-event-card:hover *,
+  #root .standalone-calendar-page .calendar-record-list article:hover *,
+  #root .standalone-calendar-page .month-agenda-item:hover *,
+  #root .standalone-calendar-page .calendar-event-empty:hover *,
+  #root .standalone-calendar-page .upcoming-empty:hover *{
+    color:var(--theme-hover-fg)!important;
+  }
+
+  #root .standalone-calendar-page .calendar-day:not(.selected):not(.today):hover .day-number,
+  #root .standalone-calendar-page .month-agenda-item:hover time{
+    background:color-mix(in srgb,var(--theme-hover-fg) 14%,transparent)!important;
+    border-color:color-mix(in srgb,var(--theme-hover-fg) 24%,transparent)!important;
+    color:var(--theme-hover-fg)!important;
   }
 }
 
-/* Dark mode: preserve contrast while retaining a visible palette reaction. */
+/* Same solid behavior in dark mode; only shadow depth changes. */
 :root[data-mode="dark"]{
-  --theme-hover-bg:color-mix(in srgb,var(--paper) 74%,var(--green) 26%);
-  --theme-hover-bg-strong:color-mix(in srgb,var(--paper) 66%,var(--green) 34%);
-  --theme-hover-border:color-mix(in srgb,var(--green) 68%,var(--line));
-  --theme-hover-shadow:0 14px 34px color-mix(in srgb,var(--green) 22%,transparent),0 3px 12px rgba(0,0,0,.24);
-  --theme-hover-shadow-soft:0 9px 24px color-mix(in srgb,var(--green) 16%,transparent);
+  --theme-hover-shadow:0 16px 38px color-mix(in srgb,var(--green) 34%,transparent),0 4px 14px rgba(0,0,0,.30);
+  --theme-hover-shadow-soft:0 10px 28px color-mix(in srgb,var(--green) 28%,transparent);
 }
 
 @media (prefers-reduced-motion:reduce){
