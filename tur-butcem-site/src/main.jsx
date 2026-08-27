@@ -18,6 +18,11 @@ if (window.location.pathname.startsWith('/varliklar')) {
   assetsReadable.rel = 'stylesheet';
   assetsReadable.href = '/assets-readable-large.css';
   document.head.appendChild(assetsReadable);
+
+  const assetsEditorPremium = document.createElement('link');
+  assetsEditorPremium.rel = 'stylesheet';
+  assetsEditorPremium.href = '/assets-editor-premium.css';
+  document.head.appendChild(assetsEditorPremium);
 }
 
 if (window.location.pathname.startsWith('/takvim')) {
