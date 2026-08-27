@@ -164,3 +164,17 @@ export async function onRequestPost(context) {
     return errorResponse(error, "Yedek işlemi tamamlanamadı.");
   }
 }
+
+
+export async function onRequestDelete(context) {
+  try {
+    const db = await getDb(context);
+    await requireSession(context, db);
+    const id = String(new URL(context.request.url).searchParams.get("id") || "");
+    if (!id) return json({ error: "Yedek kimliği gerekli." }, 400);
+    const result = await db.prepare("DELETE FROM backups WHERE id=?").bind(id).run();
+    return json({ ok: true, deleted: Number(result.meta?.changes || 0) });
+  } catch (error) {
+    return errorResponse(error, "Yedek kalıcı olarak silinemedi.");
+  }
+}
