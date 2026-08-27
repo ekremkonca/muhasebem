@@ -1,6 +1,6 @@
 /* V8 left header branding + compact controls */
 html body #root .v7-header{
-  min-height:82px!important;
+  min-height:86px!important;
   height:auto!important;
   padding-left:max(34px,calc((100vw - 1680px)/2 + 34px))!important;
   padding-right:12px!important;
@@ -8,39 +8,57 @@ html body #root .v7-header{
 
 html body #root .v7-header>.brand{
   display:grid!important;
-  grid-template-columns:82px 72px!important;
-  grid-template-rows:52px 24px!important;
+  grid-template-columns:94px 72px!important;
+  grid-template-rows:58px 24px!important;
   column-gap:8px!important;
   row-gap:0!important;
   align-items:center!important;
   justify-content:flex-start!important;
-  min-width:162px!important;
+  min-width:174px!important;
   margin:0!important;
   padding:0!important;
 }
 
-/* Uploaded EK mark */
+/* EK logo is now rendered as a real IMG by header-brand-v8.js. */
 html body #root .v7-header .brand-mark{
   grid-column:1!important;
   grid-row:1!important;
-  width:82px!important;
-  height:52px!important;
+  width:94px!important;
+  height:58px!important;
   margin:0!important;
   padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
   border:0!important;
   border-radius:0!important;
-  background:transparent url('/ek-logo.webp') center/contain no-repeat!important;
+  background:transparent!important;
   box-shadow:none!important;
   color:transparent!important;
   overflow:visible!important;
+  position:relative!important;
 }
-html body #root .v7-header .brand-mark svg{display:none!important}
+html body #root .v7-header .brand-mark>svg{display:none!important}
+html body #root .v7-header .v8-brand-logo-img{
+  display:block!important;
+  width:94px!important;
+  height:58px!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  opacity:1!important;
+  visibility:visible!important;
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.16))!important;
+  pointer-events:none!important;
+  user-select:none!important;
+}
 
 /* Replace legacy “Muhasebe V7” visually with the new two-line brand name. */
 html body #root .v7-header>.brand>strong{
   grid-column:1!important;
   grid-row:2!important;
-  width:82px!important;
+  width:94px!important;
   margin:0!important;
   padding:0!important;
   display:flex!important;
@@ -162,9 +180,10 @@ html body #root .v7-header .v8-theme-panel{
 
 @media(max-width:900px){
   html body #root .v7-header{padding-left:22px!important;padding-right:8px!important}
-  html body #root .v7-header>.brand{grid-template-columns:72px 66px!important;grid-template-rows:46px 22px!important;min-width:146px!important;column-gap:6px!important}
-  html body #root .v7-header .brand-mark{width:72px!important;height:46px!important}
-  html body #root .v7-header>.brand>strong{width:72px!important}
+  html body #root .v7-header>.brand{grid-template-columns:82px 66px!important;grid-template-rows:50px 22px!important;min-width:156px!important;column-gap:6px!important}
+  html body #root .v7-header .brand-mark{width:82px!important;height:50px!important}
+  html body #root .v7-header .v8-brand-logo-img{width:82px!important;height:50px!important}
+  html body #root .v7-header>.brand>strong{width:82px!important}
   html body #root .v7-header>.brand>strong::before{font-size:11px!important}
   html body #root .v7-header>.brand>strong::after{font-size:9px!important}
   html body #root .v7-header .v8-theme-menu{transform:scale(.94);transform-origin:left center}
@@ -172,9 +191,10 @@ html body #root .v7-header .v8-theme-panel{
 
 @media(max-width:720px){
   html body #root .v7-header{padding-left:14px!important;padding-right:6px!important}
-  html body #root .v7-header>.brand{grid-template-columns:62px 34px!important;grid-template-rows:42px 20px!important;min-width:104px!important;column-gap:5px!important}
-  html body #root .v7-header .brand-mark{width:62px!important;height:42px!important}
-  html body #root .v7-header>.brand>strong{width:62px!important}
+  html body #root .v7-header>.brand{grid-template-columns:70px 34px!important;grid-template-rows:44px 20px!important;min-width:112px!important;column-gap:5px!important}
+  html body #root .v7-header .brand-mark{width:70px!important;height:44px!important}
+  html body #root .v7-header .v8-brand-logo-img{width:70px!important;height:44px!important}
+  html body #root .v7-header>.brand>strong{width:70px!important}
   html body #root .v7-header>.brand>strong::before{font-size:10px!important}
   html body #root .v7-header>.brand>strong::after{font-size:8px!important}
   html body #root .v7-header .v8-theme-menu{width:34px!important;grid-template-columns:34px!important;grid-template-rows:30px 30px 30px!important;height:98px!important;gap:3px!important;transform:scale(.86);transform-origin:left center}
