@@ -6,7 +6,8 @@ const LINKS=[
   ['/anasayfa/','Ana Sayfa','anasayfa'],
   ['/muhasebe/','Muhasebe','muhasebe'],
   ['/varliklar/','Varlıklar','varliklar'],
-  ['/takvim/','Takvim','takvim']
+  ['/takvim/','Takvim','takvim'],
+  ['/harcamalar/','Harcama Kayıtları','harcamalar']
 ];
 
 const pageKey=()=>{
@@ -14,6 +15,7 @@ const pageKey=()=>{
   if(p.startsWith('muhasebe'))return'muhasebe';
   if(p.startsWith('varliklar'))return'varliklar';
   if(p.startsWith('takvim'))return'takvim';
+  if(p.startsWith('harcamalar'))return'harcamalar';
   return'anasayfa';
 };
 
