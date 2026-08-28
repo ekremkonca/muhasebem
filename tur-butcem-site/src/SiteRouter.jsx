@@ -4,6 +4,7 @@ import AssetsNav from "./AssetsNav.jsx";
 import AssetsHeaderBridge from "./AssetsHeaderBridge.jsx";
 import CalendarView from "./CalendarView.jsx";
 import HomePage from "./HomePage.jsx";
+import ExpensesPage from "./ExpensesPage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
 import {
   createEvent,
@@ -231,6 +232,7 @@ export default function SiteRouter() {
     if (path === "/muhasebe") return <MuhasebePage />;
     if (path === "/varliklar") return <VarliklarPage />;
     if (path === "/takvim") return <TakvimPage />;
+    if (path === "/harcamalar") return <ExpensesPage />;
     return <RedirectHome />;
   }, [path]);
   return (
