@@ -7,13 +7,8 @@ const FEEDS = [
   { url: 'https://www.aa.com.tr/tr/rss/default?cat=ekonomi', source: 'Anadolu Ajansı', region: 'tr' },
   { url: 'https://feeds.bloomberg.com/markets/news.rss', source: 'Bloomberg', region: 'world' },
   { url: 'https://feeds.bbci.co.uk/news/business/rss.xml', source: 'BBC Business', region: 'world' },
+  { url: 'https://www.reddit.com/r/Yatirim/new/.rss', source: 'r/Yatirim', region: 'forum', atom: true },
 ];
-
-const TRUSTED_AGGREGATED_SOURCES = new Set([
-  'Anadolu Ajansı', 'BBC Türkçe', 'Bloomberg HT', 'CNBC', 'CNBC-e',
-  'Dünya Gazetesi', 'Ekonomim', 'Financial Times', 'NTV Haber',
-  'Reuters', 'TRT Haber', 'Euronews',
-]);
 
 const decode = value => String(value || '')
   .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
@@ -37,7 +32,9 @@ const safeUrl = value => {
 };
 
 function parseFeed(xml, feed) {
-  const rows = [...xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi)];
+  const rows = feed.atom
+    ? [...xml.matchAll(/<entry(?:\s[^>]*)?>([\s\S]*?)<\/entry>/gi)]
+    : [...xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi)];
   return rows.map(([, item]) => {
     let title = tag(item, 'title');
     let source = tag(item, 'source') || feed.source;
@@ -46,23 +43,23 @@ function parseFeed(xml, feed) {
       if (parts.length > 1) source = parts.pop().trim();
       title = parts.join(' - ').trim();
     }
-    const publishedRaw = tag(item, 'pubDate') || tag(item, 'dc:date');
+    const atomLink = item.match(/<link\s+[^>]*href=["']([^"']+)["'][^>]*\/?>/i)?.[1] || '';
+    const publishedRaw = tag(item, 'pubDate') || tag(item, 'dc:date') || tag(item, 'published') || tag(item, 'updated');
     const publishedAt = new Date(publishedRaw);
     return {
-      id: tag(item, 'guid') || safeUrl(tag(item, 'link')) || `${source}-${title}`,
+      id: tag(item, 'guid') || tag(item, 'id') || safeUrl(tag(item, 'link') || atomLink) || `${source}-${title}`,
       title,
       source,
       region: feed.region,
-      url: safeUrl(tag(item, 'link')),
+      url: safeUrl(tag(item, 'link') || atomLink),
       publishedAt: Number.isNaN(publishedAt.getTime()) ? null : publishedAt.toISOString(),
     };
-  }).filter(row => row.title && row.url && row.publishedAt)
-    .filter(row => feed.source !== 'Google Haberler' || TRUSTED_AGGREGATED_SOURCES.has(row.source));
+  }).filter(row => row.title && row.url && row.publishedAt);
 }
 
 async function loadFeed(feed) {
   const response = await fetch(feed.url, {
-    headers: { accept: 'application/rss+xml, application/xml, text/xml;q=0.9' },
+    headers: { accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9', 'user-agent': 'Muhasebem-Ekonomi-Akisi/1.0' },
     signal: AbortSignal.timeout(7000),
   });
   if (!response.ok) throw new Error(`${feed.source}: HTTP ${response.status}`);
@@ -80,7 +77,7 @@ export async function onRequestGet() {
       seen.add(key);
       return true;
     })
-    .slice(0, 60);
+    .slice(0, 100);
   const unavailable = settled.map((result, index) => result.status === 'rejected' ? FEEDS[index].source : null).filter(Boolean);
   return new Response(JSON.stringify({ items, unavailable, updatedAt: new Date().toISOString() }), {
     headers: {
