@@ -1,5 +1,10 @@
 const FEEDS = [
   {
+    url: 'https://news.google.com/rss/search?q=(ekonomi%20OR%20piyasa%20OR%20merkez%20bankas%C4%B1)%20when%3A1d&hl=tr&gl=TR&ceid=TR%3Atr',
+    source: 'Google Haberler',
+    region: 'tr',
+  },
+  {
     url: 'https://news.google.com/rss/search?q=(%C4%B0ran%20OR%20sava%C5%9F%20OR%20petrol%20OR%20%22merkez%20bankas%C4%B1%22%20OR%20faiz%20OR%20enflasyon%20OR%20%22k%C3%BCresel%20piyasalar%22%20OR%20borsa%20OR%20dolar%20OR%20alt%C4%B1n%20OR%20yapt%C4%B1r%C4%B1m%20OR%20Fed%20OR%20OPEC%20OR%20ticaret)%20when%3A2d&hl=tr&gl=TR&ceid=TR%3Atr',
     source: 'Google Haberler',
     region: 'tr',
