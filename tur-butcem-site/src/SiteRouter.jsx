@@ -180,17 +180,6 @@ function TakvimPage() {
 }
 
 function VarliklarPage() {
-  useEffect(() => {
-    const intercept = (e) => {
-      if (!e.target.closest?.(".assets-back")) return;
-      e.preventDefault();
-      e.stopPropagation();
-      window.history.pushState({}, "", "/muhasebe/");
-      window.dispatchEvent(new Event(SITE_NAV_EVENT));
-    };
-    document.addEventListener("click", intercept, true);
-    return () => document.removeEventListener("click", intercept, true);
-  }, []);
   return (
     <>
       <App />

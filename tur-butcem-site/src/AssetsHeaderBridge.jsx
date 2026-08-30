@@ -1,4 +1,5 @@
 import React,{useEffect}from'react';
+import{navigateTo}from'./navigation.js';
 
 const isAssets=()=>Boolean(document.querySelector('.assets-fund-page'));
 
@@ -17,7 +18,7 @@ export default function AssetsHeaderBridge(){
     el.style.cursor='pointer';
     el.setAttribute('role','link');
     el.setAttribute('tabindex','0');
-    el.setAttribute('title',active?'Muhasebe ana sayfasına dön':'Ana sayfa');
+    el.setAttribute('title','Ana sayfa');
    });
   })};
   const goHome=e=>{
@@ -25,14 +26,7 @@ export default function AssetsHeaderBridge(){
    if(!hit)return;
    if(e.type==='keydown'&&!['Enter',' '].includes(e.key))return;
    e.preventDefault();
-   if(isAssets()){
-    const back=document.querySelector('.assets-back');
-    if(back){back.click();return}
-   }
-   history.pushState(null,'',`${location.pathname}${location.search}`);
-   window.dispatchEvent(new Event('popstate'));
-   window.dispatchEvent(new Event('assetsviewchange'));
-   window.scrollTo({top:0,behavior:'auto'});
+   navigateTo('/anasayfa/');
   };
   sync();
   const observer=new MutationObserver(sync);observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});
