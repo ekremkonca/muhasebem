@@ -5,6 +5,7 @@ import './styles/styles.css';
 import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
+import './styles/home-dashboard.css';
 
 const PUBLIC_ASSET_VERSION='20260827-16';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;

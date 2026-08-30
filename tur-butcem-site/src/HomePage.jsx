@@ -1,6 +1,7 @@
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import {navigateTo} from './navigation.js';
+import HomeDashboard from './HomeDashboard.jsx';
 
 function Icon({name,size=18}){
   const paths={
@@ -18,6 +19,7 @@ function Icon({name,size=18}){
 }
 
 export default function HomePage({children=null,contentClassName=''}){
+  const content=children||<HomeDashboard/>;
   return <div className="home-page-shell">
     <header className="v7-header home-v7-header">
       <div className="brand home-brand">
@@ -37,6 +39,6 @@ export default function HomePage({children=null,contentClassName=''}){
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
       </div>
     </header>
-    <main className={children?(contentClassName||'home-content-area'):'home-empty-area'}>{children}</main>
+    {children?<main className={contentClassName||'home-content-area'}>{content}</main>:content}
   </div>;
 }
