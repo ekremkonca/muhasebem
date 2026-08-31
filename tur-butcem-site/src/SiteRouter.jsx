@@ -4,7 +4,6 @@ import AssetsNav from "./AssetsNav.jsx";
 import AssetsHeaderBridge from "./AssetsHeaderBridge.jsx";
 import CalendarView from "./CalendarView.jsx";
 import HomePage from "./HomePage.jsx";
-import ExpensesPage from "./ExpensesPage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
 import {
   createEvent,
@@ -198,7 +197,7 @@ function MuhasebePage() {
 }
 function RedirectHome() {
   useEffect(() => {
-    window.history.replaceState({}, "", "/anasayfa/");
+    window.history.replaceState({}, "", "/muhasebe/");
     window.dispatchEvent(new Event(SITE_NAV_EVENT));
   }, []);
   return null;
@@ -217,11 +216,9 @@ export default function SiteRouter() {
     };
   }, []);
   const page = useMemo(() => {
-    if (path === "/anasayfa") return <HomePage />;
     if (path === "/muhasebe") return <MuhasebePage />;
     if (path === "/varliklar") return <VarliklarPage />;
     if (path === "/takvim") return <TakvimPage />;
-    if (path === "/harcamalar") return <ExpensesPage />;
     return <RedirectHome />;
   }, [path]);
   return (

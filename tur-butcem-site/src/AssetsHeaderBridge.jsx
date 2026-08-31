@@ -18,7 +18,7 @@ export default function AssetsHeaderBridge(){
     el.style.cursor='pointer';
     el.setAttribute('role','link');
     el.setAttribute('tabindex','0');
-    el.setAttribute('title','Ana sayfa');
+    el.setAttribute('title','Muhasebe');
    });
   })};
   const goHome=e=>{
@@ -26,7 +26,7 @@ export default function AssetsHeaderBridge(){
    if(!hit)return;
    if(e.type==='keydown'&&!['Enter',' '].includes(e.key))return;
    e.preventDefault();
-   navigateTo('/anasayfa/');
+   navigateTo('/muhasebe/');
   };
   sync();
   const observer=new MutationObserver(sync);observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});

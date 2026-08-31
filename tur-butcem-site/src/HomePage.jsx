@@ -1,7 +1,6 @@
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import {navigateTo} from './navigation.js';
-import HomeDashboard from './HomeDashboard.jsx';
 
 function Icon({name,size=18}){
   const paths={
@@ -18,8 +17,7 @@ function Icon({name,size=18}){
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
-export default function HomePage({children=null,contentClassName=''}){
-  const content=children||<HomeDashboard/>;
+export default function HomePage({children,contentClassName=''}){
   return <div className="home-page-shell">
     <header className="v7-header home-v7-header">
       <div className="brand home-brand">
@@ -39,6 +37,6 @@ export default function HomePage({children=null,contentClassName=''}){
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
       </div>
     </header>
-    {children?<main className={contentClassName||'home-content-area'}>{content}</main>:content}
+    <main className={contentClassName||'home-content-area'}>{children}</main>
   </div>;
 }

@@ -3,11 +3,9 @@ import {getAuthState} from './api.js';
 import {navigateTo,SITE_NAV_EVENT} from './navigation.js';
 
 const LINKS=[
-  ['/anasayfa/','Ana Sayfa','anasayfa'],
   ['/muhasebe/','Muhasebe','muhasebe'],
   ['/varliklar/','Varlıklar','varliklar'],
-  ['/takvim/','Takvim','takvim'],
-  ['/harcamalar/','Harcama Kayıtları','harcamalar']
+  ['/takvim/','Takvim','takvim']
 ];
 
 const pageKey=()=>{
@@ -15,8 +13,7 @@ const pageKey=()=>{
   if(p.startsWith('muhasebe'))return'muhasebe';
   if(p.startsWith('varliklar'))return'varliklar';
   if(p.startsWith('takvim'))return'takvim';
-  if(p.startsWith('harcamalar'))return'harcamalar';
-  return'anasayfa';
+  return'muhasebe';
 };
 
 const buildNav=()=>{
@@ -28,11 +25,11 @@ const buildNav=()=>{
     a.href=href;
     a.textContent=label;
     a.dataset.page=key;
-    a.addEventListener('pointerenter',()=>{if(key!=='anasayfa')getAuthState().catch(()=>{})},{passive:true});
+    a.addEventListener('pointerenter',()=>{getAuthState().catch(()=>{})},{passive:true});
     a.addEventListener('click',e=>{
       if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
       e.preventDefault();
-      if(key!=='anasayfa')getAuthState().catch(()=>{});
+      getAuthState().catch(()=>{});
       navigateTo(href);
     });
     nav.appendChild(a);
