@@ -183,7 +183,22 @@ export async function onRequestGet(context = {}) {
   const forumItems = candidates.filter(item => item.region === 'forum')
     .sort((a, b) => String(b.publishedAt).localeCompare(String(a.publishedAt)))
     .slice(0, 25);
-  const items = [...diversify(rankedNews, 75), ...forumItems];
+  const selectedNews = diversify(rankedNews, 75);
+  const independentFallbacks = [
+    { name: 'Watcher.Guru', handle: 'WatcherGuru' },
+    { name: 'The Spectator Index', handle: 'spectatorindex' },
+    { name: 'Current Report', handle: 'Currentreport1' },
+  ].filter(source => !selectedNews.some(item => item.region === 'independent' && item.source.toLocaleLowerCase('tr').includes(source.name.toLocaleLowerCase('tr'))))
+    .map(source => ({
+      id: `x-profile-${source.handle}`,
+      title: `${source.name} güncel paylaşımlarını X üzerinde görüntüle`,
+      source: source.name,
+      region: 'independent',
+      url: `https://x.com/${source.handle}`,
+      publishedAt: new Date().toISOString(),
+      quality: 3,
+    }));
+  const items = [...selectedNews, ...independentFallbacks, ...forumItems];
   const unavailable = settled.map((result, index) => result.status === 'rejected' ? (FEEDS[index]?.source || 'X API') : null).filter(Boolean);
   return new Response(JSON.stringify({ items, unavailable, updatedAt: new Date().toISOString() }), {
     headers: {
