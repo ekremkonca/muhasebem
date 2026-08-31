@@ -1,5 +1,15 @@
 const FEEDS = [
   {
+    url: 'https://news.google.com/rss/search?q=(%22Watcher.Guru%22%20OR%20%22The%20Spectator%20Index%22%20OR%20%22Current%20Report%22)%20when%3A2d&hl=en-US&gl=US&ceid=US%3Aen',
+    source: 'Bağımsız kaynaklar',
+    region: 'independent',
+  },
+  {
+    url: 'https://news.google.com/rss/search?q=(WatcherGuru%20OR%20spectatorindex%20OR%20Currentreport1)%20when%3A2d&hl=en-US&gl=US&ceid=US%3Aen',
+    source: 'X gündemi',
+    region: 'independent',
+  },
+  {
     url: 'https://news.google.com/rss/search?q=(ekonomi%20OR%20piyasa%20OR%20merkez%20bankas%C4%B1)%20when%3A1d&hl=tr&gl=TR&ceid=TR%3Atr',
     source: 'Google Haberler',
     region: 'tr',
@@ -42,6 +52,7 @@ const LOW_IMPACT_TOPICS = [
   'ayçiçeği üreticisi', 'fuarına yoğun ilgi', 'quiz', 'hollywood', 'film',
 ];
 const PREMIUM_SOURCES = [
+  'Watcher.Guru', 'Watcher Guru', 'The Spectator Index', 'Spectator Index', 'Current Report',
   'Reuters', 'Bloomberg', 'Financial Times', 'Associated Press', 'AP News',
   'CNBC', 'BBC Business', 'Anadolu Ajansı', 'Bloomberg HT', 'Dünya Gazetesi',
   'Ekonomim', 'NTV Haber', 'TRT Haber', 'Euronews',
@@ -105,10 +116,33 @@ async function loadFeed(feed) {
   return parseFeed(await response.text(), feed);
 }
 
+async function loadXPosts(token) {
+  if (!token) return [];
+  const query = encodeURIComponent('(from:WatcherGuru OR from:spectatorindex OR from:Currentreport1) -is:reply -is:retweet');
+  const response = await fetch(`https://api.x.com/2/tweets/search/recent?query=${query}&max_results=25&tweet.fields=created_at,author_id&expansions=author_id&user.fields=username,name`, {
+    headers: { authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(7000),
+  });
+  if (!response.ok) throw new Error(`X API: HTTP ${response.status}`);
+  const payload = await response.json();
+  const users = new Map((payload.includes?.users || []).map(user => [user.id, user]));
+  return (payload.data || []).map(post => {
+    const author = users.get(post.author_id) || {};
+    return {
+      id: `x-${post.id}`,
+      title: decode(post.text),
+      source: author.name || `@${author.username || 'X'}`,
+      region: 'independent',
+      url: `https://x.com/${author.username || 'i'}/status/${post.id}`,
+      publishedAt: post.created_at,
+    };
+  }).filter(item => item.title && item.publishedAt);
+}
+
 function qualityScore(item) {
   if (item.region === 'forum') return 0;
   const title = item.title.toLocaleLowerCase('tr');
-  let score = 0;
+  let score = item.region === 'independent' ? 10 : 0;
   for (const topic of CRITICAL_TOPICS) if (title.includes(topic)) score += 5;
   for (const topic of MARKET_TOPICS) if (title.includes(topic)) score += 2;
   for (const topic of LOW_IMPACT_TOPICS) if (title.includes(topic)) score -= 12;
@@ -122,7 +156,7 @@ function diversify(items, limit = 100) {
   const sourceCounts = new Map();
   const selected = [];
   for (const item of items) {
-    const max = item.region === 'forum' ? 30 : 3;
+    const max = item.region === 'forum' ? 30 : item.region === 'independent' ? 10 : 3;
     const count = sourceCounts.get(item.source) || 0;
     if (count >= max) continue;
     sourceCounts.set(item.source, count + 1);
@@ -132,8 +166,8 @@ function diversify(items, limit = 100) {
   return selected;
 }
 
-export async function onRequestGet() {
-  const settled = await Promise.allSettled(FEEDS.map(loadFeed));
+export async function onRequestGet(context = {}) {
+  const settled = await Promise.allSettled([...FEEDS.map(loadFeed), loadXPosts(context.env?.X_BEARER_TOKEN)]);
   const seen = new Set();
   const candidates = settled.flatMap(result => result.status === 'fulfilled' ? result.value : [])
     .filter(item => {
@@ -150,7 +184,7 @@ export async function onRequestGet() {
     .sort((a, b) => String(b.publishedAt).localeCompare(String(a.publishedAt)))
     .slice(0, 25);
   const items = [...diversify(rankedNews, 75), ...forumItems];
-  const unavailable = settled.map((result, index) => result.status === 'rejected' ? FEEDS[index].source : null).filter(Boolean);
+  const unavailable = settled.map((result, index) => result.status === 'rejected' ? (FEEDS[index]?.source || 'X API') : null).filter(Boolean);
   return new Response(JSON.stringify({ items, unavailable, updatedAt: new Date().toISOString() }), {
     headers: {
       'content-type': 'application/json; charset=utf-8',
