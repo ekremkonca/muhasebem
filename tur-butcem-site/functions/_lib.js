@@ -66,6 +66,10 @@ export async function ensureSchema(db) {
       amount REAL NOT NULL,
       currency TEXT NOT NULL,
       status TEXT NOT NULL,
+      due_date TEXT NOT NULL DEFAULT '',
+      paid_amount REAL NOT NULL DEFAULT 0,
+      tags TEXT NOT NULL DEFAULT '',
+      source_event_id TEXT NOT NULL DEFAULT '',
       note TEXT NOT NULL DEFAULT '',
       deleted_at TEXT DEFAULT NULL,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -78,6 +82,10 @@ export async function ensureSchema(db) {
   await ensureColumn(db, "records", "agency", "TEXT NOT NULL DEFAULT ''");
   await ensureColumn(db, "records", "ship", "TEXT NOT NULL DEFAULT ''");
   await ensureColumn(db, "records", "deleted_at", "TEXT DEFAULT NULL");
+  await ensureColumn(db, "records", "due_date", "TEXT NOT NULL DEFAULT ''");
+  await ensureColumn(db, "records", "paid_amount", "REAL NOT NULL DEFAULT 0");
+  await ensureColumn(db, "records", "tags", "TEXT NOT NULL DEFAULT ''");
+  await ensureColumn(db, "records", "source_event_id", "TEXT NOT NULL DEFAULT ''");
 
   await db
     .prepare(
@@ -154,13 +162,23 @@ export async function ensureSchema(db) {
     time TEXT NOT NULL DEFAULT '',
     company TEXT NOT NULL DEFAULT '',
     title TEXT NOT NULL,
-    note TEXT NOT NULL DEFAULT '',
-    status TEXT NOT NULL DEFAULT 'Planlandı',
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      note TEXT NOT NULL DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'Planlandı',
+      category TEXT NOT NULL DEFAULT 'Plan',
+      amount REAL NOT NULL DEFAULT 0,
+      currency TEXT NOT NULL DEFAULT 'TRY',
+      recurrence TEXT NOT NULL DEFAULT 'Yok',
+      linked_record_id TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`,
     )
     .run();
+  await ensureColumn(db, "calendar_events", "category", "TEXT NOT NULL DEFAULT 'Plan'");
+  await ensureColumn(db, "calendar_events", "amount", "REAL NOT NULL DEFAULT 0");
+  await ensureColumn(db, "calendar_events", "currency", "TEXT NOT NULL DEFAULT 'TRY'");
+  await ensureColumn(db, "calendar_events", "recurrence", "TEXT NOT NULL DEFAULT 'Yok'");
+  await ensureColumn(db, "calendar_events", "linked_record_id", "TEXT NOT NULL DEFAULT ''");
 
   await db
     .prepare(
@@ -324,6 +342,10 @@ export function normalizeRecord(input) {
     amount: Number(input.amount),
     currency: String(input.currency || "").trim(),
     status: String(input.status || "").trim(),
+    due_date: String(input.due_date || "").slice(0, 10),
+    paid_amount: Number(input.paid_amount ?? (input.status === "Ödendi" ? input.amount : 0)),
+    tags: String(input.tags || "").trim(),
+    source_event_id: String(input.source_event_id || "").trim(),
     note: String(input.note || "").trim(),
   };
 
@@ -346,7 +368,12 @@ export function normalizeRecord(input) {
     throw Object.assign(new Error("Geçersiz para birimi."), { status: 400 });
   if (!["Ödendi", "Ödenmedi"].includes(record.status))
     throw Object.assign(new Error("Geçersiz durum."), { status: 400 });
-  const limits = { tour: 200, guest: 200, agency: 200, ship: 200, note: 2000 };
+  if (record.due_date && !/^\d{4}-\d{2}-\d{2}$/.test(record.due_date))
+    throw Object.assign(new Error("Geçersiz vade tarihi."), { status: 400 });
+  if (!Number.isFinite(record.paid_amount) || record.paid_amount < 0 || record.paid_amount > record.amount)
+    throw Object.assign(new Error("Tahsil edilen tutar toplam tutarı aşamaz."), { status: 400 });
+  record.status = record.paid_amount >= record.amount ? "Ödendi" : "Ödenmedi";
+  const limits = { tour: 200, guest: 200, agency: 200, ship: 200, tags: 300, source_event_id: 100, note: 2000 };
   for (const [field, limit] of Object.entries(limits)) {
     if (record[field].length > limit)
       throw Object.assign(
@@ -368,6 +395,11 @@ export function normalizeCalendarEvent(input) {
     title: String(input.title || "").trim(),
     note: String(input.note || "").trim(),
     status: String(input.status || "Planlandı").trim(),
+    category: String(input.category || "Plan").trim(),
+    amount: Number(input.amount || 0),
+    currency: String(input.currency || "TRY").trim(),
+    recurrence: String(input.recurrence || "Yok").trim(),
+    linked_record_id: String(input.linked_record_id || "").trim(),
   };
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(event.date))
@@ -386,6 +418,14 @@ export function normalizeCalendarEvent(input) {
     throw Object.assign(new Error("Geçersiz etkinlik durumu."), {
       status: 400,
     });
+  if (!["Plan", "Gelir", "Gider", "Tahsilat", "Yatırım", "Vergi"].includes(event.category))
+    throw Object.assign(new Error("Geçersiz etkinlik kategorisi."), { status: 400 });
+  if (!Number.isFinite(event.amount) || event.amount < 0)
+    throw Object.assign(new Error("Etkinlik tutarı geçersiz."), { status: 400 });
+  if (!["TRY", "USD", "EUR", "GBP"].includes(event.currency))
+    throw Object.assign(new Error("Geçersiz para birimi."), { status: 400 });
+  if (!["Yok", "Haftalık", "Aylık", "Yıllık"].includes(event.recurrence))
+    throw Object.assign(new Error("Geçersiz tekrar seçeneği."), { status: 400 });
   const limits = { company: 200, title: 200, note: 2000 };
   for (const [field, limit] of Object.entries(limits)) {
     if (event[field].length > limit)
@@ -418,12 +458,12 @@ export async function snapshotRecords(
 ) {
   const result = await db
     .prepare(
-      `SELECT id,date,tour,guest,agency,ship,type,amount,currency,status,note,deleted_at,created_at,updated_at FROM records ORDER BY date DESC, created_at DESC`,
+      `SELECT id,date,tour,guest,agency,ship,type,amount,currency,status,due_date,paid_amount,tags,source_event_id,note,deleted_at,created_at,updated_at FROM records ORDER BY date DESC, created_at DESC`,
     )
     .all();
   const eventResult = await db
     .prepare(
-      `SELECT id,date,time,company,title,note,status,created_at,updated_at FROM calendar_events ORDER BY date, time, created_at`,
+      `SELECT id,date,time,company,title,note,status,category,amount,currency,recurrence,linked_record_id,created_at,updated_at FROM calendar_events ORDER BY date, time, created_at`,
     )
     .all();
   const id = crypto.randomUUID();

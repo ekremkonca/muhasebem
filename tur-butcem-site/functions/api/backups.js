@@ -18,6 +18,10 @@ const fields = [
   "amount",
   "currency",
   "status",
+  "due_date",
+  "paid_amount",
+  "tags",
+  "source_event_id",
   "note",
   "deleted_at",
   "created_at",
@@ -31,6 +35,11 @@ const eventFields = [
   "title",
   "note",
   "status",
+  "category",
+  "amount",
+  "currency",
+  "recurrence",
+  "linked_record_id",
   "created_at",
   "updated_at",
 ];
@@ -104,7 +113,7 @@ export async function onRequestPost(context) {
             ...fields.map(
               (key) =>
                 row[key] ??
-                (["guest", "agency", "ship", "note"].includes(key) ? "" : null),
+                (["guest", "agency", "ship", "due_date", "tags", "source_event_id", "note"].includes(key) ? "" : key === "paid_amount" ? 0 : null),
             ),
           ),
       );
@@ -120,7 +129,7 @@ export async function onRequestPost(context) {
               ...eventFields.map(
                 (key) =>
                   event[key] ??
-                  (["time", "company", "note"].includes(key) ? "" : null),
+                  (["time", "company", "note", "linked_record_id"].includes(key) ? "" : key === "amount" ? 0 : key === "category" ? "Plan" : key === "currency" ? "TRY" : key === "recurrence" ? "Yok" : null),
               ),
             ),
         );

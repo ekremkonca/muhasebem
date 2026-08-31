@@ -15,6 +15,11 @@ const eventFields = [
   "title",
   "note",
   "status",
+  "category",
+  "amount",
+  "currency",
+  "recurrence",
+  "linked_record_id",
 ];
 
 export async function onRequestGet(context) {
@@ -24,7 +29,7 @@ export async function onRequestGet(context) {
     const result = await db
       .prepare(
         `
-      SELECT id,date,time,company,title,note,status,created_at,updated_at
+      SELECT id,date,time,company,title,note,status,category,amount,currency,recurrence,linked_record_id,created_at,updated_at
       FROM calendar_events
       ORDER BY date, time, created_at
     `,
@@ -73,7 +78,7 @@ export async function onRequestPatch(context) {
       .prepare(
         `
       UPDATE calendar_events
-      SET date=?, time=?, company=?, title=?, note=?, status=?, updated_at=CURRENT_TIMESTAMP
+      SET date=?, time=?, company=?, title=?, note=?, status=?, category=?, amount=?, currency=?, recurrence=?, linked_record_id=?, updated_at=CURRENT_TIMESTAMP
       WHERE id=?
     `,
       )
@@ -84,6 +89,11 @@ export async function onRequestPatch(context) {
         event.title,
         event.note,
         event.status,
+        event.category,
+        event.amount,
+        event.currency,
+        event.recurrence,
+        event.linked_record_id,
         event.id,
       )
       .run();

@@ -51,7 +51,7 @@ function buildCalendar(viewDate) {
   });
 }
 
-function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
+function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete, onConvert }) {
   const [form, setForm] = useState(() => ({
     id: initialEvent?.id,
     date: initialEvent?.date || selectedDate || today,
@@ -60,6 +60,11 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
     title: initialEvent?.title || "",
     note: initialEvent?.note || "",
     status: initialEvent?.status || "Planlandı",
+    category: initialEvent?.category || "Plan",
+    amount: initialEvent?.amount || "",
+    currency: initialEvent?.currency || "TRY",
+    recurrence: initialEvent?.recurrence || "Yok",
+    linked_record_id: initialEvent?.linked_record_id || "",
   }));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -186,6 +191,28 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
               ))}
             </select>
           </label>
+          <label>
+            Kategori
+            <select value={form.category} onChange={(e) => update("category", e.target.value)}>
+              {["Plan", "Gelir", "Gider", "Tahsilat", "Yatırım", "Vergi"].map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </label>
+          <label>
+            Tutar
+            <input type="number" min="0" step="0.01" value={form.amount} onChange={(e) => update("amount", e.target.value)} placeholder="0" />
+          </label>
+          <label>
+            Para birimi
+            <select value={form.currency} onChange={(e) => update("currency", e.target.value)}>
+              {["TRY", "USD", "EUR", "GBP"].map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </label>
+          <label>
+            Tekrar
+            <select value={form.recurrence} onChange={(e) => update("recurrence", e.target.value)}>
+              {["Yok", "Haftalık", "Aylık", "Yıllık"].map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </label>
           <label className="event-form-wide">
             Not <small>isteğe bağlı</small>
             <textarea
@@ -209,6 +236,9 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
             >
               Sil
             </button>
+          )}
+          {initialEvent && form.amount > 0 && !form.linked_record_id && ["Gelir", "Gider", "Tahsilat"].includes(form.category) && (
+            <button type="button" className="btn secondary" disabled={busy} onClick={async()=>{setBusy(true);setError("");try{await onConvert?.(form);onClose()}catch(err){setError(err.message||"Muhasebe kaydı oluşturulamadı.")}finally{setBusy(false)}}}>Muhasebeye aktar</button>
           )}
           <span />
           <button
@@ -304,6 +334,7 @@ export default function CalendarView({
   onCreateEvent,
   onUpdateEvent,
   onDeleteEvent,
+  onConvertEvent,
 }) {
   const now = new Date();
   const [viewDate, setViewDate] = useState(
@@ -530,7 +561,7 @@ export default function CalendarView({
                 <span className="event-card-copy">
                   <strong>{event.title}</strong>
                   <small>
-                    {event.company || event.note || "Etkinlik planı"}
+                    {[event.company, event.amount > 0 && fmtMoney(event.amount, event.currency), event.recurrence !== "Yok" && `↻ ${event.recurrence}`].filter(Boolean).join(" · ") || event.note || "Etkinlik planı"}
                   </small>
                 </span>
                 <span className={`event-status ${meta.className}`}>
@@ -591,6 +622,7 @@ export default function CalendarView({
           onClose={() => setModal(null)}
           onSave={saveEvent}
           onDelete={onDeleteEvent}
+          onConvert={onConvertEvent}
         />
       )}
     </section>

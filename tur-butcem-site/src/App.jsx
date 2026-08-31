@@ -146,6 +146,10 @@ const normalizeRecord = (r) => ({
   amount: Number(r.amount || 0),
   currency: normalizeCurrency(r.currency),
   status: normalizeStatus(r.status),
+  due_date: r.due_date || "",
+  paid_amount: Number(r.paid_amount ?? (normalizeStatus(r.status) === "Ödendi" ? r.amount : 0)),
+  tags: r.tags || "",
+  source_event_id: r.source_event_id || "",
   note: r.note || "",
 });
 const isIncome = (r) => INCOME_TYPES.has(normalizeType(r.type));
@@ -322,6 +326,9 @@ function EntryModal({ record, onClose, onSave, currency }) {
         amount: "",
         currency,
         status: "Ödendi",
+        due_date: "",
+        paid_amount: "",
+        tags: "",
         note: "",
       },
     ),
@@ -419,7 +426,10 @@ function EntryModal({ record, onClose, onSave, currency }) {
             Durum
             <select
               value={form.status}
-              onChange={(e) => set("status", e.target.value)}
+              onChange={(e) => {
+                const next = e.target.value;
+                setForm((f) => ({ ...f, status: next, paid_amount: next === "Ödendi" ? f.amount : 0 }));
+              }}
             >
               <option>Ödendi</option>
               <option>Ödenmedi</option>
@@ -432,7 +442,10 @@ function EntryModal({ record, onClose, onSave, currency }) {
               min="0"
               step="0.01"
               value={form.amount}
-              onChange={(e) => set("amount", e.target.value)}
+              onChange={(e) => {
+                const amount = e.target.value;
+                setForm((f) => ({ ...f, amount, paid_amount: f.status === "Ödendi" ? amount : Math.min(Number(f.paid_amount || 0), Number(amount || 0)) }));
+              }}
               required
             />
           </label>
@@ -446,6 +459,18 @@ function EntryModal({ record, onClose, onSave, currency }) {
                 <option key={x}>{x}</option>
               ))}
             </select>
+          </label>
+          <label>
+            Vade tarihi
+            <input type="date" value={form.due_date} onChange={(e) => set("due_date", e.target.value)} />
+          </label>
+          <label>
+            Tahsil edilen
+            <input type="number" min="0" max={form.amount || undefined} step="0.01" value={form.paid_amount} onChange={(e) => set("paid_amount", e.target.value)} />
+          </label>
+          <label className="wide">
+            Etiketler
+            <input value={form.tags} onChange={(e) => set("tags", e.target.value)} placeholder="VIP, kruvaziyer, özel tur…" />
           </label>
           <label className="wide">
             Not
@@ -794,6 +819,8 @@ function Dashboard({ onSignedOut }) {
     return dst === "TRY" ? tryValue : tryValue / (Number(rates[dst]) || 1);
   };
   const converted = (r) => convertAmount(r.amount, r.currency, currency);
+  const convertedOutstanding = (r) =>
+    convertAmount(Math.max(0, r.amount - r.paid_amount), r.currency, currency);
 
   const dateRange = useMemo(() => {
     const now = new Date(),
@@ -830,7 +857,7 @@ function Dashboard({ onSignedOut }) {
           (typeFilter === "Tümü" || r.type === typeFilter) &&
           (statusFilter === "Tümü" || r.status === statusFilter) &&
           (!q ||
-            [r.tour, r.guest, r.agency, r.ship, r.note, r.type, r.status].some(
+            [r.tour, r.guest, r.agency, r.ship, r.note, r.tags, r.type, r.status].some(
               (v) => tidy(v).includes(q),
             )),
       )
@@ -845,7 +872,7 @@ function Dashboard({ onSignedOut }) {
     expense = paid.filter(isExpense).reduce((s, r) => s + converted(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi" && isIncome(r))
-      .reduce((s, r) => s + converted(r), 0),
+      .reduce((s, r) => s + convertedOutstanding(r), 0),
     net = income - expense,
     tourCount = new Set(accountingRows.map((r) => `${r.date}|${r.tour}`)).size,
     average = tourCount ? net / tourCount : 0;
@@ -883,10 +910,29 @@ function Dashboard({ onSignedOut }) {
     () =>
       rows
         .filter((r) => r.status === "Ödenmedi" && isIncome(r))
-        .sort((a, b) => converted(b) - converted(a))
+        .sort((a, b) => convertedOutstanding(b) - convertedOutstanding(a))
         .slice(0, 6),
     [rows, currency, rates],
   );
+  const agencySummary = useMemo(() => {
+    const totals = {};
+    rows.filter(isIncome).forEach((r) => {
+      const name = r.agency || r.guest || "Diğer";
+      if (!totals[name]) totals[name] = { name, revenue: 0, outstanding: 0, count: 0 };
+      totals[name].revenue += converted(r);
+      totals[name].outstanding += convertedOutstanding(r);
+      totals[name].count += 1;
+    });
+    return Object.values(totals).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+  }, [rows, currency, rates]);
+  const cashForecast = useMemo(() => {
+    const end = new Date();
+    end.setDate(end.getDate() + 30);
+    const endKey = localISO(end);
+    const expectedIn = rows.filter((r) => isIncome(r) && r.status === "Ödenmedi" && (r.due_date || r.date) <= endKey).reduce((s, r) => s + convertedOutstanding(r), 0);
+    const expectedOut = rows.filter((r) => isExpense(r) && r.status === "Ödenmedi" && (r.due_date || r.date) <= endKey).reduce((s, r) => s + convertedOutstanding(r), 0);
+    return { expectedIn, expectedOut, net: expectedIn - expectedOut };
+  }, [rows, currency, rates]);
   const pageCount = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
   useEffect(
     () => setPage(1),
@@ -961,10 +1007,26 @@ function Dashboard({ onSignedOut }) {
       throw e;
     }
   };
+  const convertEventToRecord = async (event) => {
+    if (event.linked_record_id) return null;
+    const record = normalizeRecord({
+      id: uid(), date: event.date, due_date: event.date,
+      tour: event.title, guest: "", agency: event.company || "", ship: "",
+      type: event.category === "Gider" ? "Tur Masrafı" : event.category === "Tahsilat" ? "Komisyon" : "Tur Geliri",
+      amount: Number(event.amount), currency: event.currency || "TRY",
+      status: "Ödenmedi", paid_amount: 0, tags: `Takvim, ${event.category}`,
+      source_event_id: event.id, note: event.note || "Takvimden oluşturuldu",
+    });
+    const saved = await createRecord(record);
+    const updatedEvent = await updateEvent({ ...event, status: "Tamamlandı", linked_record_id: saved.id });
+    setRows((current) => [normalizeRecord(saved), ...current]);
+    setEvents((current) => current.map((item) => item.id === updatedEvent.id ? updatedEvent : item));
+    return saved;
+  };
   const status = async (r) => {
     const next = r.status === "Ödendi" ? "Ödenmedi" : "Ödendi",
       old = r;
-    setRows((x) => x.map((a) => (a.id === r.id ? { ...a, status: next } : a)));
+    setRows((x) => x.map((a) => (a.id === r.id ? { ...a, status: next, paid_amount: next === "Ödendi" ? a.amount : 0 } : a)));
     try {
       await updateRecordStatus(r.id, next);
     } catch (e) {
@@ -1359,6 +1421,19 @@ function Dashboard({ onSignedOut }) {
             <small>{fmtDateTime(ratesUpdatedAt)}</small>
           </article>
         </div>
+        <section className="finance-command-strip" aria-label="Finans özeti">
+          <div><span>30 gün beklenen giriş</span><strong>{money(cashForecast.expectedIn, currency)}</strong></div>
+          <div><span>30 gün beklenen çıkış</span><strong>{money(cashForecast.expectedOut, currency)}</strong></div>
+          <div className={cashForecast.net < 0 ? "negative" : "positive"}><span>Tahmini net akış</span><strong>{money(cashForecast.net, currency)}</strong></div>
+          <div><span>Geciken kayıt</span><strong>{rows.filter((r) => r.status === "Ödenmedi" && r.due_date && r.due_date < today()).length}</strong></div>
+        </section>
+        <section className="agency-summary-card">
+          <header><div><span className="eyebrow">CARİ ÖZET</span><h2>Acenta ve müşteri görünümü</h2></div><small>En yüksek ciroya göre ilk 5</small></header>
+          <div className="agency-summary-grid">
+            {agencySummary.map((item) => <article key={item.name}><strong>{item.name}</strong><span>{item.count} kayıt</span><b>{money(item.revenue, currency)}</b><small>{item.outstanding ? `${money(item.outstanding, currency)} alacak` : "Bakiye kapalı"}</small></article>)}
+            {!agencySummary.length && <p className="empty-mini">Cari özet için acenta veya müşteri bilgisi ekle.</p>}
+          </div>
+        </section>
         <div className="v7-layout">
           <div className="v7-left">
             <section className="records workspace-records">
@@ -1434,7 +1509,7 @@ function Dashboard({ onSignedOut }) {
                   </thead>
                   <tbody>
                     {pageRows.map((r) => (
-                      <tr key={r.id}>
+                      <tr key={r.id} className={r.due_date && r.due_date < today() && r.status === "Ödenmedi" ? "record-overdue" : ""}>
                         <td>
                           <input
                             type="checkbox"
@@ -1458,6 +1533,7 @@ function Dashboard({ onSignedOut }) {
                               r.note ||
                               "—"}
                           </span>
+                          {(r.due_date || r.tags) && <small>{[r.due_date && `Vade: ${fmtDate(r.due_date)}`, r.tags].filter(Boolean).join(" · ")}</small>}
                         </td>
                         <td>
                           <span
@@ -1474,11 +1550,13 @@ function Dashboard({ onSignedOut }) {
                             }
                             onClick={() => status(r)}
                           >
-                            {r.status}
+                            {r.paid_amount > 0 && r.paid_amount < r.amount ? "Kısmi" : r.status}
                           </button>
+                          {r.paid_amount > 0 && r.paid_amount < r.amount && <small>{money(r.paid_amount, r.currency)} tahsil</small>}
                         </td>
                         <td className="right amount">
                           <strong>{money(converted(r), currency)}</strong>
+                          {r.status === "Ödenmedi" && <small>Kalan: {money(convertedOutstanding(r), currency)}</small>}
                           {r.currency !== currency && (
                             <small>{money(r.amount, r.currency)}</small>
                           )}
@@ -1566,7 +1644,7 @@ function Dashboard({ onSignedOut }) {
                     {money(
                       rows
                         .filter((r) => r.status === "Ödenmedi" && isIncome(r))
-                        .reduce((s, r) => s + converted(r), 0),
+                        .reduce((s, r) => s + convertedOutstanding(r), 0),
                       currency,
                     )}
                   </h2>
@@ -1589,7 +1667,7 @@ function Dashboard({ onSignedOut }) {
                       </span>
                     </div>
                     <div>
-                      <strong>{money(converted(r), currency)}</strong>
+                      <strong>{money(convertedOutstanding(r), currency)}</strong>
                       <button onClick={() => status(r)}>Ödendi yap</button>
                     </div>
                   </article>
@@ -1609,6 +1687,7 @@ function Dashboard({ onSignedOut }) {
               onCreateEvent={persistEvent}
               onUpdateEvent={persistEvent}
               onDeleteEvent={removeEvent}
+              onConvertEvent={convertEventToRecord}
             />
           </aside>
         </div>
