@@ -1,4 +1,5 @@
 const FEEDS = [
+  { url: 'https://watcher.guru/news/feed', source: 'Watcher.Guru', region: 'independent' },
   {
     url: 'https://news.google.com/rss/search?q=(%22Watcher.Guru%22%20OR%20%22The%20Spectator%20Index%22%20OR%20%22Current%20Report%22)%20when%3A2d&hl=en-US&gl=US&ceid=US%3Aen',
     source: 'Bağımsız kaynaklar',
@@ -139,6 +140,40 @@ async function loadXPosts(token) {
   }).filter(item => item.title && item.publishedAt);
 }
 
+async function loadPublicXProfile({ handle, name }) {
+  const response = await fetch(`https://r.jina.ai/http://x.com/${handle}`, {
+    headers: { accept: 'text/plain; charset=utf-8', 'user-agent': 'Muhasebem-Haber-Akisi/2.0' },
+    signal: AbortSignal.timeout(12000),
+  });
+  if (!response.ok) throw new Error(`${name}: HTTP ${response.status}`);
+  const markdown = await response.text();
+  const chunks = markdown.split(/\n\*\s{2,}(?=\[!\[Image)/).slice(0, 12);
+  return chunks.map((chunk, index) => {
+    const start = chunk.match(new RegExp(`\\]\\(https?:\\/\\/x\\.com\\/${handle}\\)\\s+`, 'i'));
+    if (!start) return null;
+    let title = chunk.slice((start.index || 0) + start[0].length)
+      .replace(/\[\]\([^)]*\)/g, ' ')
+      .replace(/\[!\[Image[^\]]*\]\([^)]*\)\]\([^)]*\)/g, ' ')
+      .replace(/!\[Image[^\]]*\]\([^)]*\)/g, ' ')
+      .replace(/\[Video\s+\d+\]\([^)]*\)/g, ' ')
+      .replace(/\[[^\]]+\]\([^)]*\)/g, ' ')
+      .replace(/\b\d{1,2}:\d{2}\s*$/g, ' ')
+      .replace(/(?:\s+\d+(?:\.\d+)?[KMB]?){3,}\s*$/i, ' ')
+      .replace(/\s+/g, ' ').trim();
+    if (title.length < 20) return null;
+    title = title.slice(0, 520).trim();
+    const statusId = chunk.match(new RegExp(`x\\.com\\/${handle}\\/status\\/(\\d+)`, 'i'))?.[1];
+    return {
+      id: `x-public-${handle}-${statusId || index}`,
+      title,
+      source: name,
+      region: 'independent',
+      url: statusId ? `https://x.com/${handle}/status/${statusId}` : `https://x.com/${handle}`,
+      publishedAt: new Date(Date.now() - index * 60000).toISOString(),
+    };
+  }).filter(Boolean).slice(0, 8);
+}
+
 function qualityScore(item) {
   if (item.region === 'forum') return 0;
   const title = item.title.toLocaleLowerCase('tr');
@@ -167,7 +202,12 @@ function diversify(items, limit = 100) {
 }
 
 export async function onRequestGet(context = {}) {
-  const settled = await Promise.allSettled([...FEEDS.map(loadFeed), loadXPosts(context.env?.X_BEARER_TOKEN)]);
+  const publicProfiles = [
+    { handle: 'WatcherGuru', name: 'Watcher.Guru' },
+    { handle: 'spectatorindex', name: 'The Spectator Index' },
+    { handle: 'Currentreport1', name: 'Current Report' },
+  ];
+  const settled = await Promise.allSettled([...FEEDS.map(loadFeed), ...publicProfiles.map(loadPublicXProfile), loadXPosts(context.env?.X_BEARER_TOKEN)]);
   const seen = new Set();
   const candidates = settled.flatMap(result => result.status === 'fulfilled' ? result.value : [])
     .filter(item => {
@@ -184,22 +224,9 @@ export async function onRequestGet(context = {}) {
     .sort((a, b) => String(b.publishedAt).localeCompare(String(a.publishedAt)))
     .slice(0, 25);
   const selectedNews = diversify(rankedNews, 75);
-  const independentFallbacks = [
-    { name: 'Watcher.Guru', handle: 'WatcherGuru' },
-    { name: 'The Spectator Index', handle: 'spectatorindex' },
-    { name: 'Current Report', handle: 'Currentreport1' },
-  ].filter(source => !selectedNews.some(item => item.region === 'independent' && item.source.toLocaleLowerCase('tr').includes(source.name.toLocaleLowerCase('tr'))))
-    .map(source => ({
-      id: `x-profile-${source.handle}`,
-      title: `${source.name} güncel paylaşımlarını X üzerinde görüntüle`,
-      source: source.name,
-      region: 'independent',
-      url: `https://x.com/${source.handle}`,
-      publishedAt: new Date().toISOString(),
-      quality: 3,
-    }));
-  const items = [...selectedNews, ...independentFallbacks, ...forumItems];
-  const unavailable = settled.map((result, index) => result.status === 'rejected' ? (FEEDS[index]?.source || 'X API') : null).filter(Boolean);
+  const items = [...selectedNews, ...forumItems];
+  const labels = [...FEEDS.map(feed => feed.source), ...publicProfiles.map(profile => profile.name), 'X API'];
+  const unavailable = settled.map((result, index) => result.status === 'rejected' ? labels[index] : null).filter(Boolean);
   return new Response(JSON.stringify({ items, unavailable, updatedAt: new Date().toISOString() }), {
     headers: {
       'content-type': 'application/json; charset=utf-8',
