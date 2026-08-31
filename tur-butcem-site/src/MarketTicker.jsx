@@ -1,10 +1,35 @@
 import React, { useEffect, useMemo, useState } from "react";
-const fallback = ["USD/TRY", "EUR/TRY", "GBP/TRY", "ALTIN", "BTC", "ETH"].map((symbol) => ({ symbol, value: null, currency: "TRY" }));
-const format = (item) => item.value == null ? "—" : new Intl.NumberFormat("tr-TR", { style: "currency", currency: item.currency || "TRY", minimumFractionDigits: item.value > 10000 ? 0 : 2, maximumFractionDigits: item.value > 10000 ? 0 : 2 }).format(item.value);
+
+const STORAGE_KEY = "muhasebe-tradingview-symbols-v1";
+const DEFAULT_SYMBOLS = ["FX_IDC:USDTRY", "FX_IDC:EURTRY", "FX_IDC:GBPTRY", "BIST:XAUTRY1!", "BINANCE:BTCUSDT", "BINANCE:ETHUSDT"];
+const normalize = (value) => String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+const validSymbol = (value) => /^[A-Z0-9_.-]+:[A-Z0-9_.!/-]+$/.test(value);
+
 export default function MarketTicker() {
-  const [items, setItems] = useState(fallback), [updatedAt, setUpdatedAt] = useState(""), [paused, setPaused] = useState(false);
-  useEffect(() => { let active = true; const refresh = async () => { try { const response = await fetch(`/api/markets?_=${Date.now()}`, { cache: "no-store" }), data = await response.json(); if (active && response.ok && data.items?.length) { setItems(data.items); setUpdatedAt(data.fetchedAt || new Date().toISOString()); } } catch {} }; refresh(); const timer = setInterval(refresh, 5 * 60 * 1000); return () => { active = false; clearInterval(timer); }; }, []);
-  useEffect(() => { const place = () => { const ticker = document.querySelector(".market-ticker-host"), nav = document.querySelector(".global-category-nav-host"); if (ticker && nav && ticker.previousElementSibling !== nav) nav.insertAdjacentElement("afterend", ticker); }; place(); const observer = new MutationObserver(place); observer.observe(document.body, { childList: true, subtree: true }); return () => observer.disconnect(); }, []);
-  const repeated = useMemo(() => [...items, ...items], [items]);
-  return <div className="market-ticker-host" aria-label="Güncel piyasa verileri"><div className="market-ticker-label"><i/> PİYASALAR <small>{updatedAt ? new Intl.DateTimeFormat("tr-TR", { hour: "2-digit", minute: "2-digit" }).format(new Date(updatedAt)) : "yükleniyor"}</small></div><div className={`market-ticker-window${paused ? " paused" : ""}`} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}><div className="market-ticker-track">{repeated.map((item, index) => <div className="market-ticker-item" key={`${item.symbol}-${index}`} aria-hidden={index >= items.length}><span>{item.symbol}</span><strong>{format(item)}</strong>{typeof item.change === "number" ? <small className={item.change >= 0 ? "up" : "down"}>{item.change >= 0 ? "▲" : "▼"} {Math.abs(item.change).toFixed(2)}%</small> : <small>CANLI</small>}</div>)}</div></div></div>;
+  const [symbols, setSymbols] = useState(() => { try { const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); return Array.isArray(stored) && stored.length ? stored : DEFAULT_SYMBOLS; } catch { return DEFAULT_SYMBOLS; } });
+  const [open, setOpen] = useState(false), [draft, setDraft] = useState(""), [error, setError] = useState("");
+  useEffect(() => {
+    if (document.querySelector('script[data-tradingview-ticker="1"]')) return;
+    const script = document.createElement("script"); script.type = "module"; script.src = "https://www.tradingview-widget.com/w/en/tv-ticker-tape.js"; script.dataset.tradingviewTicker = "1"; document.head.appendChild(script);
+  }, []);
+  useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify(symbols)); }, [symbols]);
+  useEffect(() => {
+    const place = () => { const ticker = document.querySelector(".market-ticker-host"), nav = document.querySelector(".global-category-nav-host"); if (ticker && nav && ticker.previousElementSibling !== nav) nav.insertAdjacentElement("afterend", ticker); };
+    place(); const observer = new MutationObserver(place); observer.observe(document.body, { childList: true, subtree: true }); return () => observer.disconnect();
+  }, []);
+  const symbolString = useMemo(() => symbols.join(","), [symbols]);
+  const add = (event) => {
+    event.preventDefault(); const value = normalize(draft);
+    if (!validSymbol(value)) { setError("TradingView kodunu BORSA:SEMBOL biçiminde gir."); return; }
+    if (symbols.includes(value)) { setError("Bu sembol zaten bantta."); return; }
+    if (symbols.length >= 20) { setError("En fazla 20 sembol eklenebilir."); return; }
+    setSymbols((current) => [...current, value]); setDraft(""); setError("");
+  };
+  const remove = (symbol) => setSymbols((current) => current.filter((item) => item !== symbol));
+  const reset = () => { setSymbols(DEFAULT_SYMBOLS); setError(""); };
+  return <div className="market-ticker-host">
+    <div className="market-ticker-toolbar"><span><i/> TRADINGVIEW</span><button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open}>＋ Ekle / Kaldır</button></div>
+    <div className="tradingview-ticker-shell" key={symbolString}><tv-ticker-tape symbols={symbolString} item-size="compact"><div className="market-ticker-placeholder">TradingView piyasa verileri yükleniyor…</div></tv-ticker-tape></div>
+    {open && <div className="market-ticker-settings"><header><div><strong>Piyasa bandını düzenle</strong><small>TradingView kodu: BORSA:SEMBOL</small></div><button type="button" onClick={() => setOpen(false)}>×</button></header><form onSubmit={add}><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Örn. BIST:THYAO veya BINANCE:SOLUSDT" autoFocus/><button type="submit">Ekle</button></form>{error && <p>{error}</p>}<div className="market-symbol-list">{symbols.map((symbol) => <div key={symbol}><span>{symbol}</span><button type="button" onClick={() => remove(symbol)} disabled={symbols.length === 1}>Kaldır</button></div>)}</div><footer><button type="button" onClick={reset}>Varsayılanları yükle</button><a href="https://www.tradingview.com/symbols/" target="_blank" rel="noreferrer">TradingView’da kod ara ↗</a></footer></div>}
+  </div>;
 }
