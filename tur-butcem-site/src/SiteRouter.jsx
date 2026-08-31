@@ -5,6 +5,7 @@ import AssetsHeaderBridge from "./AssetsHeaderBridge.jsx";
 import CalendarView from "./CalendarView.jsx";
 import HomePage from "./HomePage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
+import MarketTicker from "./MarketTicker.jsx";
 import {
   createEvent,
   createRecord,
@@ -247,6 +248,7 @@ export default function SiteRouter() {
     <>
       {page}
       <CategoryNavBridge />
+      <MarketTicker />
     </>
   );
 }
