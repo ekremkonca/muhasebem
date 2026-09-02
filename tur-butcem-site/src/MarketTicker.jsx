@@ -28,13 +28,18 @@ export default function MarketTicker() {
     if (!host) return;
     let active = true;
     host.replaceChildren(); setWidgetError("");
-    const mount = document.createElement("div"); mount.className = "tradingview-widget-container__widget"; host.appendChild(mount);
-    const observer = new MutationObserver(() => { if (host.querySelector("iframe")) { setWidgetError(""); observer.disconnect(); } });
+    const config = JSON.stringify({ symbols: symbols.map((symbol) => ({ proName: symbol, title: symbol.split(":").at(-1) })), showSymbolLogo: true, isTransparent: false, displayMode: "regular", colorTheme: mode, locale: "tr" });
+    for (let index = 0; index < 2; index += 1) {
+      const copy = document.createElement("div"); copy.className = "market-ticker-copy tradingview-widget-container";
+      const mount = document.createElement("div"); mount.className = "tradingview-widget-container__widget"; copy.appendChild(mount);
+      const script = document.createElement("script"); script.async = true; script.src = "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js";
+      script.textContent = config;
+      script.onerror = () => active && setWidgetError("TradingView bağlantısı kurulamadı.");
+      copy.appendChild(script); host.appendChild(copy);
+    }
+    const observer = new MutationObserver(() => { if (host.querySelectorAll("iframe").length === 2) { setWidgetError(""); observer.disconnect(); } });
     observer.observe(host, { childList: true, subtree: true });
-    const script = document.createElement("script"); script.async = true; script.src = "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js";
-    script.textContent = JSON.stringify({ symbols: symbols.map((symbol) => ({ proName: symbol, title: symbol.split(":").at(-1) })), showSymbolLogo: true, isTransparent: false, displayMode: "regular", colorTheme: mode, locale: "tr" });
-    script.onerror = () => active && setWidgetError("TradingView bağlantısı kurulamadı."); host.appendChild(script);
-    const timer = setTimeout(() => { if (active && !host.querySelector("iframe")) setWidgetError("TradingView verileri yüklenemedi."); }, 12000);
+    const timer = setTimeout(() => { if (active && host.querySelectorAll("iframe").length < 2) setWidgetError("TradingView verileri yüklenemedi."); }, 12000);
     return () => { active = false; clearTimeout(timer); observer.disconnect(); host.replaceChildren(); };
   }, [symbolString, mode, retry]);
   const add = (event) => {
@@ -48,7 +53,7 @@ export default function MarketTicker() {
   const reset = () => { setSymbols(DEFAULT_SYMBOLS); setError(""); };
   return <div className="market-ticker-host" aria-label="Canlı piyasa bandı">
     <div className="market-ticker-toolbar"><span><i/> TradingView</span><button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open}>＋ Ekle / Kaldır</button></div>
-    <div className="tradingview-ticker-shell"><div ref={widgetRef} className="tradingview-widget-container"><div className="market-ticker-placeholder">Canlı piyasa verileri yükleniyor…</div></div>{widgetError && <button type="button" className="market-widget-error" onClick={() => setRetry((value) => value + 1)}>{widgetError} Tekrar dene</button>}</div>
+    <div className="tradingview-ticker-shell"><div ref={widgetRef} className="market-ticker-track" style={{'--ticker-copy-width':`${Math.max(1050,symbols.length*175)}px`,'--ticker-duration':`${Math.max(24,symbols.length*5)}s`}}><div className="market-ticker-placeholder">Canlı piyasa verileri yükleniyor…</div></div>{widgetError && <button type="button" className="market-widget-error" onClick={() => setRetry((value) => value + 1)}>{widgetError} Tekrar dene</button>}</div>
     {open && <div className="market-ticker-settings"><header><div><strong>Piyasa bandını düzenle</strong><small>TradingView kodu: BORSA:SEMBOL</small></div><button type="button" onClick={() => setOpen(false)} aria-label="Kapat">×</button></header><form onSubmit={add}><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Örn. BIST:THYAO veya BINANCE:SOLUSDT" autoFocus/><button type="submit">Ekle</button></form>{error && <p>{error}</p>}<div className="market-symbol-list">{symbols.map((symbol) => <div key={symbol}><span>{symbol}</span><button type="button" onClick={() => remove(symbol)} disabled={symbols.length === 1}>Kaldır</button></div>)}</div><footer><button type="button" onClick={reset}>Varsayılanları yükle</button><a href="https://www.tradingview.com/symbols/" target="_blank" rel="noreferrer">Kod ara ↗</a></footer></div>}
   </div>;
 }
