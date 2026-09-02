@@ -77,9 +77,6 @@ input:hover,select:hover,textarea:hover{border-color:color-mix(in srgb,var(--gre
 .finance-command-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
 .finance-command-strip>div{display:grid;gap:5px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:0 10px 28px rgba(18,42,34,.045)}
 .finance-command-strip span{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.finance-command-strip strong{font-size:18px}.finance-command-strip .positive strong{color:var(--green)}.finance-command-strip .negative strong{color:#c43d32}
-.agency-summary-card{margin-bottom:14px;padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--paper)}
-.agency-summary-card>header{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:13px}.agency-summary-card h2{margin:4px 0 0}.agency-summary-card>header small{color:var(--muted)}
-.agency-summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.agency-summary-grid article{display:grid;gap:5px;padding:14px;border-radius:14px;background:color-mix(in srgb,var(--mint) 38%,var(--paper))}.agency-summary-grid article>span,.agency-summary-grid article>small{color:var(--muted);font-size:9px}.agency-summary-grid article>b{font-size:14px}.agency-summary-grid article>small{color:var(--green);font-weight:750}
 .record-overdue{background:color-mix(in srgb,#ffe3df 55%,var(--paper))!important}.record-overdue td:first-child{box-shadow:inset 3px 0 #d94b40}
 .v7-layout{gap:16px!important}.v7-right{gap:14px!important}
 .records table tbody tr:hover{background:color-mix(in srgb,var(--mint) 42%,var(--paper))!important}
@@ -107,7 +104,7 @@ input:hover,select:hover,textarea:hover{border-color:color-mix(in srgb,var(--gre
 @media(max-width:900px){
  .global-category-nav-host{max-width:44vw}
  .v7-dashboard,.assets-fund-page,.standalone-calendar-page{padding-left:12px!important;padding-right:12px!important}
- .finance-command-strip{grid-template-columns:1fr 1fr}.agency-summary-grid{grid-template-columns:1fr 1fr}
+ .finance-command-strip{grid-template-columns:1fr 1fr}
  .asset-goal-card{grid-template-columns:1fr}.asset-goal-inputs{grid-template-columns:1fr 1fr 1fr}
 }
 @media(max-width:720px){

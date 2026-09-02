@@ -915,17 +915,6 @@ function Dashboard({ onSignedOut }) {
         .slice(0, 6),
     [rows, currency, rates],
   );
-  const agencySummary = useMemo(() => {
-    const totals = {};
-    rows.filter(isIncome).forEach((r) => {
-      const name = r.agency || r.guest || "Diğer";
-      if (!totals[name]) totals[name] = { name, revenue: 0, outstanding: 0, count: 0 };
-      totals[name].revenue += converted(r);
-      totals[name].outstanding += convertedOutstanding(r);
-      totals[name].count += 1;
-    });
-    return Object.values(totals).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
-  }, [rows, currency, rates]);
   const cashForecast = useMemo(() => {
     const end = new Date();
     end.setDate(end.getDate() + 30);
@@ -1428,13 +1417,6 @@ function Dashboard({ onSignedOut }) {
           <div><span>30 gün beklenen çıkış</span><strong>{money(cashForecast.expectedOut, currency)}</strong></div>
           <div className={cashForecast.net < 0 ? "negative" : "positive"}><span>Tahmini net akış</span><strong>{money(cashForecast.net, currency)}</strong></div>
           <div><span>Geciken kayıt</span><strong>{rows.filter((r) => r.status === "Ödenmedi" && r.due_date && r.due_date < today()).length}</strong></div>
-        </section>
-        <section className="agency-summary-card">
-          <header><div><span className="eyebrow">CARİ ÖZET</span><h2>Acenta ve müşteri görünümü</h2></div><small>En yüksek ciroya göre ilk 5</small></header>
-          <div className="agency-summary-grid">
-            {agencySummary.map((item) => <article key={item.name}><strong>{item.name}</strong><span>{item.count} kayıt</span><b>{money(item.revenue, currency)}</b><small>{item.outstanding ? `${money(item.outstanding, currency)} alacak` : "Bakiye kapalı"}</small></article>)}
-            {!agencySummary.length && <p className="empty-mini">Cari özet için acenta veya müşteri bilgisi ekle.</p>}
-          </div>
         </section>
         <div className="v7-layout">
           <div className="v7-left">
