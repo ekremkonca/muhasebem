@@ -121,3 +121,13 @@ input:hover,select:hover,textarea:hover{border-color:color-mix(in srgb,var(--gre
 
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 @media(prefers-reduced-motion:reduce){.market-ticker-track{animation:market-ticker-scroll var(--ticker-duration,30s) linear infinite!important}}
+
+/* Compact TradingView brand control and a clean, logo-free moving strip. */
+.market-ticker-copy{position:relative}
+.market-ticker-brand-mask{position:absolute;z-index:3;top:0;right:0;width:96px;height:100%;background:linear-gradient(90deg,transparent 0,var(--paper) 22%);pointer-events:auto}
+.market-tv-link{width:29px;height:27px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);text-decoration:none}
+.market-tv-link svg{width:20px;height:14px;fill:currentColor}
+.market-tv-link:hover{border-color:color-mix(in srgb,var(--green) 45%,var(--line));background:color-mix(in srgb,var(--mint) 48%,var(--paper));color:var(--green)}
+.market-ticker-toolbar button b{margin-left:3px;color:var(--green);font-size:7px}
+.market-ticker-settings header em{margin-left:5px;color:var(--green);font-size:9px;font-style:normal}
+.market-ticker-settings form button:disabled{opacity:.45;cursor:not-allowed}

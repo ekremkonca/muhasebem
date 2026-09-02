@@ -3,11 +3,12 @@ import { SITE_NAV_EVENT } from "./navigation.js";
 
 const STORAGE_KEY = "muhasebe-tradingview-symbols-v1";
 const MODE_EVENT = "muhasebe:mode-change";
+const MAX_SYMBOLS = 10;
 const DEFAULT_SYMBOLS = ["FX_IDC:USDTRY", "FX_IDC:EURTRY", "FX_IDC:GBPTRY", "BIST:XAUTRY1!", "BINANCE:BTCUSDT", "BINANCE:ETHUSDT"];
 const normalize = (value) => String(value || "").trim().toUpperCase().replace(/\s+/g, "");
 const validSymbol = (value) => /^[A-Z0-9_.-]+:[A-Z0-9_.!/-]+$/.test(value);
 
-const loadSymbols = () => { try { const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); return Array.isArray(stored) && stored.some(validSymbol) ? [...new Set(stored.map(normalize).filter(validSymbol))].slice(0, 20) : DEFAULT_SYMBOLS; } catch { return DEFAULT_SYMBOLS; } };
+const loadSymbols = () => { try { const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); return Array.isArray(stored) && stored.some(validSymbol) ? [...new Set(stored.map(normalize).filter(validSymbol))].slice(0, MAX_SYMBOLS) : DEFAULT_SYMBOLS; } catch { return DEFAULT_SYMBOLS; } };
 
 export default function MarketTicker() {
   const [symbols, setSymbols] = useState(loadSymbols);
@@ -35,7 +36,8 @@ export default function MarketTicker() {
       const script = document.createElement("script"); script.async = true; script.src = "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js";
       script.textContent = config;
       script.onerror = () => active && setWidgetError("TradingView bağlantısı kurulamadı.");
-      copy.appendChild(script); host.appendChild(copy);
+      const brandMask = document.createElement("span"); brandMask.className = "market-ticker-brand-mask"; brandMask.setAttribute("aria-hidden", "true");
+      copy.appendChild(script); copy.appendChild(brandMask); host.appendChild(copy);
     }
     const observer = new MutationObserver(() => { if (host.querySelectorAll("iframe").length === 2) { setWidgetError(""); observer.disconnect(); } });
     observer.observe(host, { childList: true, subtree: true });
@@ -46,14 +48,14 @@ export default function MarketTicker() {
     event.preventDefault(); const value = normalize(draft);
     if (!validSymbol(value)) { setError("TradingView kodunu BORSA:SEMBOL biçiminde gir."); return; }
     if (symbols.includes(value)) { setError("Bu sembol zaten bantta."); return; }
-    if (symbols.length >= 20) { setError("En fazla 20 sembol eklenebilir."); return; }
+    if (symbols.length >= MAX_SYMBOLS) { setError("En fazla 10 sembol eklenebilir."); return; }
     setSymbols((current) => [...current, value]); setDraft(""); setError("");
   };
   const remove = (symbol) => { if (symbols.length === 1) { setError("Bantta en az bir piyasa kalmalı."); return; } setSymbols((current) => current.filter((item) => item !== symbol)); setError(""); };
   const reset = () => { setSymbols(DEFAULT_SYMBOLS); setError(""); };
   return <div className="market-ticker-host" aria-label="Canlı piyasa bandı">
-    <div className="market-ticker-toolbar"><span><i/> TradingView</span><button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open}>＋ Ekle / Kaldır</button></div>
+    <div className="market-ticker-toolbar"><a className="market-tv-link" href="https://www.tradingview.com/" target="_blank" rel="noreferrer" aria-label="TradingView'ı aç" title="TradingView"><svg viewBox="0 0 28 18" aria-hidden="true"><path d="M1 3h10v4H7v8H3V7H1z"/><path d="M12 3h4l3 7 3-7h5l-6 12h-4z"/></svg></a><button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open}>＋ Ekle / Kaldır <b>{symbols.length}/{MAX_SYMBOLS}</b></button></div>
     <div className="tradingview-ticker-shell"><div ref={widgetRef} className="market-ticker-track" style={{'--ticker-copy-width':`${Math.max(1050,symbols.length*175)}px`,'--ticker-duration':`${Math.max(24,symbols.length*5)}s`}}><div className="market-ticker-placeholder">Canlı piyasa verileri yükleniyor…</div></div>{widgetError && <button type="button" className="market-widget-error" onClick={() => setRetry((value) => value + 1)}>{widgetError} Tekrar dene</button>}</div>
-    {open && <div className="market-ticker-settings"><header><div><strong>Piyasa bandını düzenle</strong><small>TradingView kodu: BORSA:SEMBOL</small></div><button type="button" onClick={() => setOpen(false)} aria-label="Kapat">×</button></header><form onSubmit={add}><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Örn. BIST:THYAO veya BINANCE:SOLUSDT" autoFocus/><button type="submit">Ekle</button></form>{error && <p>{error}</p>}<div className="market-symbol-list">{symbols.map((symbol) => <div key={symbol}><span>{symbol}</span><button type="button" onClick={() => remove(symbol)} disabled={symbols.length === 1}>Kaldır</button></div>)}</div><footer><button type="button" onClick={reset}>Varsayılanları yükle</button><a href="https://www.tradingview.com/symbols/" target="_blank" rel="noreferrer">Kod ara ↗</a></footer></div>}
+    {open && <div className="market-ticker-settings"><header><div><strong>Piyasa bandını düzenle <em>{symbols.length}/{MAX_SYMBOLS}</em></strong><small>TradingView kodu: BORSA:SEMBOL</small></div><button type="button" onClick={() => setOpen(false)} aria-label="Kapat">×</button></header><form onSubmit={add}><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Örn. BIST:THYAO veya BINANCE:SOLUSDT" autoFocus/><button type="submit" disabled={symbols.length >= MAX_SYMBOLS}>Ekle</button></form>{error && <p>{error}</p>}<div className="market-symbol-list">{symbols.map((symbol) => <div key={symbol}><span>{symbol}</span><button type="button" onClick={() => remove(symbol)} disabled={symbols.length === 1}>Kaldır</button></div>)}</div><footer><button type="button" onClick={reset}>Varsayılanları yükle</button><a href="https://www.tradingview.com/symbols/" target="_blank" rel="noreferrer">Kod ara ↗</a></footer></div>}
   </div>;
 }
