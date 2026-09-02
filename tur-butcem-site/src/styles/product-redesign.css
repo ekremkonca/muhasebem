@@ -124,7 +124,8 @@ input:hover,select:hover,textarea:hover{border-color:color-mix(in srgb,var(--gre
 
 /* Compact TradingView brand control and a clean, logo-free moving strip. */
 .market-ticker-copy{position:relative}
-.market-ticker-brand-mask{position:absolute;z-index:3;top:0;right:0;width:96px;height:100%;background:linear-gradient(90deg,transparent 0,var(--paper) 22%);pointer-events:auto}
+.market-ticker-brand-mask{position:absolute;z-index:3;top:0;right:0;width:70px;height:100%;background:linear-gradient(90deg,transparent 0,var(--paper) 28%);pointer-events:auto}
+.market-ticker-copy iframe{width:100%!important;height:48px!important;min-height:48px!important;transform:none!important}
 .market-tv-link{width:29px;height:27px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);text-decoration:none}
 .market-tv-link svg{width:20px;height:14px;fill:currentColor}
 .market-tv-link:hover{border-color:color-mix(in srgb,var(--green) 45%,var(--line));background:color-mix(in srgb,var(--mint) 48%,var(--paper));color:var(--green)}
