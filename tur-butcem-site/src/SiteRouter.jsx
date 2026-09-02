@@ -201,23 +201,6 @@ function TakvimPage() {
   );
 }
 
-function VarliklarPage() {
-  return (
-    <>
-      <App />
-      <AssetsNav />
-      <AssetsHeaderBridge />
-    </>
-  );
-}
-
-function MuhasebePage() {
-  return (
-    <>
-      <App />
-    </>
-  );
-}
 function RedirectHome() {
   useEffect(() => {
     window.history.replaceState({}, "", "/muhasebe/");
@@ -239,8 +222,11 @@ export default function SiteRouter() {
     };
   }, []);
   const page = useMemo(() => {
-    if (path === "/muhasebe") return <MuhasebePage />;
-    if (path === "/varliklar") return <VarliklarPage />;
+    if (path === "/muhasebe" || path === "/varliklar") return <>
+      <App />
+      {path === "/varliklar" && <AssetsNav />}
+      {path === "/varliklar" && <AssetsHeaderBridge />}
+    </>;
     if (path === "/takvim") return <TakvimPage />;
     return <RedirectHome />;
   }, [path]);

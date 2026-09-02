@@ -6,6 +6,7 @@ import './styles/header-left.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 import './styles/product-redesign.css';
+import { SITE_NAV_EVENT } from './navigation.js';
 
 const PUBLIC_ASSET_VERSION='20260827-16';
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
@@ -25,33 +26,36 @@ try{
   document.documentElement.style.removeProperty('--app-font-offset');
 }catch{}
 
-// Asset styles are scoped to the assets page/editor and are loaded for every SPA entry.
-// This keeps /varliklar visually identical whether opened directly or reached from another page.
-for (const href of ['/assets-readable-large.css','/assets-editor-premium.css','/assets-controls-modern.css']) {
+const loadStyle = href => {
+  if (document.querySelector(`link[data-lazy-style="${href}"]`)) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = versioned(href);
+  link.dataset.lazyStyle = href;
   document.head.appendChild(link);
-}
-
-const depositLiveScript = document.createElement('script');
-depositLiveScript.src = versioned('/assets-deposit-live.js');
-depositLiveScript.defer = true;
-document.head.appendChild(depositLiveScript);
-
-const assetsControlsScript = document.createElement('script');
-assetsControlsScript.src = versioned('/assets-controls-modern.js');
-assetsControlsScript.defer = true;
-document.head.appendChild(assetsControlsScript);
-
-// Calendar assets are intentionally loaded for every SPA entry point.
-// Their CSS is scoped to .standalone-calendar-page, so they do not affect other pages.
-for (const href of ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-grid.css','/takvim-theme-sync.css']) {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = versioned(href);
-  document.head.appendChild(link);
-}
+};
+const loadScript = src => {
+  if (document.querySelector(`script[data-lazy-script="${src}"]`)) return;
+  const script = document.createElement('script');
+  script.src = versioned(src);
+  script.defer = true;
+  script.dataset.lazyScript = src;
+  document.head.appendChild(script);
+};
+const loadPageAssets = () => {
+  const path = location.pathname.replace(/\/+$/, '');
+  if (path === '/varliklar') {
+    ['/assets-readable-large.css','/assets-editor-premium.css','/assets-controls-modern.css'].forEach(loadStyle);
+    ['/assets-deposit-live.js','/assets-controls-modern.js'].forEach(loadScript);
+  }
+  if (path === '/takvim') {
+    ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-grid.css','/takvim-theme-sync.css','/takvim-luxe-dark-readable.css'].forEach(loadStyle);
+    loadScript('/takvim-luxe-enhance.js');
+  }
+};
+loadPageAssets();
+window.addEventListener(SITE_NAV_EVENT, loadPageAssets);
+window.addEventListener('popstate', loadPageAssets);
 
 // Fixed typography normalizes all page-specific layers.
 const fixedTypography = document.createElement('link');
@@ -70,11 +74,6 @@ const headerBrandScript = document.createElement('script');
 headerBrandScript.src = versioned('/header-brand-v8.js');
 headerBrandScript.defer = true;
 document.head.appendChild(headerBrandScript);
-
-const calendarEnhanceScript = document.createElement('script');
-calendarEnhanceScript.src = versioned('/takvim-luxe-enhance.js');
-calendarEnhanceScript.defer = true;
-document.head.appendChild(calendarEnhanceScript);
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
