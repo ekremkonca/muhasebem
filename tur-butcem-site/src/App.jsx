@@ -28,6 +28,7 @@ import {
   updateEvent,
 } from "./api";
 import AnalyticsChart from "./AnalyticsChart";
+import MarketTicker from "./MarketTicker";
 import CalendarView, { UpcomingEvents } from "./CalendarView";
 import { navigateTo } from "./navigation";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -1264,6 +1265,7 @@ function Dashboard({ onSignedOut }) {
           </button>
         </div>
       </header>
+      <MarketTicker />
       <main className="main-dashboard v7-dashboard">
         {error && (
           <p className="system-error" onClick={() => setError("")}>

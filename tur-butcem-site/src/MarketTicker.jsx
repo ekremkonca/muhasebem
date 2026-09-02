@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { SITE_NAV_EVENT } from "./navigation.js";
 
 const STORAGE_KEY = "muhasebe-tradingview-symbols-v1";
 const MODE_EVENT = "muhasebe:mode-change";
@@ -16,12 +15,6 @@ export default function MarketTicker() {
   const [mode, setMode] = useState(() => document.documentElement.dataset.mode === "dark" ? "dark" : "light"), [retry, setRetry] = useState(0);
   const widgetRef = useRef(null);
   useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(symbols)); } catch {} }, [symbols]);
-  useEffect(() => {
-    let frame = 0;
-    const place = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(() => { const ticker = document.querySelector(".market-ticker-host"), header = document.querySelector(".v7-header"); if (ticker && header && ticker.previousElementSibling !== header) header.insertAdjacentElement("afterend", ticker); }); };
-    place(); window.addEventListener(SITE_NAV_EVENT, place); window.addEventListener("popstate", place);
-    return () => { cancelAnimationFrame(frame); window.removeEventListener(SITE_NAV_EVENT, place); window.removeEventListener("popstate", place); };
-  }, []);
   useEffect(() => { const sync = (event) => setMode(event.detail === "dark" ? "dark" : "light"); window.addEventListener(MODE_EVENT, sync); return () => window.removeEventListener(MODE_EVENT, sync); }, []);
   const symbolString = useMemo(() => symbols.join(","), [symbols]);
   useEffect(() => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
+import MarketTicker from './MarketTicker.jsx';
 import {navigateTo} from './navigation.js';
 
 function Icon({name,size=18}){
@@ -37,6 +38,7 @@ export default function HomePage({children,contentClassName=''}){
         <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
       </div>
     </header>
+    <MarketTicker/>
     <main className={contentClassName||'home-content-area'}>{children}</main>
   </div>;
 }
