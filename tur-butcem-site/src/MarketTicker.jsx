@@ -1,54 +1,32 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React,{useEffect,useMemo,useState}from'react';
 
-const STORAGE_KEY = "muhasebe-tradingview-symbols-v1";
-const MODE_EVENT = "muhasebe:mode-change";
-const MAX_SYMBOLS = 10;
-const DEFAULT_SYMBOLS = ["FX_IDC:USDTRY", "FX_IDC:EURTRY", "FX_IDC:GBPTRY", "BIST:XAUTRY1!", "BINANCE:BTCUSDT", "BINANCE:ETHUSDT"];
-const normalize = (value) => String(value || "").trim().toUpperCase().replace(/\s+/g, "");
-const validSymbol = (value) => /^[A-Z0-9_.-]+:[A-Z0-9_.!/-]+$/.test(value);
+export const MARKET_CATALOG=[
+ ['USDTRY','USD / TL'],['EURTRY','EUR / TL'],['GBPTRY','GBP / TL'],['GOLD','Ons Altın'],
+ ['BTCUSD','Bitcoin'],['ETHUSD','Ethereum'],['SOLUSD','Solana'],['BNBUSD','BNB'],
+ ['XU100','BIST 100'],['BRENT','Brent Petrol']
+];
+const STORAGE_KEY='muhasebe-market-symbols-v2';
+const DEFAULT_SYMBOLS=['USDTRY','EURTRY','BTCUSD','ETHUSD'];
+const allowed=new Set(MARKET_CATALOG.map(([id])=>id));
+const initialSymbols=()=>{try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(Array.isArray(saved)){const clean=[...new Set(saved.filter(id=>allowed.has(id)))];if(clean.length)return clean}}catch{}return DEFAULT_SYMBOLS};
+const number=(value,digits=2)=>Number(value).toLocaleString('tr-TR',{minimumFractionDigits:digits,maximumFractionDigits:digits});
+const digits=value=>Math.abs(Number(value))>=1000?2:Math.abs(Number(value))>=10?3:4;
 
-const loadSymbols = () => { try { const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); return Array.isArray(stored) && stored.some(validSymbol) ? [...new Set(stored.map(normalize).filter(validSymbol))].slice(0, MAX_SYMBOLS) : DEFAULT_SYMBOLS; } catch { return DEFAULT_SYMBOLS; } };
-
-export default function MarketTicker() {
-  const [symbols, setSymbols] = useState(loadSymbols);
-  const [open, setOpen] = useState(false), [draft, setDraft] = useState(""), [message, setMessage] = useState(null), [widgetError, setWidgetError] = useState("");
-  const [mode, setMode] = useState(() => document.documentElement.dataset.mode === "dark" ? "dark" : "light"), [retry, setRetry] = useState(0);
-  const widgetRef = useRef(null);
-  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(symbols)); } catch {} }, [symbols]);
-  useEffect(() => { const sync = (event) => setMode(event.detail === "dark" ? "dark" : "light"); window.addEventListener(MODE_EVENT, sync); return () => window.removeEventListener(MODE_EVENT, sync); }, []);
-  const symbolString = useMemo(() => symbols.join(","), [symbols]);
-  useEffect(() => {
-    const host = widgetRef.current;
-    if (!host) return;
-    let active = true;
-    host.replaceChildren(); setWidgetError("");
-    const config = JSON.stringify({ symbols: symbols.map((symbol) => ({ proName: symbol, title: symbol.split(":").at(-1) })), showSymbolLogo: true, isTransparent: false, displayMode: "regular", colorTheme: mode, locale: "tr" });
-    for (let index = 0; index < 2; index += 1) {
-      const copy = document.createElement("div"); copy.className = "market-ticker-copy tradingview-widget-container";
-      const mount = document.createElement("div"); mount.className = "tradingview-widget-container__widget"; copy.appendChild(mount);
-      const script = document.createElement("script"); script.async = true; script.src = "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js";
-      script.textContent = config;
-      script.onerror = () => active && setWidgetError("TradingView bağlantısı kurulamadı.");
-      const brandMask = document.createElement("span"); brandMask.className = "market-ticker-brand-mask"; brandMask.setAttribute("aria-hidden", "true");
-      copy.appendChild(script); copy.appendChild(brandMask); host.appendChild(copy);
-    }
-    const observer = new MutationObserver(() => { if (host.querySelectorAll("iframe").length === 2) { setWidgetError(""); observer.disconnect(); } });
-    observer.observe(host, { childList: true, subtree: true });
-    const timer = setTimeout(() => { if (active && host.querySelectorAll("iframe").length < 2) setWidgetError("TradingView verileri yüklenemedi."); }, 12000);
-    return () => { active = false; clearTimeout(timer); observer.disconnect(); host.replaceChildren(); };
-  }, [symbolString, mode, retry]);
-  const add = (event) => {
-    event.preventDefault(); const value = normalize(draft);
-    if (!validSymbol(value)) { setMessage({type:"error",text:"TradingView kodunu BORSA:SEMBOL biçiminde gir."}); return; }
-    if (symbols.includes(value)) { setMessage({type:"info",text:`${value} zaten kayan panelde.`}); setRetry((current) => current + 1); return; }
-    if (symbols.length >= MAX_SYMBOLS) { setMessage({type:"error",text:"Panel dolu: en fazla 10 pair gösterilebilir. Önce bir pair kaldır."}); return; }
-    setSymbols((current) => [value, ...current]); setDraft(""); setMessage({type:"success",text:`${value} eklendi ve kayan panelin başına alındı.`});
-  };
-  const remove = (symbol) => { if (symbols.length === 1) { setMessage({type:"error",text:"Bantta en az bir piyasa kalmalı."}); return; } setSymbols((current) => current.filter((item) => item !== symbol)); setMessage({type:"success",text:`${symbol} panelden kaldırıldı.`}); };
-  const reset = () => { setSymbols(DEFAULT_SYMBOLS); setMessage({type:"success",text:"Varsayılan pair listesi yüklendi."}); };
-  return <div className="market-ticker-host" aria-label="Canlı piyasa bandı">
-    <div className="market-ticker-toolbar"><a className="market-tv-link" href="https://www.tradingview.com/" target="_blank" rel="noreferrer" aria-label="TradingView'ı aç" title="TradingView"><svg viewBox="0 0 28 18" aria-hidden="true"><path d="M1 3h10v4H7v8H3V7H1z"/><path d="M12 3h4l3 7 3-7h5l-6 12h-4z"/></svg></a><button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open}>＋ Ekle / Kaldır <b>{symbols.length}/{MAX_SYMBOLS}</b></button></div>
-    <div className="tradingview-ticker-shell"><div ref={widgetRef} className="market-ticker-track" style={{'--ticker-copy-width':`${Math.max(1200,symbols.length*230)}px`,'--ticker-duration':`${Math.max(28,symbols.length*5)}s`}}><div className="market-ticker-placeholder">Canlı piyasa verileri yükleniyor…</div></div>{widgetError && <button type="button" className="market-widget-error" onClick={() => setRetry((value) => value + 1)}>{widgetError} Tekrar dene</button>}</div>
-    {open && <div className="market-ticker-settings"><header><div><strong>Piyasa bandını düzenle <em>{symbols.length}/{MAX_SYMBOLS}</em></strong><small>TradingView kodu: BORSA:SEMBOL</small></div><button type="button" onClick={() => setOpen(false)} aria-label="Kapat">×</button></header><form onSubmit={add}><input value={draft} onChange={(event) => {setDraft(event.target.value);setMessage(null)}} placeholder="Örn. BIST:THYAO veya BINANCE:SOLUSDT" autoFocus/><button type="submit" disabled={symbols.length >= MAX_SYMBOLS}>Ekle</button></form>{message && <p className={`market-editor-message ${message.type}`} role="status">{message.text}</p>}<div className="market-symbol-list">{symbols.map((symbol) => <div key={symbol}><span>{symbol}</span><button type="button" onClick={() => remove(symbol)} disabled={symbols.length === 1}>Kaldır</button></div>)}</div><footer><button type="button" onClick={reset}>Varsayılanları yükle</button><a href="https://www.tradingview.com/symbols/" target="_blank" rel="noreferrer">Kod ara ↗</a></footer></div>}
-  </div>;
+export default function MarketTicker(){
+ const[symbols,setSymbols]=useState(initialSymbols),[quotes,setQuotes]=useState({}),[open,setOpen]=useState(false),[status,setStatus]=useState('loading'),[updatedAt,setUpdatedAt]=useState('');
+ useEffect(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(symbols))}catch{}},[symbols]);
+ useEffect(()=>{
+  let timer,cancelled=false;
+  const load=async()=>{try{setStatus(current=>Object.keys(quotes).length?current:'loading');const response=await fetch(`/api/markets?symbols=${encodeURIComponent(symbols.join(','))}`,{cache:'no-store'});const json=await response.json();if(!response.ok)throw new Error(json?.error||'Piyasa verisi alınamadı.');if(cancelled)return;setQuotes(current=>({...current,...Object.fromEntries((json.quotes||[]).map(item=>[item.symbol,item]))}));setUpdatedAt(json.fetchedAt||new Date().toISOString());setStatus('live')}catch{if(!cancelled)setStatus(current=>Object.keys(quotes).length?'stale':'error')}};
+  load();timer=setInterval(load,60000);return()=>{cancelled=true;clearInterval(timer)};
+ },[symbols.join(',')]);
+ const items=useMemo(()=>symbols.map(id=>{const meta=MARKET_CATALOG.find(([key])=>key===id);return{id,label:meta?.[1]||id,...quotes[id]}}),[symbols,quotes]);
+ const add=id=>{if(!allowed.has(id)||symbols.includes(id)||symbols.length>=10)return;setSymbols(current=>[...current,id])};
+ const remove=id=>setSymbols(current=>current.filter(item=>item!==id));
+ const copies=[0,1];
+ return <section className="market-ticker-host native-market" aria-label="Canlı piyasa bandı">
+  <div className="market-ticker-toolbar"><span className={`market-live-state ${status}`}><i/>{status==='live'?'CANLI':status==='error'?'BAĞLANTI':'GÜNCELLENİYOR'}</span><button type="button" onClick={()=>setOpen(value=>!value)} aria-expanded={open}>＋ Ekle / Kaldır <b>{symbols.length}/10</b></button></div>
+  <div className="native-market-viewport"><div className="native-market-track" style={{'--market-width':`${Math.max(920,items.length*230)}px`,'--market-speed':`${Math.max(28,items.length*6)}s`}}>{copies.map(copy=><div className="native-market-copy" key={copy}>{items.map(item=>{const change=Number(item.changePercent);const ready=Number.isFinite(Number(item.price));return <article className="native-market-card" key={`${copy}-${item.id}`}><div><strong>{item.symbol}</strong><small>{item.label}</small></div><div className="native-market-value"><b>{ready?number(item.price,digits(item.price)):'—'}</b><span className={change>0?'up':change<0?'down':'flat'}>{ready?`${change>0?'+':''}${number(change,2)}%`:'Bekleniyor'}</span></div></article>})}</div>)}</div></div>
+  {open&&<div className="market-ticker-settings native-market-settings"><header><div><strong>Piyasa bandını düzenle <em>{symbols.length}/10</em></strong><small>Eklemek veya kaldırmak için ürüne dokun.</small></div><button type="button" onClick={()=>setOpen(false)} aria-label="Kapat">×</button></header><div className="native-market-picker">{MARKET_CATALOG.map(([id,label])=>{const selected=symbols.includes(id);return <button type="button" key={id} className={selected?'selected':''} onClick={()=>selected?remove(id):add(id)} disabled={!selected&&symbols.length>=10}><span><b>{id}</b><small>{label}</small></span><strong>{selected?'Kaldır':'Ekle'}</strong></button>})}</div><footer><span>{updatedAt?`Son güncelleme ${new Date(updatedAt).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}`:'Veri bekleniyor'}</span><button type="button" onClick={()=>setSymbols(DEFAULT_SYMBOLS)}>Varsayılanlar</button></footer></div>}
+ </section>
 }
