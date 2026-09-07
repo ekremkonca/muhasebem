@@ -12,16 +12,34 @@ const setNativeValue = (element, value) => {
   element.dispatchEvent(new Event("input", { bubbles: true }));
 };
 
+const clickQueuedHeaderAction = () => {
+  let action = "";
+  try { action = sessionStorage.getItem("muhasebe:open-header-tool") || ""; } catch {}
+  if (!action) return false;
+
+  const buttons = [...document.querySelectorAll(".v7-header button")];
+  const target = buttons.find((button) =>
+    button.getAttribute("title") === action ||
+    button.textContent?.replace(/\s+/g, " ").trim().includes(action),
+  );
+  if (!target) return false;
+
+  try { sessionStorage.removeItem("muhasebe:open-header-tool"); } catch {}
+  target.click();
+  return true;
+};
+
 export default function SearchBridge() {
   useEffect(() => {
     let boundInput = null;
+    let frame = 0;
 
     const activateGlobalSearch = (event) => {
       const value = String(event.currentTarget?.value || "").trim();
       if (!value) return;
 
-      // Search should cover the complete accounting ledger, not only the
-      // currently selected date/type/status slice.
+      // Arama tüm muhasebe defterini kapsasın; eski tarih/tür/durum filtresi
+      // kullanıcıya yanlış biçimde "sonuç yok" göstermesin.
       const allDateButton = [...document.querySelectorAll(".date-presets button")]
         .find((button) => button.textContent?.trim() === "Tümü");
       if (allDateButton && !allDateButton.classList.contains("active")) {
@@ -34,23 +52,34 @@ export default function SearchBridge() {
     };
 
     const sync = () => {
-      const input = document.querySelector(".v7-filterbar .searchbox input");
-      if (input === boundInput) return;
-      boundInput?.removeEventListener("input", activateGlobalSearch);
-      boundInput = input;
-      if (!boundInput) return;
-      boundInput.disabled = false;
-      boundInput.readOnly = false;
-      boundInput.setAttribute("autocomplete", "off");
-      boundInput.setAttribute("aria-label", "Muhasebe kayıtlarında ara");
-      boundInput.addEventListener("input", activateGlobalSearch);
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const input = document.querySelector(".v7-filterbar .searchbox input");
+        if (input !== boundInput) {
+          boundInput?.removeEventListener("input", activateGlobalSearch);
+          boundInput = input;
+          if (boundInput) {
+            boundInput.disabled = false;
+            boundInput.readOnly = false;
+            boundInput.setAttribute("autocomplete", "off");
+            boundInput.setAttribute("aria-label", "Muhasebe kayıtlarında ara");
+            boundInput.addEventListener("input", activateGlobalSearch);
+          }
+        }
+        clickQueuedHeaderAction();
+      });
     };
 
     sync();
     const observer = new MutationObserver(sync);
     observer.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener("popstate", sync);
+    window.addEventListener("muhasebe:site-nav", sync);
     return () => {
+      cancelAnimationFrame(frame);
       observer.disconnect();
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("muhasebe:site-nav", sync);
       boundInput?.removeEventListener("input", activateGlobalSearch);
     };
   }, []);
