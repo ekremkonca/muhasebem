@@ -68,6 +68,8 @@
 .report-modal{max-width:900px;max-height:90vh;overflow:auto}
 .report-toolbar{display:flex;justify-content:space-between;gap:10px;margin:8px 0 16px}
 .report-toolbar input{border:1px solid var(--line,#d9dee7);border-radius:10px;background:transparent;color:inherit;padding:0 10px}
+.btn.whatsapp-share{background:#168a46;border-color:#168a46;color:#fff}
+.btn.whatsapp-share:hover{background:#11753a;border-color:#11753a}
 .report-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .report-grid article{border:1px solid var(--line,#d9dee7);border-radius:12px;padding:12px}
 .report-grid span{display:block;color:var(--muted,#64748b);font-size:11px}

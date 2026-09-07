@@ -20,8 +20,6 @@
 .home-empty-area{min-height:calc(100vh - 134px)}
 html[data-assets-page="1"] .global-category-nav-host{display:block!important}
 html[data-assets-page="1"] .main-dashboard.v7-dashboard{display:none!important}
-.auth-shell:has(>.auth-card>h2:only-child){background:var(--bg)!important;padding:0;min-height:0}
-.auth-shell>.auth-card:has(>h2:only-child){display:none!important}
 @media(max-width:900px){.home-v7-header{height:auto;min-height:72px;padding:10px 16px;align-items:flex-start}.home-brand{flex-wrap:wrap}.home-header-actions{overflow-x:auto;max-width:100%;padding-bottom:4px}.global-category-nav{padding:0 12px}.global-category-nav a{padding:0 14px}.home-theme-pill{height:36px}.home-currency{height:38px}}
 @media(max-width:720px){.brand-logo-mark{width:48px;height:39px}.auth-logo-image{width:min(180px,66%)}}
 @media(max-width:760px){.standalone-calendar-page{padding:16px 12px 40px}.standalone-page-header .header-actions{gap:6px}.standalone-page-header .btn{padding:8px 10px;font-size:12px}}

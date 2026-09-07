@@ -11,6 +11,7 @@ const timeText=value=>value?new Intl.DateTimeFormat('tr-TR',{day:'2-digit',month
 const addDays=(iso,days)=>{const d=new Date(`${iso}T12:00:00`);d.setDate(d.getDate()+Number(days||0));return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const todayIso=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const daysBetween=(from,to)=>Math.floor((new Date(`${to}T12:00:00`)-new Date(`${from}T12:00:00`))/86400000);
+const shareWhatsAppText=text=>{if(window.AndroidAuth?.shareText){window.AndroidAuth.shareText(text);return}window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank','noopener,noreferrer')};
 
 function deriveDeposit(raw){
  const deposit={...DEFAULT_DEPOSIT,...raw};
@@ -101,10 +102,12 @@ function AssetReportModal({settings,onClose}){
  const bought=monthlyTransactions.filter(row=>row.type==='buy').reduce((sum,row)=>sum+(Number(row.units)||0)*(Number(row.price)||0),0);
  const sold=monthlyTransactions.filter(row=>row.type==='sell').reduce((sum,row)=>sum+(Number(row.units)||0)*(Number(row.price)||0),0);
  const fundCost=fund.units*fund.averagePrice;
+ const reportText=[`REHBERLİK MUHASEBE — VARLIKLAR ${month}`,'',`Mevduat anapara: ${tl(deposit.principal)}`,`Mevduat net getiri: ${tl(deposit.netInterest)}`,`Fon adedi: ${num(fund.units,3)} ${fund.fundCode}`,`Fon maliyeti: ${tl(fundCost)}`,`Bu ay fon alımı: ${tl(bought)}`,`Bu ay fon satışı: ${tl(sold)}`].join('\n');
+ const sharePdf=()=>{if(window.AndroidAuth?.sharePdfText){window.AndroidAuth.sharePdfText(`Varliklar-${month}`,reportText);return}window.print()};
  return <div className="asset-report-backdrop" onMouseDown={event=>event.target===event.currentTarget&&onClose()}>
   <section className="asset-report-modal" role="dialog" aria-modal="true" aria-label="Varlıklar aylık raporu">
    <div className="asset-report-head"><div><span className="eyebrow">AYLIK RAPOR</span><h2>Mevduat ve Fon Raporu</h2></div><button type="button" onClick={onClose} aria-label="Kapat">×</button></div>
-   <div className="asset-report-toolbar no-print"><input type="month" value={month} onChange={event=>setMonth(event.target.value)}/><button type="button" className="asset-report-print" onClick={()=>window.print()}>Yazdır / PDF</button></div>
+   <div className="asset-report-toolbar no-print"><input type="month" value={month} onChange={event=>setMonth(event.target.value)}/><button type="button" className="asset-report-print" onClick={sharePdf}>Yazdır / PDF</button><button type="button" className="asset-report-whatsapp" onClick={()=>shareWhatsAppText(reportText)}>WhatsApp'ta paylaş</button></div>
    <div className="asset-report-grid">
     <article><span>Mevduat anapara</span><strong>{tl(deposit.principal)}</strong><small>{deposit.bank} · %{num(deposit.annualRate,2)}</small></article>
     <article><span>Mevduat net getiri</span><strong>{tl(deposit.netInterest)}</strong><small>{dateText(deposit.startDate)} – {dateText(deposit.endDate)}</small></article>

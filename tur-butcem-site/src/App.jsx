@@ -518,7 +518,7 @@ function EntryModal({ record, onClose, onSave, currency }) {
   );
 }
 
-function ReportModal({ rows, currency, convert, onExcel, onPdf, onClose }) {
+function ReportModal({ rows, currency, convert, onExcel, onPdf, onWhatsApp, onClose }) {
   const [month, setMonth] = useState(today().slice(0, 7));
   const monthRows = rows.filter((r) => r.date.startsWith(month));
   const paid = monthRows.filter((r) => r.status === "Ödendi");
@@ -534,6 +534,17 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onClose }) {
     pending = monthRows
       .filter((r) => r.status === "Ödenmedi" && isIncome(r))
       .reduce((s, r) => s + convert(r), 0);
+  const reportText = [
+    `REHBERLİK MUHASEBE — ${month}`,
+    "",
+    `Gelir: ${money(income, currency)}`,
+    `Masraf: ${money(expense, currency)}`,
+    `Net: ${money(income - expense, currency)}`,
+    `Bahşiş: ${money(tips, currency)}`,
+    `Komisyon: ${money(commission, currency)}`,
+    `Tur sayısı: ${tourCount}`,
+    `Bekleyen tahsilat: ${money(pending, currency)}`,
+  ].join("\n");
   return (
     <div className="modal-backdrop report-backdrop">
       <section className="modal report-modal">
@@ -553,13 +564,16 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onClose }) {
             value={month}
             onChange={(e) => setMonth(e.target.value)}
           />
-          <button className="btn primary" onClick={onPdf || (() => window.print())}>
+          <button className="btn primary" onClick={() => onPdf ? onPdf({ text: reportText, month }) : window.print()}>
             <Icon name="report" />
             Yazdır / PDF
           </button>
-          <button className="btn secondary" onClick={onExcel}>
+          <button className="btn secondary" onClick={() => onExcel?.({ rows: monthRows, month })}>
             <Icon name="download" />
             Excel
+          </button>
+          <button className="btn whatsapp-share" onClick={() => onWhatsApp?.({ text: reportText, month })}>
+            WhatsApp'ta paylaş
           </button>
         </div>
         <div className="report-grid">
@@ -1188,7 +1202,7 @@ function Dashboard({ onSignedOut }) {
     a.click();
     URL.revokeObjectURL(url);
   };
-  const excel = () => {
+  const excel = ({ rows: reportRows = rows, month: reportMonth = today().slice(0, 7) } = {}) => {
     const columns = [
       ["Tarih", "date"],
       ["Tur", "tour"],
@@ -1210,7 +1224,7 @@ function Dashboard({ onSignedOut }) {
       "\uFEFF" +
       [
         columns.map(([label]) => safe(label)).join(";"),
-        ...rows.map((row) =>
+        ...reportRows.map((row) =>
           columns
             .map(([, key]) =>
               safe(key === "amount" ? Number(row[key] || 0) : row[key]),
@@ -1222,11 +1236,11 @@ function Dashboard({ onSignedOut }) {
     if (window.AndroidAuth?.shareFileBase64) {
       let binary = "";
       bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
-      window.AndroidAuth.shareFileBase64(`Muhasebe-${today()}.csv`, "application/vnd.ms-excel", btoa(binary));
+      window.AndroidAuth.shareFileBase64(`Muhasebe-${reportMonth}.csv`, "application/vnd.ms-excel", btoa(binary));
       return;
     }
     if (navigator.share) {
-      const file = new File([bytes], `Muhasebe-${today()}.csv`, { type: "application/vnd.ms-excel" });
+      const file = new File([bytes], `Muhasebe-${reportMonth}.csv`, { type: "application/vnd.ms-excel" });
       navigator.share({ title: "Muhasebe raporu", files: [file] }).catch(() => {});
       return;
     }
@@ -1235,7 +1249,7 @@ function Dashboard({ onSignedOut }) {
       ),
       a = document.createElement("a");
     a.href = url;
-    a.download = `Muhasebe-${today()}.csv`;
+    a.download = `Muhasebe-${reportMonth}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -1249,23 +1263,20 @@ function Dashboard({ onSignedOut }) {
     await logout();
     onSignedOut();
   };
-  const sharePdf = () => {
-    const text = [
-      `REHBERLİK MUHASEBE — ${month}`,
-      "",
-      `Gelir: ${money(income, currency)}`,
-      `Masraf: ${money(expense, currency)}`,
-      `Net: ${money(income - expense, currency)}`,
-      `Bahşiş: ${money(tips, currency)}`,
-      `Komisyon: ${money(commission, currency)}`,
-      `Tur sayısı: ${tourCount}`,
-      `Bekleyen tahsilat: ${money(pending, currency)}`,
-    ].join("\n");
+  const sharePdf = ({ text, month: reportMonth } = {}) => {
     if (window.AndroidAuth?.sharePdfText) {
-      window.AndroidAuth.sharePdfText(`Muhasebe-${today()}`, text);
+      window.AndroidAuth.sharePdfText(`Muhasebe-${reportMonth || today()}`, text || "Muhasebe raporu");
       return;
     }
     window.print();
+  };
+  const shareWhatsApp = ({ text } = {}) => {
+    const message = text || "Rehberlik Muhasebe raporu";
+    if (window.AndroidAuth?.shareText) {
+      window.AndroidAuth.shareText(message);
+      return;
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   };
   const changePinAndKeepSession = async (pin) => {
     await changePin(pin);
@@ -1797,6 +1808,7 @@ function Dashboard({ onSignedOut }) {
           convert={converted}
           onExcel={excel}
           onPdf={sharePdf}
+          onWhatsApp={shareWhatsApp}
           onClose={() => setReportOpen(false)}
         />
       )}{" "}

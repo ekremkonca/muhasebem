@@ -84,7 +84,8 @@
 @media(max-width:760px){.assets-fund-page .assets-nav-button{font-size:12px}.assets-fund-page .fund-kpi strong{font-size:18px}.assets-fund-page .compact-details-grid dd{font-size:13px}}
 @media(max-width:430px){.assets-fund-page .fund-kpi strong{font-size:17px}}
 
-.assets-report-button,.asset-report-print{border:1px solid color-mix(in srgb,var(--green) 42%,var(--line));border-radius:11px;background:var(--green);color:#fff;padding:9px 13px;font-weight:850;cursor:pointer}
+.assets-report-button,.asset-report-print,.asset-report-whatsapp{border:1px solid color-mix(in srgb,var(--green) 42%,var(--line));border-radius:11px;background:var(--green);color:#fff;padding:9px 13px;font-weight:850;cursor:pointer}
+.asset-report-whatsapp{background:#168a46;border-color:#168a46}
 .asset-report-backdrop{position:fixed;inset:0;z-index:1100;display:grid;place-items:center;padding:18px;background:rgba(5,14,11,.62);backdrop-filter:blur(9px)}
 .asset-report-modal{width:min(900px,calc(100vw - 36px));max-height:calc(100dvh - 36px);overflow:auto;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--paper);color:var(--ink);box-shadow:0 30px 100px rgba(0,0,0,.3)}
 .asset-report-head,.asset-report-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px}

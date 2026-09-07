@@ -24,6 +24,7 @@ import "./styles/pages.css";
 const cleanPath = (value) => {
   let p = (value || "/").replace(/\/+$/, "") || "/";
   if (p.endsWith(".html")) p = p.slice(0, -5) || "/";
+  if (p.endsWith("/index")) p = p.slice(0, -6) || "/";
   return p;
 };
 
