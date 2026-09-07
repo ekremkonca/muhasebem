@@ -1,4 +1,4 @@
-import { clearSessionCookie, createSession, deleteCurrentSession, errorResponse, getDb, hashPin, isAuthenticated, json, makeSalt, sessionCookie } from '../_lib.js';
+import { clearSessionCookie, createSession, deleteCurrentSession, errorResponse, getDb, hashPin, isAuthenticated, json, makeSalt, requireSession, sessionCookie } from '../_lib.js';
 
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000;
@@ -66,6 +66,24 @@ async function handlePost(context) {
     return json({ ok: true, authenticated: true }, 200, { 'set-cookie': sessionCookie(token) });
   }
 
+  if (action === 'change-pin') {
+    await requireSession(context, db);
+    const pin = String(body?.pin || '');
+    if (!/^\d{4,8}$/.test(pin)) return json({ error: 'PIN 4-8 rakam olmalı.' }, 400);
+    const salt = makeSalt();
+    const pinHash = await hashPin(pin, salt);
+    await db.prepare('UPDATE admin_auth SET salt=?, pin_hash=? WHERE id=1').bind(salt, pinHash).run();
+    await db.prepare('DELETE FROM sessions').run();
+    const token = await createSession(db);
+    return json({ ok: true, configured: true, authenticated: true }, 200, { 'set-cookie': sessionCookie(token) });
+  }
+
+  if (action === 'logout-all') {
+    await requireSession(context, db);
+    await db.prepare('DELETE FROM sessions').run();
+    return json({ ok: true, authenticated: false }, 200, { 'set-cookie': clearSessionCookie() });
+  }
+
   if (action === 'logout') {
     await deleteCurrentSession(context, db);
     return json({ ok: true, authenticated: false }, 200, { 'set-cookie': clearSessionCookie() });
@@ -85,3 +103,4 @@ export async function onRequest(context) {
     return errorResponse(error, 'Kimlik doğrulama işlemi başarısız.');
   }
 }
+
