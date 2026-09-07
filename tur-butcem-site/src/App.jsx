@@ -1302,7 +1302,7 @@ function Dashboard({ onSignedOut }) {
           <strong>
             Muhasebe <small>V7</small>
           </strong>
-          <ThemeSwitcher />
+          <div className="header-tool-grid"><ThemeSwitcher />
           <div className="system-shortcuts" aria-label="Sistem araçları">
             <button
               className="system-shortcut-card"
@@ -1336,7 +1336,7 @@ function Dashboard({ onSignedOut }) {
               <Icon name="settings" />
               <span>Güvenlik</span>
             </button>
-          </div>
+          </div></div>
         </div>
         <div className="header-actions">
           {installPrompt && (
