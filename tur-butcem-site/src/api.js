@@ -24,8 +24,9 @@ async function parseResponse(response) {
   return data;
 }
 
+const API_ORIGIN = "https://rehberlikmuhasebe.pages.dev";
 const request = (url, options = {}) =>
-  fetch(url, {
+  fetch(`${API_ORIGIN}${url}`, {
     credentials: "same-origin",
     cache: "no-store",
     headers: {
@@ -65,6 +66,19 @@ export const getAuthState = (fresh = false) => {
     });
   return authInFlight;
 };
+export async function getAuthStateWithRetry() {
+  let lastError;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      return await getAuthState(attempt > 0);
+    } catch (error) {
+      lastError = error;
+      if (error?.status && error.status < 500 && error.status !== 408 && error.status !== 429) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 700 * (attempt + 1)));
+    }
+  }
+  throw lastError || new Error("Sunucuya bağlanılamadı.");
+}
 export const setupPin = (pin) =>
   request("/api/auth", {
     method: "POST",
@@ -79,6 +93,16 @@ export const logout = () =>
   request("/api/auth", {
     method: "POST",
     body: JSON.stringify({ action: "logout" }),
+  }).then(setAuthCache);
+export const changePin = (pin) =>
+  request("/api/auth", {
+    method: "POST",
+    body: JSON.stringify({ action: "change-pin", pin }),
+  }).then(setAuthCache);
+export const logoutAllSessions = () =>
+  request("/api/auth", {
+    method: "POST",
+    body: JSON.stringify({ action: "logout-all" }),
   }).then(setAuthCache);
 
 export async function loadRecords(trash = false) {
@@ -177,3 +201,4 @@ export async function updateEvent(event) {
 }
 export const deleteEvent = (id) =>
   request(`/api/events?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+

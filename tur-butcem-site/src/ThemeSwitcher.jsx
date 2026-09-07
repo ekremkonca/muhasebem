@@ -23,7 +23,7 @@ let privacyObserver=null;
 const originals=new Map();
 
 const getInitialTheme=()=>{try{const saved=localStorage.getItem(THEME_KEY);return THEMES.some(([id])=>id===saved)?saved:'emerald'}catch{return'emerald'}};
-const getInitialMode=()=>{try{return localStorage.getItem(MODE_KEY)==='dark'?'dark':'light'}catch{return'light'}};
+const getInitialMode=()=>{try{const saved=localStorage.getItem(MODE_KEY);return saved==='dark'||saved==='system'?saved:'light'}catch{return'light'}};
 const skipped=node=>Boolean(node?.parentElement?.closest('script,style,input,textarea,select,option,.privacy-trigger'));
 const hasMoney=text=>{MONEY_RE.lastIndex=0;return MONEY_RE.test(text||'')};
 const maskText=node=>{if(!node||node.nodeType!==Node.TEXT_NODE||skipped(node)||!hasMoney(node.data))return;originals.set(node,node.data);MONEY_RE.lastIndex=0;node.data=node.data.replace(MONEY_RE,'••••')};
@@ -37,18 +37,21 @@ function ModeIcon({dark}){return <svg width="18" height="18" viewBox="0 0 24 24"
 
 export default function ThemeSwitcher(){
  const panelId=useId(),triggerRef=useRef(null);
- const[theme,setTheme]=useState(getInitialTheme),[mode,setMode]=useState(getInitialMode),[open,setOpen]=useState(false),[hidden,setHidden]=useState(()=>{try{return localStorage.getItem(PRIVACY_KEY)==='1'}catch{return false}}),ref=useRef();
+ const[theme,setTheme]=useState(getInitialTheme),[mode,setMode]=useState(getInitialMode),[open,setOpen]=useState(false),[hidden,setHidden]=useState(()=>{try{return localStorage.getItem(PRIVACY_KEY)==='1'}catch{return false}}),[systemDark,setSystemDark]=useState(()=>window.matchMedia?.('(prefers-color-scheme: dark)').matches??false),ref=useRef();
  useEffect(()=>{document.documentElement.dataset.theme=theme;try{localStorage.setItem(THEME_KEY,theme)}catch{}window.dispatchEvent(new CustomEvent(THEME_EVENT,{detail:theme}))},[theme]);
- useEffect(()=>{document.documentElement.dataset.mode=mode;try{localStorage.setItem(MODE_KEY,mode)}catch{}window.dispatchEvent(new CustomEvent(MODE_EVENT,{detail:mode}))},[mode]);
+ const effectiveMode=mode==='system'?(systemDark?'dark':'light'):mode;
+ useEffect(()=>{document.documentElement.dataset.mode=effectiveMode;try{localStorage.setItem(MODE_KEY,mode)}catch{}window.dispatchEvent(new CustomEvent(MODE_EVENT,{detail:effectiveMode}))},[mode,effectiveMode]);
+ useEffect(()=>{const media=window.matchMedia?.('(prefers-color-scheme: dark)');if(!media)return;const onChange=e=>setSystemDark(e.matches);media.addEventListener?.('change',onChange);return()=>media.removeEventListener?.('change',onChange)},[]);
  useEffect(()=>{const onTheme=e=>e.detail&&e.detail!==theme&&setTheme(e.detail);const onMode=e=>e.detail&&e.detail!==mode&&setMode(e.detail);window.addEventListener(THEME_EVENT,onTheme);window.addEventListener(MODE_EVENT,onMode);return()=>{window.removeEventListener(THEME_EVENT,onTheme);window.removeEventListener(MODE_EVENT,onMode)}},[theme,mode]);
  useEffect(()=>{const close=e=>!ref.current?.contains(e.target)&&setOpen(false);document.addEventListener('pointerdown',close);return()=>document.removeEventListener('pointerdown',close)},[]);
  useEffect(()=>{if(!open)return;const escape=e=>{if(e.key==='Escape'){setOpen(false);triggerRef.current?.focus()}};document.addEventListener('keydown',escape);return()=>document.removeEventListener('keydown',escape)},[open]);
  useEffect(()=>{try{localStorage.setItem(PRIVACY_KEY,hidden?'1':'0')}catch{}hidden?startPrivacy():stopPrivacy();return()=>{privacyObserver?.disconnect()}},[hidden]);
- const current=THEMES.find(x=>x[0]===theme)||THEMES[0],dark=mode==='dark';
+ const current=THEMES.find(x=>x[0]===theme)||THEMES[0],dark=effectiveMode==='dark';
  return <div className="theme-menu v8-theme-menu" ref={ref}>
   <button ref={triggerRef} className="theme-trigger theme-icon-trigger" type="button" onClick={()=>setOpen(x=>!x)} title="Tema rengini değiştir" aria-label={`Tema rengini değiştir. Seçili: ${current[1]}`} aria-expanded={open} aria-controls={open?panelId:undefined}><PaletteIcon/><i className="theme-current-dot" style={{'--theme-dot':current[2]}}/><span className="mobile-tool-label">Tema</span></button>
   <button className={`privacy-trigger v8-privacy-trigger${hidden?' active':''}`} type="button" onClick={()=>setHidden(x=>!x)} title={hidden?'Bakiyeleri göster':'Bakiyeleri gizle'} aria-label={hidden?'Bakiyeleri göster':'Bakiyeleri gizle'} aria-pressed={hidden}><EyeIcon hidden={hidden}/><span className="mobile-tool-label">{hidden?'Göster':'Gizle'}</span></button>
-  <button className={`mode-trigger v8-mode-trigger${dark?' active':''}`} type="button" onClick={()=>setMode(dark?'light':'dark')} title={dark?'Açık moda geç':'Koyu moda geç'} aria-label={dark?'Açık moda geç':'Koyu moda geç'} aria-pressed={dark}><ModeIcon dark={dark}/><span className="mobile-tool-label">{dark?'Açık mod':'Koyu mod'}</span></button>
+  <button className={`mode-trigger v8-mode-trigger${dark?' active':''}`} type="button" onClick={()=>setMode(mode==='light'?'dark':mode==='dark'?'system':'light')} title={mode==='system'?'Sistem temasını kullanıyor':dark?'Açık moda geç':'Koyu moda geç'} aria-label="Renk modunu değiştir" aria-pressed={dark}><ModeIcon dark={dark}/><span className="mobile-tool-label">{mode==='system'?'Sistem':dark?'Açık mod':'Koyu mod'}</span></button>
   {open&&<div id={panelId} className="theme-panel v8-theme-panel" role="group" aria-label="Tema renkleri">{THEMES.map(([id,name,color])=><button key={id} type="button" className={theme===id?'active':''} aria-pressed={theme===id} onClick={()=>{setTheme(id);setOpen(false);triggerRef.current?.focus()}}><i style={{'--theme-dot':color}}/>{name}</button>)}</div>}
  </div>
 }
+
