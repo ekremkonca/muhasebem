@@ -59,6 +59,7 @@
 .auth-card label{display:grid;gap:6px;margin-top:14px;font-size:12px;font-weight:700}
 .auth-card input{height:46px;border:1px solid var(--line,#d9dee7);border-radius:11px;background:transparent;color:inherit;padding:0 12px;font-size:20px;letter-spacing:.18em}
 .auth-submit{width:100%;justify-content:center;margin-top:18px;min-height:44px}
+.auth-biometric{width:100%;justify-content:center;margin-top:10px;min-height:44px;border:1px solid var(--line,#d9dee7);background:transparent;color:inherit}
 .auth-error{color:#b91c1c!important;font-size:12px}
 .undo-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:12px;background:#111827;color:#fff;border-radius:13px;padding:12px 14px;box-shadow:0 18px 50px rgba(0,0,0,.3);font-size:13px}
 .undo-toast button{border:0;background:transparent;color:#93c5fd;font-weight:800;cursor:pointer}
@@ -97,3 +98,4 @@
 .system-shortcut-card:hover{border-color:var(--green);background:var(--mint);transform:translateY(-1px)}
 .system-shortcut-card:nth-child(3){grid-column:1 / -1}
 @media(max-width:720px){.system-shortcuts{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));order:5}.system-shortcut-card{justify-content:center}.system-shortcut-card:nth-child(3){grid-column:1 / -1}}
+
