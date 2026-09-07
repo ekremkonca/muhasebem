@@ -1264,10 +1264,12 @@ function Dashboard({ onSignedOut }) {
   };
   const changePinAndKeepSession = async (pin) => {
     await changePin(pin);
+    try { window.AndroidAuth?.savePin(pin); } catch {}
   };
   const signOutAll = async () => {
     if (!window.confirm("Tüm cihazlardaki oturumlar kapatılsın mı?")) return;
     await logoutAllSessions();
+    try { window.AndroidAuth?.clearPin(); } catch {}
     onSignedOut();
   };
   const pageStart = filteredRows.length ? (page - 1) * PAGE_SIZE + 1 : 0,
