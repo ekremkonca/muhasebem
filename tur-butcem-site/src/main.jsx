@@ -4,6 +4,7 @@ import SiteRouter from './SiteRouter.jsx';
 import './styles/styles.css';
 import './styles/header-left.css';
 import './styles/v8-visual.css';
+import './styles/v8-suite.css';
 import './styles/assets-page.css';
 import './styles/dark-mode.css';
 import './styles/product-redesign.css';
