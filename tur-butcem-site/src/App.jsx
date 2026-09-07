@@ -927,7 +927,7 @@ function Dashboard({ onSignedOut }) {
           (statusFilter === "Tümü" || r.status === statusFilter) &&
           (!q ||
             [r.tour, r.guest, r.agency, r.ship, r.note, r.tags, r.type, r.status].some(
-              (v) => tidy(v).includes(q),
+              (v) => tidy(Array.isArray(v) ? v.join(" ") : v).includes(q),
             )),
       )
       .sort((a, b) =>
@@ -936,6 +936,7 @@ function Dashboard({ onSignedOut }) {
           : b.date.localeCompare(a.date),
       );
   }, [accountingRows, typeFilter, statusFilter, sortOrder, search]);
+  useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter, datePreset, customFrom, customTo]);
   const paid = accountingRows.filter((r) => r.status === "Ödendi"),
     income = paid.filter(isIncome).reduce((s, r) => s + converted(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + converted(r), 0),
