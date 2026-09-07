@@ -21,5 +21,5 @@ export default function CategoryNavBridge(){
     window.addEventListener(SITE_NAV_EVENT,sync);
     return()=>{window.removeEventListener('popstate',sync);window.removeEventListener(SITE_NAV_EVENT,sync)};
   },[]);
-  return <div className="global-category-nav-host"><nav className="global-category-nav" aria-label="Ana kategoriler">{LINKS.map(([href,label,key])=><a key={key} href={href} data-page={key} aria-current={active===key?'page':undefined} className={active===key?'active':''} onClick={event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();navigateTo(href)}}>{label}</a>)}</nav></div>;
+  return <div className="global-category-nav-host"><nav className="global-category-nav" aria-label="Ana kategoriler">{LINKS.map(([href,label,key])=><a key={key} href={href} data-page={key} aria-current={active===key?'page':undefined} className={active===key?'active':''} onClick={event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();window.location.assign(href)}}>{label}</a>)}</nav></div>;
 }
