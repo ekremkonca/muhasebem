@@ -4,14 +4,14 @@ import'./styles/neon-calendar-fix.css';
 import'./styles/privacy.css';
 
 const THEMES=[
- ['emerald','Zümrüt','#00a86b'],
- ['ocean','Okyanus','#008cff'],
- ['royal','Kraliyet','#315cff'],
- ['violet','Mor Neon','#8b5cf6'],
- ['fuchsia','Fuşya','#e83e8c'],
- ['coral','Mercan','#ff6b4a'],
- ['sunset','Günbatımı','#ff8a00'],
- ['neon','Gece Neon','#00b8df']
+ ['emerald','Sage Modern','#0f9f72'],
+ ['ocean','Buz Mavisi','#2387d9'],
+ ['royal','Royal Blue','#4355d9'],
+ ['violet','Lavanta','#8759d6'],
+ ['fuchsia','Berry','#d44786'],
+ ['coral','Terracotta','#e86f50'],
+ ['sunset','Sıcak Kum','#d98b26'],
+ ['neon','Midnight Neon','#00b8df']
 ];
 const THEME_KEY='muhasebe-theme';
 const MODE_KEY='muhasebe-color-mode';
