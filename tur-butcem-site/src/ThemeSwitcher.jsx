@@ -1,4 +1,4 @@
-import React,{useEffect,useRef,useState}from'react';
+import React,{useEffect,useId,useRef,useState}from'react';
 import'./styles/themes.css';
 import'./styles/neon-calendar-fix.css';
 import'./styles/privacy.css';
@@ -36,17 +36,19 @@ function PaletteIcon(){return <svg width="18" height="18" viewBox="0 0 24 24" fi
 function ModeIcon({dark}){return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{dark?<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.7 6.7 0 0 0 21 12.8z"/>:<><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></>}</svg>}
 
 export default function ThemeSwitcher(){
+ const panelId=useId(),triggerRef=useRef(null);
  const[theme,setTheme]=useState(getInitialTheme),[mode,setMode]=useState(getInitialMode),[open,setOpen]=useState(false),[hidden,setHidden]=useState(()=>{try{return localStorage.getItem(PRIVACY_KEY)==='1'}catch{return false}}),ref=useRef();
  useEffect(()=>{document.documentElement.dataset.theme=theme;try{localStorage.setItem(THEME_KEY,theme)}catch{}window.dispatchEvent(new CustomEvent(THEME_EVENT,{detail:theme}))},[theme]);
  useEffect(()=>{document.documentElement.dataset.mode=mode;try{localStorage.setItem(MODE_KEY,mode)}catch{}window.dispatchEvent(new CustomEvent(MODE_EVENT,{detail:mode}))},[mode]);
  useEffect(()=>{const onTheme=e=>e.detail&&e.detail!==theme&&setTheme(e.detail);const onMode=e=>e.detail&&e.detail!==mode&&setMode(e.detail);window.addEventListener(THEME_EVENT,onTheme);window.addEventListener(MODE_EVENT,onMode);return()=>{window.removeEventListener(THEME_EVENT,onTheme);window.removeEventListener(MODE_EVENT,onMode)}},[theme,mode]);
- useEffect(()=>{const close=e=>!ref.current?.contains(e.target)&&setOpen(false);document.addEventListener('mousedown',close);return()=>document.removeEventListener('mousedown',close)},[]);
+ useEffect(()=>{const close=e=>!ref.current?.contains(e.target)&&setOpen(false);document.addEventListener('pointerdown',close);return()=>document.removeEventListener('pointerdown',close)},[]);
+ useEffect(()=>{if(!open)return;const escape=e=>{if(e.key==='Escape'){setOpen(false);triggerRef.current?.focus()}};document.addEventListener('keydown',escape);return()=>document.removeEventListener('keydown',escape)},[open]);
  useEffect(()=>{try{localStorage.setItem(PRIVACY_KEY,hidden?'1':'0')}catch{}hidden?startPrivacy():stopPrivacy();return()=>{privacyObserver?.disconnect()}},[hidden]);
  const current=THEMES.find(x=>x[0]===theme)||THEMES[0],dark=mode==='dark';
  return <div className="theme-menu v8-theme-menu" ref={ref}>
-  <button className="theme-trigger theme-icon-trigger" type="button" onClick={()=>setOpen(x=>!x)} title="Tema rengini değiştir" aria-label={`Tema rengini değiştir. Seçili: ${current[1]}`}><PaletteIcon/><i className="theme-current-dot" style={{'--theme-dot':current[2]}}/></button>
-  <button className={`privacy-trigger v8-privacy-trigger${hidden?' active':''}`} type="button" onClick={()=>setHidden(x=>!x)} title={hidden?'Bakiyeleri göster':'Bakiyeleri gizle'} aria-label={hidden?'Bakiyeleri göster':'Bakiyeleri gizle'} aria-pressed={hidden}><EyeIcon hidden={hidden}/></button>
-  <button className={`mode-trigger v8-mode-trigger${dark?' active':''}`} type="button" onClick={()=>setMode(dark?'light':'dark')} title={dark?'Açık moda geç':'Koyu moda geç'} aria-label={dark?'Açık moda geç':'Koyu moda geç'} aria-pressed={dark}><ModeIcon dark={dark}/></button>
-  {open&&<div className="theme-panel v8-theme-panel">{THEMES.map(([id,name,color])=><button key={id} type="button" className={theme===id?'active':''} onClick={()=>{setTheme(id);setOpen(false)}}><i style={{'--theme-dot':color}}/>{name}</button>)}</div>}
+  <button ref={triggerRef} className="theme-trigger theme-icon-trigger" type="button" onClick={()=>setOpen(x=>!x)} title="Tema rengini değiştir" aria-label={`Tema rengini değiştir. Seçili: ${current[1]}`} aria-expanded={open} aria-controls={open?panelId:undefined}><PaletteIcon/><i className="theme-current-dot" style={{'--theme-dot':current[2]}}/><span className="mobile-tool-label">Tema</span></button>
+  <button className={`privacy-trigger v8-privacy-trigger${hidden?' active':''}`} type="button" onClick={()=>setHidden(x=>!x)} title={hidden?'Bakiyeleri göster':'Bakiyeleri gizle'} aria-label={hidden?'Bakiyeleri göster':'Bakiyeleri gizle'} aria-pressed={hidden}><EyeIcon hidden={hidden}/><span className="mobile-tool-label">{hidden?'Göster':'Gizle'}</span></button>
+  <button className={`mode-trigger v8-mode-trigger${dark?' active':''}`} type="button" onClick={()=>setMode(dark?'light':'dark')} title={dark?'Açık moda geç':'Koyu moda geç'} aria-label={dark?'Açık moda geç':'Koyu moda geç'} aria-pressed={dark}><ModeIcon dark={dark}/><span className="mobile-tool-label">{dark?'Açık mod':'Koyu mod'}</span></button>
+  {open&&<div id={panelId} className="theme-panel v8-theme-panel" role="group" aria-label="Tema renkleri">{THEMES.map(([id,name,color])=><button key={id} type="button" className={theme===id?'active':''} aria-pressed={theme===id} onClick={()=>{setTheme(id);setOpen(false);triggerRef.current?.focus()}}><i style={{'--theme-dot':color}}/>{name}</button>)}</div>}
  </div>
 }
