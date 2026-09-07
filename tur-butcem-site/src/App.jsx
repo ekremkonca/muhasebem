@@ -6,10 +6,12 @@ import {
   deleteHistory,
   createEvent,
   createRecord,
+  changePin,
   deleteEvent,
   deleteRecord,
   deleteRecords,
   exportBackup,
+  getAuthStateWithRetry,
   getAuthState,
   loadBackups,
   loadEvents,
@@ -18,6 +20,7 @@ import {
   loadSettings,
   login,
   logout,
+  logoutAllSessions,
   permanentDeleteRecord,
   restoreBackup,
   restoreRecord,
@@ -241,7 +244,9 @@ function AuthScreen({ configured, onDone }) {
   const [pin, setPin] = useState(""),
     [confirm, setConfirm] = useState(""),
     [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [nativeBiometric, setNativeBiometric] = useState(false);
+  useEffect(() => setNativeBiometric(Boolean(window.AndroidAuth)), []);
   const submit = async (e) => {
     e.preventDefault();
     setError("");
@@ -256,8 +261,17 @@ function AuthScreen({ configured, onDone }) {
     setBusy(true);
     try {
       configured ? await login(pin) : await setupPin(pin);
+      try { window.AndroidAuth?.savePin(pin); } catch {}
       onDone();
     } catch (err) {
+      try {
+        const recovered = await getAuthState(true);
+        if (recovered?.authenticated) {
+          try { window.AndroidAuth?.savePin(pin); } catch {}
+          onDone();
+          return;
+        }
+      } catch {}
       setError(err.message);
     } finally {
       setBusy(false);
@@ -307,6 +321,15 @@ function AuthScreen({ configured, onDone }) {
               ? "Giriş yap"
               : "PIN’i oluştur"}
         </button>
+        {nativeBiometric && configured && (
+          <button
+            type="button"
+            className="btn auth-biometric"
+            onClick={() => window.AndroidAuth.authenticate()}
+          >
+            👆 Parmak izi ile giriş
+          </button>
+        )}
       </form>
     </div>
   );
@@ -495,7 +518,7 @@ function EntryModal({ record, onClose, onSave, currency }) {
   );
 }
 
-function ReportModal({ rows, currency, convert, onExcel, onClose }) {
+function ReportModal({ rows, currency, convert, onExcel, onPdf, onClose }) {
   const [month, setMonth] = useState(today().slice(0, 7));
   const monthRows = rows.filter((r) => r.date.startsWith(month));
   const paid = monthRows.filter((r) => r.status === "Ödendi");
@@ -530,7 +553,7 @@ function ReportModal({ rows, currency, convert, onExcel, onClose }) {
             value={month}
             onChange={(e) => setMonth(e.target.value)}
           />
-          <button className="btn primary" onClick={() => window.print()}>
+          <button className="btn primary" onClick={onPdf || (() => window.print())}>
             <Icon name="report" />
             Yazdır / PDF
           </button>
@@ -598,6 +621,32 @@ function ReportModal({ rows, currency, convert, onExcel, onClose }) {
   );
 }
 
+function SecurityPanel({ onChangePin, onLogoutAll }) {
+  const [pin, setPin] = useState(""), [confirm, setConfirm] = useState(""), [busy, setBusy] = useState(false), [message, setMessage] = useState("");
+  const submit = async (event) => {
+    event.preventDefault();
+    if (!/^\d{4,8}$/.test(pin) || pin !== confirm) { setMessage("PIN 4-8 rakam olmalı ve tekrar alanı eşleşmeli."); return; }
+    setBusy(true); setMessage("");
+    try { await onChangePin(pin); setPin(""); setConfirm(""); setMessage("PIN değiştirildi."); }
+    catch (error) { setMessage(error.message || "PIN değiştirilemedi."); }
+    finally { setBusy(false); }
+  };
+  return <div className="security-panel">
+    <form onSubmit={submit} className="security-form">
+      <p>Yeni PIN 4-8 rakamdan oluşmalıdır.</p>
+      <label>Yeni PIN<input type="password" inputMode="numeric" maxLength="8" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} /></label>
+      <label>Yeni PIN tekrar<input type="password" inputMode="numeric" maxLength="8" value={confirm} onChange={(e) => setConfirm(e.target.value.replace(/\D/g, ""))} /></label>
+      {message && <p className="system-message">{message}</p>}
+      <button className="btn primary" disabled={busy}>{busy ? "Kaydediliyor..." : "PIN’i değiştir"}</button>
+    </form>
+    <div className="security-danger">
+      <strong>Tüm cihazlardan çıkış</strong>
+      <p>Açık olan tüm oturumlar kapatılır ve her cihazda yeniden PIN istenir.</p>
+      <button className="btn danger" onClick={onLogoutAll}>Tüm cihazlardan çıkış yap</button>
+    </div>
+  </div>;
+}
+
 function SystemPanel({
   tab,
   onClose,
@@ -615,6 +664,8 @@ function SystemPanel({
   trash,
   onRestoreTrash,
   onPurgeTrash,
+  onChangePin,
+  onLogoutAll,
 }) {
   if (!tab) return null;
   const actionLabel = {
@@ -638,7 +689,9 @@ function SystemPanel({
                 ? "Yedekleme merkezi"
                 : tab === "history"
                   ? "İşlem geçmişi"
-                  : "Çöp kutusu"}
+                  : tab === "security"
+                    ? "Güvenlik"
+                    : "Çöp kutusu"}
           </h2>
         </div>
         <button className="icon-btn" onClick={onClose}>
@@ -746,6 +799,7 @@ function SystemPanel({
           {!trash.length && <p>Çöp kutusu boş.</p>}
         </div>
       )}
+      {tab === "security" && <SecurityPanel onChangePin={onChangePin} onLogoutAll={onLogoutAll} />}
     </section>
   );
 }
@@ -1164,6 +1218,13 @@ function Dashboard({ onSignedOut }) {
             .join(";"),
         ),
       ].join("\r\n");
+    if (window.AndroidAuth?.shareFileBase64) {
+      const bytes = new TextEncoder().encode(csv);
+      let binary = "";
+      bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+      window.AndroidAuth.shareFileBase64(`Muhasebe-${today()}.csv`, "text/csv", btoa(binary));
+      return;
+    }
     const url = URL.createObjectURL(
         new Blob([csv], { type: "text/csv;charset=utf-8" }),
       ),
@@ -1181,6 +1242,32 @@ function Dashboard({ onSignedOut }) {
   };
   const signOut = async () => {
     await logout();
+    onSignedOut();
+  };
+  const sharePdf = () => {
+    const text = [
+      `REHBERLİK MUHASEBE — ${month}`,
+      "",
+      `Gelir: ${money(income, currency)}`,
+      `Masraf: ${money(expense, currency)}`,
+      `Net: ${money(income - expense, currency)}`,
+      `Bahşiş: ${money(tips, currency)}`,
+      `Komisyon: ${money(commission, currency)}`,
+      `Tur sayısı: ${tourCount}`,
+      `Bekleyen tahsilat: ${money(pending, currency)}`,
+    ].join("\n");
+    if (window.AndroidAuth?.sharePdfText) {
+      window.AndroidAuth.sharePdfText(`Muhasebe-${today()}`, text);
+      return;
+    }
+    window.print();
+  };
+  const changePinAndKeepSession = async (pin) => {
+    await changePin(pin);
+  };
+  const signOutAll = async () => {
+    if (!window.confirm("Tüm cihazlardaki oturumlar kapatılsın mı?")) return;
+    await logoutAllSessions();
     onSignedOut();
   };
   const pageStart = filteredRows.length ? (page - 1) * PAGE_SIZE + 1 : 0,
@@ -1221,6 +1308,14 @@ function Dashboard({ onSignedOut }) {
             >
               <Icon name="box" />
               <span>Çöp kutusu</span>
+            </button>
+            <button
+              className="system-shortcut-card"
+              onClick={() => reloadSide("security")}
+              title="Güvenlik"
+            >
+              <Icon name="settings" />
+              <span>Güvenlik</span>
             </button>
           </div>
         </div>
@@ -1287,6 +1382,8 @@ function Dashboard({ onSignedOut }) {
           trash={trash}
           onRestoreTrash={restoreTrashItem}
           onPurgeTrash={purgeTrashItem}
+          onChangePin={changePinAndKeepSession}
+          onLogoutAll={signOutAll}
         />
         <section className="v7-filterbar">
           <div className="searchbox">
@@ -1692,6 +1789,7 @@ function Dashboard({ onSignedOut }) {
           currency={currency}
           convert={converted}
           onExcel={excel}
+          onPdf={sharePdf}
           onClose={() => setReportOpen(false)}
         />
       )}{" "}
@@ -1711,19 +1809,34 @@ export default function App() {
     loading: true,
     configured: false,
     authenticated: false,
+    error: "",
   });
-  useEffect(() => {
-    getAuthState()
-      .then((s) => setState({ loading: false, ...s }))
-      .catch(() =>
-        setState({ loading: false, configured: false, authenticated: false }),
+  const loadAuth = () => {
+    setState((s) => ({ ...s, loading: true, error: "" }));
+    getAuthStateWithRetry()
+      .then((s) => setState({ loading: false, ...s, error: "" }))
+      .catch((error) =>
+        setState((s) => ({ ...s, loading: false, error: error.message || "Sunucuya bağlanılamadı." })),
       );
+  };
+  useEffect(() => {
+    loadAuth();
   }, []);
   if (state.loading)
     return (
       <div className="auth-shell">
         <div className="auth-card">
           <h2>Yükleniyor...</h2>
+        </div>
+      </div>
+    );
+  if (state.error)
+    return (
+      <div className="auth-shell">
+        <div className="auth-card">
+          <h2>Sunucu bağlantısı bekleniyor</h2>
+          <p>{state.error}</p>
+          <button className="btn primary auth-submit" onClick={loadAuth}>Tekrar dene</button>
         </div>
       </div>
     );
@@ -1742,3 +1855,4 @@ export default function App() {
     />
   );
 }
+
