@@ -361,12 +361,13 @@ function EntryModal({ record, onClose, onSave, currency }) {
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const submit = async (e) => {
     e.preventDefault();
-    if (!form.tour.trim() || !Number(form.amount) || saving) return;
+    if (!Number(form.amount) || saving) return;
     setSaving(true);
     try {
       await onSave(
         normalizeRecord({
           ...form,
+          tour: form.tour || "Muhasebe kaydı",
           id: form.id || uid(),
           amount: Number(form.amount),
         }),
@@ -414,36 +415,12 @@ function EntryModal({ record, onClose, onSave, currency }) {
               required
             />
           </label>
-          <label className="wide">
-            Tur adı
-            <input
-              value={form.tour}
-              onChange={(e) => set("tour", e.target.value)}
-              autoFocus
-              required
-            />
-          </label>
-          <label>
-            Misafir / kaynak
-            <input
-              value={form.guest}
-              onChange={(e) => set("guest", e.target.value)}
-            />
-          </label>
           <label>
             Acenta
             <input
               value={form.agency}
               onChange={(e) => set("agency", e.target.value)}
               placeholder="Örn. X Travel"
-            />
-          </label>
-          <label>
-            Gemi / kaynak
-            <input
-              value={form.ship}
-              onChange={(e) => set("ship", e.target.value)}
-              placeholder="Örn. MSC Fantasia"
             />
           </label>
           <label>
@@ -483,18 +460,6 @@ function EntryModal({ record, onClose, onSave, currency }) {
                 <option key={x}>{x}</option>
               ))}
             </select>
-          </label>
-          <label>
-            Vade tarihi
-            <input type="date" value={form.due_date} onChange={(e) => set("due_date", e.target.value)} />
-          </label>
-          <label>
-            Tahsil edilen
-            <input type="number" min="0" max={form.amount || undefined} step="0.01" value={form.paid_amount} onChange={(e) => set("paid_amount", e.target.value)} />
-          </label>
-          <label className="wide">
-            Etiketler
-            <input value={form.tags} onChange={(e) => set("tags", e.target.value)} placeholder="VIP, kruvaziyer, özel tur…" />
           </label>
           <label className="wide">
             Not
