@@ -1249,6 +1249,7 @@ function Dashboard({ onSignedOut }) {
             className="icon-btn header-tool"
             onClick={signOut}
             title="Çıkış"
+            aria-label="Çıkış yap"
           >
             <Icon name="logout" />
           </button>
@@ -1479,7 +1480,7 @@ function Dashboard({ onSignedOut }) {
                 </div>
               </div>
               <div className="table-scroll">
-                <table>
+                <table className="records-table" role="table" aria-label="Muhasebe kayıtları">
                   <thead>
                     <tr>
                       <th />
@@ -1494,9 +1495,10 @@ function Dashboard({ onSignedOut }) {
                   <tbody>
                     {pageRows.map((r) => (
                       <tr key={r.id} className={r.due_date && r.due_date < today() && r.status === "Ödenmedi" ? "record-overdue" : ""}>
-                        <td>
+                        <td className="record-select">
                           <input
                             type="checkbox"
+                            aria-label={`${r.tour || 'Muhasebe'} kaydını seç`}
                             checked={selected.includes(r.id)}
                             onChange={() =>
                               setSelected((x) =>
@@ -1507,8 +1509,8 @@ function Dashboard({ onSignedOut }) {
                             }
                           />
                         </td>
-                        <td>{fmtDate(r.date)}</td>
-                        <td>
+                        <td className="record-date" data-label="Tarih">{fmtDate(r.date)}</td>
+                        <td className="record-source" data-label="Tur / Kaynak">
                           <strong>{r.tour}</strong>
                           <span>
                             {[r.guest, r.agency, r.ship]
@@ -1519,14 +1521,14 @@ function Dashboard({ onSignedOut }) {
                           </span>
                           {(r.due_date || r.tags) && <small>{[r.due_date && `Vade: ${fmtDate(r.due_date)}`, r.tags].filter(Boolean).join(" · ")}</small>}
                         </td>
-                        <td>
+                        <td className="record-type" data-label="Tür">
                           <span
                             className={"type type-" + TYPES.indexOf(r.type)}
                           >
                             {r.type}
                           </span>
                         </td>
-                        <td>
+                        <td className="record-status" data-label="Durum">
                           <button
                             className={
                               "status " +
@@ -1538,14 +1540,14 @@ function Dashboard({ onSignedOut }) {
                           </button>
                           {r.paid_amount > 0 && r.paid_amount < r.amount && <small>{money(r.paid_amount, r.currency)} tahsil</small>}
                         </td>
-                        <td className="right amount">
+                        <td className="right amount record-amount" data-label="Tutar">
                           <strong>{money(converted(r), currency)}</strong>
                           {r.status === "Ödenmedi" && <small>Kalan: {money(convertedOutstanding(r), currency)}</small>}
                           {r.currency !== currency && (
                             <small>{money(r.amount, r.currency)}</small>
                           )}
                         </td>
-                        <td className="row-actions">
+                        <td className="row-actions" data-label="İşlemler">
                           <button
                             className="edit"
                             onClick={() => setModal(r)}
