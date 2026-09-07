@@ -1294,8 +1294,8 @@ function Dashboard({ onSignedOut }) {
 
   return (
     <>
-      <header className="v7-header">
-        <div className="brand">
+      <header className="v7-header home-v7-header">
+        <div className="brand home-brand">
           <div className="brand-mark brand-logo-mark">
             <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
           </div>
