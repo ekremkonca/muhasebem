@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ekremkonca.rehberlikmuhasebe",
+      "sha256_cert_fingerprints": ["E1:83:1B:A8:C1:75:0B:99:D6:85:35:75:10:6E:2F:9E:50:B1:50:16:27:0B:7B:A6:78:99:68:AA:11:7B:B8:0D"]
+    }
+  }
+]
