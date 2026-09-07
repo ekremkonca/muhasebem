@@ -1351,13 +1351,6 @@ function Dashboard({ onSignedOut }) {
             Aylık rapor
           </button>
           <button
-            className="btn primary"
-            onClick={() => setModal({ currency })}
-          >
-            <Icon name="plus" />
-            Yeni kayıt
-          </button>
-          <button
             className="icon-btn header-tool"
             onClick={signOut}
             title="Çıkış"
@@ -1591,6 +1584,13 @@ function Dashboard({ onSignedOut }) {
                   >
                     <Icon name="trash" />
                     Sil
+                  </button>
+                  <button
+                    className="btn primary"
+                    onClick={() => setModal({ currency })}
+                  >
+                    <Icon name="plus" />
+                    Yeni kayıt
                   </button>
                 </div>
               </div>
