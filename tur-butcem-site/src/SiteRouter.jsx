@@ -11,6 +11,7 @@ import {
   createRecord,
   deleteEvent,
   getAuthState,
+  getAuthStateWithRetry,
   loadEvents,
   loadRecords,
   login,
@@ -30,7 +31,9 @@ function CalendarAuth({ configured, onDone }) {
   const [pin, setPin] = useState(""),
     [confirm, setConfirm] = useState(""),
     [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [nativeBiometric, setNativeBiometric] = useState(false);
+  useEffect(() => setNativeBiometric(Boolean(window.AndroidAuth)), []);
   const submit = async (e) => {
     e.preventDefault();
     setError("");
@@ -45,8 +48,17 @@ function CalendarAuth({ configured, onDone }) {
     setBusy(true);
     try {
       configured ? await login(pin) : await setupPin(pin);
+      try { window.AndroidAuth?.savePin(pin); } catch {}
       onDone();
     } catch (err) {
+      try {
+        const recovered = await getAuthState(true);
+        if (recovered?.authenticated) {
+          try { window.AndroidAuth?.savePin(pin); } catch {}
+          onDone();
+          return;
+        }
+      } catch {}
       setError(err.message || "Giriş yapılamadı.");
     } finally {
       setBusy(false);
@@ -95,6 +107,15 @@ function CalendarAuth({ configured, onDone }) {
               ? "Giriş yap"
               : "PIN’i oluştur"}
         </button>
+        {nativeBiometric && configured && (
+          <button
+            type="button"
+            className="btn auth-biometric"
+            onClick={() => window.AndroidAuth.authenticate()}
+          >
+            👆 Parmak izi ile giriş
+          </button>
+        )}
       </form>
     </div>
   );
@@ -105,6 +126,7 @@ function TakvimPage() {
     loading: true,
     configured: false,
     authenticated: false,
+    error: "",
   });
   const [rows, setRows] = useState([]),
     [events, setEvents] = useState([]),
@@ -120,11 +142,9 @@ function TakvimPage() {
     }
   };
   useEffect(() => {
-    getAuthState()
-      .then((s) => setState({ loading: false, ...s }))
-      .catch(() =>
-        setState({ loading: false, configured: false, authenticated: false }),
-      );
+    getAuthStateWithRetry()
+      .then((s) => setState({ loading: false, ...s, error: "" }))
+      .catch((error) => setState((s) => ({ ...s, loading: false, error: error.message || "Sunucuya bağlanılamadı." })));
   }, []);
   useEffect(() => {
     if (state.authenticated) load();
@@ -173,6 +193,8 @@ function TakvimPage() {
       throw err;
     }
   };
+  if (!state.loading && state.error)
+    return <div className="auth-shell"><div className="auth-card"><h2>Sunucu bağlantısı bekleniyor</h2><p>{state.error}</p><button className="btn primary auth-submit" onClick={() => window.location.reload()}>Tekrar dene</button></div></div>;
   if (!state.loading && !state.authenticated)
     return (
       <CalendarAuth
@@ -238,3 +260,4 @@ export default function SiteRouter() {
     </>
   );
 }
+
