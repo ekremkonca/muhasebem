@@ -6,6 +6,7 @@ import CalendarView from "./CalendarView.jsx";
 import HomePage from "./HomePage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
 import ScrollTopButton from "./ScrollTopButton.jsx";
+import SearchBridge from "./SearchBridge.jsx";
 import {
   createEvent,
   createRecord,
@@ -15,11 +16,14 @@ import {
   loadEvents,
   loadRecords,
   login,
+  logoutAllSessions,
   setupPin,
   updateEvent,
 } from "./api.js";
 import { SITE_NAV_EVENT } from "./navigation.js";
 import "./styles/pages.css";
+
+const INACTIVITY_MS = 10 * 60 * 1000;
 
 const cleanPath = (value) => {
   let p = (value || "/").replace(/\/+$/, "") || "/";
@@ -234,6 +238,7 @@ function RedirectHome() {
 
 export default function SiteRouter() {
   const [path, setPath] = useState(() => cleanPath(window.location.pathname));
+
   useEffect(() => {
     getAuthState().catch(() => {});
     const sync = () => setPath(cleanPath(window.location.pathname));
@@ -244,6 +249,46 @@ export default function SiteRouter() {
       window.removeEventListener(SITE_NAV_EVENT, sync);
     };
   }, []);
+
+  useEffect(() => {
+    let timer;
+    let signingOut = false;
+
+    const expire = async () => {
+      if (signingOut) return;
+      signingOut = true;
+      try {
+        const state = await getAuthState(true);
+        if (state?.authenticated) {
+          await logoutAllSessions();
+          try { window.AndroidAuth?.clearPin(); } catch {}
+          window.location.replace("/muhasebe/");
+        }
+      } catch {
+        signingOut = false;
+        reset();
+      }
+    };
+
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(expire, INACTIVITY_MS);
+    };
+
+    const activityEvents = ["pointerdown", "keydown", "touchstart", "scroll", "wheel"];
+    activityEvents.forEach((eventName) =>
+      window.addEventListener(eventName, reset, { passive: true }),
+    );
+    document.addEventListener("visibilitychange", reset);
+    reset();
+
+    return () => {
+      clearTimeout(timer);
+      activityEvents.forEach((eventName) => window.removeEventListener(eventName, reset));
+      document.removeEventListener("visibilitychange", reset);
+    };
+  }, []);
+
   const page = useMemo(() => {
     if (path === "/muhasebe" || path === "/varliklar") return <>
       <App />
@@ -253,12 +298,13 @@ export default function SiteRouter() {
     if (path === "/takvim") return <TakvimPage />;
     return <RedirectHome />;
   }, [path]);
+
   return (
     <>
       {page}
+      <SearchBridge />
       <CategoryNavBridge />
       <ScrollTopButton />
     </>
   );
 }
-
