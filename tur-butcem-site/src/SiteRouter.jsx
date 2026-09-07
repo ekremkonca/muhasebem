@@ -295,7 +295,7 @@ export default function SiteRouter() {
       {path === "/varliklar" && <AssetsNav />}
       {path === "/varliklar" && <AssetsHeaderBridge />}
     </>;
-    if (path === "/takvim") return <TakvimPage />;
+    if (path === "/takvim" || path === "/takvim/index") return <TakvimPage />;
     return <RedirectHome />;
   }, [path]);
 
