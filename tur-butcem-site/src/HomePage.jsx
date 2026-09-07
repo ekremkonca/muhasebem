@@ -1,6 +1,7 @@
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import MarketTicker from './MarketTicker.jsx';
+import {logout} from './api.js';
 import {navigateTo} from './navigation.js';
 
 function Icon({name,size=18}){
@@ -18,24 +19,33 @@ function Icon({name,size=18}){
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
+const openAccountingTool=(title)=>{
+  try{sessionStorage.setItem('muhasebe:open-header-tool',title)}catch{}
+  navigateTo('/muhasebe/');
+};
+
 export default function HomePage({children,contentClassName=''}){
+  const signOut=async()=>{
+    try{await logout()}finally{window.location.replace('/muhasebe/')}
+  };
   return <div className="home-page-shell">
     <header className="v7-header home-v7-header">
       <div className="brand home-brand">
         <div className="brand-mark brand-logo-mark">
           <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
         </div>
-        <strong>Muhasebe <small>V7</small></strong>
         <ThemeSwitcher/>
         <div className="system-shortcuts" aria-label="Sistem araçları">
-          <button className="system-shortcut-card" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Yedekler"><Icon name="backup"/><span>Yedekler</span></button>
-          <button className="system-shortcut-card" type="button" onClick={()=>navigateTo('/muhasebe/')} title="İşlem geçmişi"><Icon name="history"/><span>İşlem geçmişi</span></button>
-          <button className="system-shortcut-card" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çöp kutusu"><Icon name="box"/><span>Çöp kutusu</span></button>
+          <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('Yedekler')} title="Yedekler"><Icon name="backup"/><span>Yedekler</span></button>
+          <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('İşlem geçmişi')} title="İşlem geçmişi"><Icon name="history"/><span>İşlem geçmişi</span></button>
+          <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('Çöp kutusu')} title="Çöp kutusu"><Icon name="box"/><span>Çöp kutusu</span></button>
+          <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('Güvenlik')} title="Güvenlik"><Icon name="settings"/><span>Güvenlik</span></button>
         </div>
       </div>
       <div className="header-actions home-header-actions">
-        <button className="btn primary" type="button" onClick={()=>navigateTo('/muhasebe/')}><Icon name="plus"/>Yeni kayıt</button>
-        <button className="icon-btn header-tool" type="button" onClick={()=>navigateTo('/muhasebe/')} title="Çıkış"><Icon name="logout"/></button>
+        <button className="btn secondary" type="button" onClick={()=>openAccountingTool('Aylık rapor')}><Icon name="report"/>Aylık rapor</button>
+        <button className="btn primary" type="button" onClick={()=>openAccountingTool('Yeni kayıt')}><Icon name="plus"/>Yeni kayıt</button>
+        <button className="icon-btn header-tool" type="button" onClick={signOut} title="Çıkış" aria-label="Çıkış yap"><Icon name="logout"/></button>
       </div>
     </header>
     <MarketTicker/>
