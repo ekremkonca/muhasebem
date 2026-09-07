@@ -1299,9 +1299,6 @@ function Dashboard({ onSignedOut }) {
           <div className="brand-mark brand-logo-mark">
             <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
           </div>
-          <strong>
-            Muhasebe <small>V7</small>
-          </strong>
           <div className="header-tool-grid"><ThemeSwitcher />
           <div className="system-shortcuts" aria-label="Sistem araçları">
             <button
@@ -1338,7 +1335,7 @@ function Dashboard({ onSignedOut }) {
             </button>
           </div></div>
         </div>
-        <div className="header-actions">
+        <div className="header-actions home-header-actions">
           {installPrompt && (
             <button className="btn secondary desktop" onClick={install}>
               Uygulamayı kur
