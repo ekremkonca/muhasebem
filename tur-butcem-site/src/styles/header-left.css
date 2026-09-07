@@ -10,6 +10,7 @@ html body #root .v7-header>.brand>strong{display:none!important}
 html body #root .v7-header .header-tool-grid{grid-column:2 / span 4!important;grid-row:1 / span 2!important;display:grid!important;grid-template-columns:repeat(4,44px)!important;grid-auto-rows:36px!important;gap:6px!important;align-content:center!important}
 html body #root .v7-header .header-tool-grid .v8-theme-menu,html body #root .v7-header .header-tool-grid .system-shortcuts{display:contents!important}
 html body #root .v7-header .header-tool-grid .theme-icon-trigger{grid-column:auto!important;grid-row:1!important}.header-tool-grid .v8-privacy-trigger{grid-column:auto!important;grid-row:1!important}.header-tool-grid .v8-mode-trigger{grid-column:auto!important;grid-row:1!important}.header-tool-grid .system-shortcut-card{grid-column:auto!important;grid-row:2!important}
+html body #root .v7-header .header-tool-grid .mobile-tool-label,html body #root .v7-header .header-tool-grid .system-shortcut-card span{display:none!important}
 html body #root .v7-header .theme-icon-trigger,
 html body #root .v7-header .v8-privacy-trigger,
 html body #root .v7-header .v8-mode-trigger,
