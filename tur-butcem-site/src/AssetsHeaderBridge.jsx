@@ -13,13 +13,14 @@ export default function AssetsHeaderBridge(){
    const mark=header?.querySelector('.brand-mark');
    const title=header?.querySelector('.brand>strong');
    if(header)header.hidden=false;
-   if(actions)actions.hidden=active;
+   if(actions)actions.hidden=false;
    [mark,title].filter(Boolean).forEach(el=>{
     el.style.cursor='pointer';
     el.setAttribute('role','link');
     el.setAttribute('tabindex','0');
     el.setAttribute('title','Muhasebe');
    });
+   if(header)header.dataset.assetsActive=active?'1':'0';
   })};
   const goHome=e=>{
    const hit=e.target.closest?.('.v7-header .brand-mark,.v7-header .brand>strong');
