@@ -1521,12 +1521,6 @@ function Dashboard({ onSignedOut }) {
           </article>
         </div>
         <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} />
-        <section className="finance-command-strip" aria-label="Finans özeti">
-          <div><span>30 gün beklenen giriş</span><strong>{money(cashForecast.expectedIn, currency)}</strong></div>
-          <div><span>30 gün beklenen çıkış</span><strong>{money(cashForecast.expectedOut, currency)}</strong></div>
-          <div className={cashForecast.net < 0 ? "negative" : "positive"}><span>Tahmini net akış</span><strong>{money(cashForecast.net, currency)}</strong></div>
-          <div><span>Geciken kayıt</span><strong>{rows.filter((r) => r.status === "Ödenmedi" && r.due_date && r.due_date < today()).length}</strong></div>
-        </section>
         <div className="v7-layout">
           <div className="v7-left">
             <section className="records workspace-records">
