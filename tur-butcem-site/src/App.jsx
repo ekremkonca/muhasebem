@@ -1218,11 +1218,16 @@ function Dashboard({ onSignedOut }) {
             .join(";"),
         ),
       ].join("\r\n");
+    const bytes = new TextEncoder().encode(csv);
     if (window.AndroidAuth?.shareFileBase64) {
-      const bytes = new TextEncoder().encode(csv);
       let binary = "";
       bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
-      window.AndroidAuth.shareFileBase64(`Muhasebe-${today()}.csv`, "text/csv", btoa(binary));
+      window.AndroidAuth.shareFileBase64(`Muhasebe-${today()}.csv`, "application/vnd.ms-excel", btoa(binary));
+      return;
+    }
+    if (navigator.share) {
+      const file = new File([bytes], `Muhasebe-${today()}.csv`, { type: "application/vnd.ms-excel" });
+      navigator.share({ title: "Muhasebe raporu", files: [file] }).catch(() => {});
       return;
     }
     const url = URL.createObjectURL(
