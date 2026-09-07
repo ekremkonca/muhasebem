@@ -818,6 +818,25 @@ function SystemPanel({
   );
 }
 
+function V8Enhancements({ rows, income, expense, pending, currency }) {
+  const [customize, setCustomize] = useState(false);
+  const [hidden, setHidden] = useState(() => { try { return JSON.parse(localStorage.getItem("v8-hidden-cards") || "[]"); } catch { return []; } });
+  const score = Math.max(0, Math.min(100, Math.round(70 + (income > 0 ? Math.min(20, (income - expense) / Math.max(income, 1) * 20) : 0) - (pending > income * .4 ? 15 : 0))));
+  const toggle = (id) => setHidden((items) => { const next = items.includes(id) ? items.filter((x) => x !== id) : [...items, id]; try { localStorage.setItem("v8-hidden-cards", JSON.stringify(next)); } catch {} return next; });
+  const cats = ["Tur Geliri", "Tur Masrafı", "Komisyon", "Bahşiş"].map((type) => ({ type, value: rows.filter((r) => r.type === type).reduce((sum, r) => sum + Number(r.amount || 0), 0) }));
+  const max = Math.max(...cats.map((x) => x.value), 1);
+  const notices = rows.filter((r) => r.status === "Ödenmedi").slice(0, 3);
+  return <section className="v8-enhancements" aria-label="V8 finans araçları">
+    <div className="v8-enhance-head"><div><span className="eyebrow">V8 ÖZET</span><h3>Finans görünümü</h3></div><button className="btn secondary" onClick={() => setCustomize((x) => !x)}>{customize ? "Tamam" : "Kartları düzenle"}</button></div>
+    {customize && <div className="v8-card-picker">{[["score","Finans skoru"],["chart","Kategori grafiği"],["notice","Bildirimler"]].map(([id,label]) => <label key={id}><input type="checkbox" checked={!hidden.includes(id)} onChange={() => toggle(id)}/>{label}</label>)}</div>}
+    <div className="v8-enhance-grid">
+      {!hidden.includes("score") && <article className="v8-score-card"><span>Kişisel finans skoru</span><strong>{score}<small>/100</small></strong><div className="v8-score-ring" style={{"--score":`${score * 3.6}deg`}}/><p>{score >= 80 ? "Finansal durumun çok iyi." : score >= 60 ? "Dengeli gidiyorsun." : "Bütçeni biraz daha yakından takip et."}</p></article>}
+      {!hidden.includes("chart") && <article className="v8-chart-card"><div className="v8-card-title"><span>Kategori dağılımı</span><small>{currency}</small></div><div className="v8-bars">{cats.map((cat) => <div className="v8-bar-row" key={cat.type}><span>{cat.type.replace("Tur ", "")}</span><div><i style={{width:`${Math.max(4,cat.value/max*100)}%`}}/></div><b>{money(cat.value, currency)}</b></div>)}</div></article>}
+      {!hidden.includes("notice") && <article className="v8-notice-card"><div className="v8-card-title"><span>Bildirim merkezi</span><small>{notices.length} bekleyen</small></div>{notices.length ? notices.map((r) => <div className="v8-notice" key={r.id}><i/><span>{r.tour || "Kayıt"}<small>{r.due_date ? `Vade: ${r.due_date}` : "Ödeme bekliyor"}</small></span></div>) : <p>Yeni bildirimin yok.</p>}</article>}
+    </div>
+  </section>;
+}
+
 function Dashboard({ onSignedOut }) {
   const [rows, setRows] = useState([]),
     [events, setEvents] = useState([]),
@@ -1526,6 +1545,7 @@ function Dashboard({ onSignedOut }) {
             <small>{fmtDateTime(ratesUpdatedAt)}</small>
           </article>
         </div>
+        <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} />
         <section className="finance-command-strip" aria-label="Finans özeti">
           <div><span>30 gün beklenen giriş</span><strong>{money(cashForecast.expectedIn, currency)}</strong></div>
           <div><span>30 gün beklenen çıkış</span><strong>{money(cashForecast.expectedOut, currency)}</strong></div>
