@@ -101,3 +101,4 @@
 .system-shortcut-card:nth-child(3){grid-column:1 / -1}
 @media(max-width:720px){.system-shortcuts{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));order:5}.system-shortcut-card{justify-content:center}.system-shortcut-card:nth-child(3){grid-column:1 / -1}}
 
+.native-currency-totals{display:grid;gap:6px;margin:10px 0}.native-currency-totals>div{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}.native-currency-totals small{color:var(--muted);font-size:11px}.native-currency-totals b{font-size:14px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.currency-totals-kpi>small{display:block;color:var(--muted);font-size:10px}.secondary-accounting-kpis{grid-template-columns:repeat(2,minmax(0,220px))!important}.secondary-accounting-kpis strong{font-size:20px!important}

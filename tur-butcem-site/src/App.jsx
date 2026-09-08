@@ -950,6 +950,13 @@ function Dashboard({ onSignedOut }) {
     net = income - expense,
     tourCount = new Set(accountingRows.map((r) => `${r.date}|${r.tour}`)).size,
     average = tourCount ? net / tourCount : 0;
+  const totalsByCurrency = (type, receivedOnly) => ['EUR', 'GBP', 'USD', 'TRY'].map(code => ({
+    code,
+    amount: accountingRows.filter(r => r.type === type && normalizeCurrency(r.currency) === code && (!receivedOnly || r.status === 'Ödendi'))
+      .reduce((total, r) => total + Number(r.amount || 0), 0),
+  }));
+  const tipTotals = totalsByCurrency('Bahşiş', true);
+  const commissionTotals = totalsByCurrency('Komisyon', false);
   const topTour = useMemo(() => {
     const m = {};
     paid
@@ -1458,11 +1465,10 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={income} currency={currency} />
             </strong>
           </article>
-          <article>
-            <span>Masraf</span>
-            <strong>
-              <AnimatedMoney value={expense} currency={currency} />
-            </strong>
+          <article className="currency-totals-kpi">
+            <span>Komisyon</span>
+            <div className="native-currency-totals">{commissionTotals.map(({code, amount}) => <div key={code}><small>{code}</small><b>{money(amount, code)}</b></div>)}</div>
+            <small>Hak edilen toplam · tüm durumlar</small>
           </article>
           <article className="net">
             <span>Net</span>
@@ -1476,9 +1482,10 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={pending} currency={currency} />
             </strong>
           </article>
-          <article>
-            <span>Tur sayısı</span>
-            <strong>{tourCount}</strong>
+          <article className="currency-totals-kpi">
+            <span>Bahşiş</span>
+            <div className="native-currency-totals">{tipTotals.map(({code, amount}) => <div key={code}><small>{code}</small><b>{money(amount, code)}</b></div>)}</div>
+            <small>Alınan toplam · ödenmiş kayıtlar</small>
           </article>
           <article>
             <span>Tur başı ortalama</span>
@@ -1486,6 +1493,10 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={average} currency={currency} />
             </strong>
           </article>
+        </div>
+        <div className="v7-insights secondary-accounting-kpis">
+          <article><span>Tur sayısı</span><strong>{tourCount}</strong></article>
+          <article><span>Masraf</span><strong><AnimatedMoney value={expense} currency={currency} /></strong></article>
         </div>
         <div className="v7-insights">
           <article>
