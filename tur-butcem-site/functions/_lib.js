@@ -366,13 +366,14 @@ export function normalizeRecord(input) {
     });
   if (!["TRY", "USD", "EUR", "GBP"].includes(record.currency))
     throw Object.assign(new Error("Geçersiz para birimi."), { status: 400 });
-  if (!["Ödendi", "Ödenmedi"].includes(record.status))
+  if (!["Ödendi", "Ödenmedi", "İade edildi"].includes(record.status))
     throw Object.assign(new Error("Geçersiz durum."), { status: 400 });
   if (record.due_date && !/^\d{4}-\d{2}-\d{2}$/.test(record.due_date))
     throw Object.assign(new Error("Geçersiz vade tarihi."), { status: 400 });
   if (!Number.isFinite(record.paid_amount) || record.paid_amount < 0 || record.paid_amount > record.amount)
     throw Object.assign(new Error("Tahsil edilen tutar toplam tutarı aşamaz."), { status: 400 });
-  record.status = record.paid_amount >= record.amount ? "Ödendi" : "Ödenmedi";
+  if (record.status === "İade edildi") record.paid_amount = 0;
+  else record.status = record.paid_amount >= record.amount ? "Ödendi" : "Ödenmedi";
   const limits = { tour: 200, guest: 200, agency: 200, ship: 200, tags: 300, source_event_id: 100, note: 2000 };
   for (const [field, limit] of Object.entries(limits)) {
     if (record[field].length > limit)

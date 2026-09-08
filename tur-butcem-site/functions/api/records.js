@@ -71,7 +71,7 @@ export async function onRequestPatch(context) {
     const id = String(body?.id || '');
     const status = String(body?.status || '');
     if (!id) return json({ error: 'Kayıt kimliği gerekli.' }, 400);
-    if (!['Ödendi', 'Ödenmedi'].includes(status)) return json({ error: 'Geçersiz durum.' }, 400);
+    if (!['Ödendi', 'Ödenmedi', 'İade edildi'].includes(status)) return json({ error: 'Geçersiz durum.' }, 400);
     const before = await db.prepare(`SELECT ${selectFields} FROM records WHERE id=?`).bind(id).first();
     const result = await db.prepare("UPDATE records SET status=?,paid_amount=CASE WHEN ?='Ödendi' THEN amount ELSE 0 END,updated_at=CURRENT_TIMESTAMP WHERE id=? AND deleted_at IS NULL").bind(status,status,id).run();
     if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı.' }, 404);
