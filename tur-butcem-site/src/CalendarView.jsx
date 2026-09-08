@@ -567,6 +567,7 @@ export default function CalendarView({
                 <span className={`event-status ${meta.className}`}>
                   {meta.label}
                 </span>
+                <span className="event-edit-label">Düzenle</span>
               </button>
             );
           })}
