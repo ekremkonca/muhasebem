@@ -1483,9 +1483,6 @@ function Dashboard({ onSignedOut }) {
             </strong>
           </article>
         </div>
-        <div className="v7-insights secondary-accounting-kpis">
-          <article><span>Tur sayısı</span><strong>{tourCount}</strong></article>
-        </div>
         <div className="v7-insights">
           <article>
             <span>En çok kazandıran tur</span>
