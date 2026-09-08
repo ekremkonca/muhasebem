@@ -115,7 +115,9 @@ const tidy = (v) =>
     .trim()
     .toLocaleLowerCase("tr-TR");
 const normalizeStatus = (s) =>
-  ["ödendi", "odendi", "alındı", "alindi", "paid", "tahsil edildi"].includes(
+  ["iade edildi", "iade", "refund", "refunded"].includes(tidy(s))
+    ? "İade edildi"
+    : ["ödendi", "odendi", "alındı", "alindi", "paid", "tahsil edildi"].includes(
     tidy(s),
   )
     ? "Ödendi"
@@ -439,6 +441,7 @@ function EntryModal({ record, onClose, onSave, currency }) {
             >
               <option>Ödendi</option>
               <option>Ödenmedi</option>
+              <option>İade edildi</option>
             </select>
           </label>
           <label>
@@ -1456,24 +1459,24 @@ function Dashboard({ onSignedOut }) {
           )}
         </section>
         <div className="kpis compact v7-kpis">
-          <article className="currency-totals-kpi">
+          <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
             <span>Komisyon</span>
             <CurrencyDonuts totals={commissionTotals} money={money} />
             <small>Hak edilen toplam · tüm durumlar</small>
           </article>
-          <article className="net">
+          <article className="net filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Tümü"); }}>
             <span>Net gelir</span>
             <strong>
               <AnimatedMoney value={net} currency={currency} />
             </strong>
           </article>
-          <article className="pending">
+          <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
             <strong>
               <AnimatedMoney value={pending} currency={currency} />
             </strong>
           </article>
-          <article className="currency-totals-kpi">
+          <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
             <span>Bahşiş</span>
             <CurrencyDonuts totals={tipTotals} money={money} />
             <small>Alınan toplam · ödenmiş kayıtlar</small>
@@ -1555,6 +1558,7 @@ function Dashboard({ onSignedOut }) {
                       <option value="Tümü">Ödendi / Ödenmedi</option>
                       <option>Ödendi</option>
                       <option>Ödenmedi</option>
+                      <option>İade edildi</option>
                     </select>
                   </div>
                   <div className="filter records-sort">
@@ -1642,7 +1646,7 @@ function Dashboard({ onSignedOut }) {
                           <button
                             className={
                               "status " +
-                              (r.status === "Ödendi" ? "done" : "open")
+                              (r.status === "Ödendi" ? "done" : r.status === "İade edildi" ? "refunded" : "open")
                             }
                             onClick={() => status(r)}
                           >
