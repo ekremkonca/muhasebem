@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import FinanceScore from './FinanceScore.jsx';
+import CategoryDonut from './CategoryDonut.jsx';
 import {
   createBackup,
   deleteBackup,
@@ -806,7 +807,7 @@ function V8Enhancements({ rows, income, expense, pending, currency }) {
     {customize && <div className="v8-card-picker">{[["score","Finans skoru"],["chart","Kategori grafiği"],["notice","Bildirimler"]].map(([id,label]) => <label key={id}><input type="checkbox" checked={!hidden.includes(id)} onChange={() => toggle(id)}/>{label}</label>)}</div>}
     <div className="v8-enhance-grid">
       {!hidden.includes("score") && <FinanceScore score={score} onDetails={() => setDetail(true)} />}
-      {!hidden.includes("chart") && <article className="v8-chart-card"><div className="v8-card-title"><span>Kategori dağılımı</span><small>{currency}</small></div><div className="v8-bars">{cats.map((cat) => <div className="v8-bar-row" key={cat.type}><span>{cat.type.replace("Tur ", "")}</span><div><i style={{width:`${Math.max(4,cat.value/max*100)}%`}}/></div><b>{money(cat.value, currency)}</b></div>)}</div></article>}
+      {!hidden.includes("chart") && <CategoryDonut cats={cats} currency={currency} money={money} />}
       {!hidden.includes("notice") && <article className="v8-notice-card"><div className="v8-card-title"><span>Bildirim merkezi</span><small>{notices.length} bekleyen</small></div>{notices.length ? notices.map((r) => <div className="v8-notice" key={r.id}><i/><span>{r.tour || "Kayıt"}<small>{r.due_date ? `Vade: ${r.due_date}` : "Ödeme bekliyor"}</small></span></div>) : <p>Yeni bildirimin yok.</p>}</article>}
     </div>
     <div className="v8-suite-grid">
