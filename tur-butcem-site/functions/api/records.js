@@ -89,6 +89,10 @@ export async function onRequestDelete(context) {
     const url = new URL(context.request.url);
     const id = String(url.searchParams.get('id') || '');
     const permanent = url.searchParams.get('permanent') === '1';
+    if (permanent && url.searchParams.get('all') === '1') {
+      const result = await db.prepare('DELETE FROM records WHERE deleted_at IS NOT NULL').run();
+      return json({ permanent: true, deleted: Number(result.meta?.changes || 0) });
+    }
     if (!id) return json({ error: 'Kayıt kimliği gerekli.' }, 400);
     const before = await db.prepare(`SELECT ${selectFields} FROM records WHERE id=?`).bind(id).first();
     if (!before) return json({ error: 'Kayıt bulunamadı.' }, 404);

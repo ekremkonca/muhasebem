@@ -6,6 +6,8 @@ import CurrencyDonuts from './CurrencyDonuts.jsx';
 import {
   createBackup,
   deleteBackup,
+  deleteAllBackups,
+  deleteAllHistory,
   deleteHistory,
   createEvent,
   createRecord,
@@ -25,6 +27,7 @@ import {
   logout,
   logoutAllSessions,
   permanentDeleteRecord,
+  permanentDeleteAllTrash,
   restoreBackup,
   restoreRecord,
   saveRates,
@@ -646,11 +649,14 @@ function SystemPanel({
   onRestoreBackup,
   onExportBackup,
   onDeleteBackup,
+  onDeleteAllBackups,
   history,
   onDeleteHistory,
+  onDeleteAllHistory,
   trash,
   onRestoreTrash,
   onPurgeTrash,
+  onPurgeAllTrash,
   onChangePin,
   onLogoutAll,
 }) {
@@ -719,6 +725,7 @@ function SystemPanel({
               <Icon name="backup" />
               Şimdi yedekle
             </button>
+            <button className="btn danger" disabled={!backups.length} onClick={onDeleteAllBackups}>Tümünü tamamen sil</button>
           </div>
           <div className="system-list">
             {backups.map((b) => (
@@ -746,7 +753,9 @@ function SystemPanel({
         </div>
       )}
       {tab === "history" && (
-        <div className="system-list history-list">
+        <div>
+          <div className="panel-actions"><button className="btn danger" disabled={!history.length} onClick={onDeleteAllHistory}>Tümünü tamamen sil</button></div>
+          <div className="system-list history-list">
           {history.map((h) => (
             <article key={h.id}>
               <div>
@@ -762,10 +771,13 @@ function SystemPanel({
             </article>
           ))}
           {!history.length && <p>İşlem geçmişi boş.</p>}
+          </div>
         </div>
       )}
       {tab === "trash" && (
-        <div className="system-list trash-list">
+        <div>
+          <div className="panel-actions"><button className="btn danger" disabled={!trash.length} onClick={onPurgeAllTrash}>Tümünü tamamen sil</button></div>
+          <div className="system-list trash-list">
           {trash.map((r) => (
             <article key={r.id}>
               <div>
@@ -784,6 +796,7 @@ function SystemPanel({
             </article>
           ))}
           {!trash.length && <p>Çöp kutusu boş.</p>}
+          </div>
         </div>
       )}
       {tab === "security" && <SecurityPanel onChangePin={onChangePin} onLogoutAll={onLogoutAll} />}
@@ -1400,15 +1413,30 @@ function Dashboard({ onSignedOut }) {
             await deleteBackup(backup.id);
             setBackups((items) => items.filter((item) => item.id !== backup.id));
           }}
+          onDeleteAllBackups={async () => {
+            if (!window.confirm("Tüm yedekler kalıcı olarak silinsin mi? Bu işlem geri alınamaz.")) return;
+            await deleteAllBackups();
+            setBackups([]);
+          }}
           history={history}
           onDeleteHistory={async (entry) => {
             if (!window.confirm("Bu işlem geçmişten kalıcı olarak silinsin mi?")) return;
             await deleteHistory(entry.id);
             setHistory((items) => items.filter((item) => item.id !== entry.id));
           }}
+          onDeleteAllHistory={async () => {
+            if (!window.confirm("Tüm işlem geçmişi kalıcı olarak silinsin mi? Bu işlem geri alınamaz.")) return;
+            await deleteAllHistory();
+            setHistory([]);
+          }}
           trash={trash}
           onRestoreTrash={restoreTrashItem}
           onPurgeTrash={purgeTrashItem}
+          onPurgeAllTrash={async () => {
+            if (!window.confirm("Çöp kutusundaki tüm kayıtlar kalıcı olarak silinsin mi? Bu işlem geri alınamaz.")) return;
+            await permanentDeleteAllTrash();
+            setTrash([]);
+          }}
           onChangePin={changePinAndKeepSession}
           onLogoutAll={signOutAll}
         />

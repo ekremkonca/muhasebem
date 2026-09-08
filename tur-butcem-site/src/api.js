@@ -141,6 +141,8 @@ export const permanentDeleteRecord = (id) =>
   request(`/api/records?id=${encodeURIComponent(id)}&permanent=1`, {
     method: "DELETE",
   });
+export const permanentDeleteAllTrash = () =>
+  request("/api/records?permanent=1&all=1", { method: "DELETE" });
 export async function restoreRecord(id) {
   const data = await request("/api/records", {
     method: "PATCH",
@@ -176,10 +178,14 @@ export const exportBackup = (id) =>
   });
 export const deleteBackup = (id) =>
   request(`/api/backups?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+export const deleteAllBackups = () =>
+  request("/api/backups?all=1", { method: "DELETE" });
 export const loadHistory = (limit = 50) =>
   request(`/api/history?limit=${limit}`);
 export const deleteHistory = (id) =>
   request(`/api/history?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+export const deleteAllHistory = () =>
+  request("/api/history?all=1", { method: "DELETE" });
 
 export async function loadEvents() {
   const data = await request("/api/events");

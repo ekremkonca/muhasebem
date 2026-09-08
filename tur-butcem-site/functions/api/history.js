@@ -18,7 +18,12 @@ export async function onRequestDelete(context) {
   try {
     const db = await getDb(context);
     await requireSession(context, db);
-    const id = String(new URL(context.request.url).searchParams.get("id") || "");
+    const url = new URL(context.request.url);
+    if (url.searchParams.get("all") === "1") {
+      const result = await db.prepare("DELETE FROM audit_log").run();
+      return json({ ok: true, deleted: Number(result.meta?.changes || 0) });
+    }
+    const id = String(url.searchParams.get("id") || "");
     if (!id) return json({ error: "Geçmiş kaydı kimliği gerekli." }, 400);
     const result = await db.prepare("DELETE FROM audit_log WHERE id=?").bind(id).run();
     return json({ ok: true, deleted: Number(result.meta?.changes || 0) });
