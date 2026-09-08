@@ -1503,6 +1503,7 @@ function Dashboard({ onSignedOut }) {
             <strong>
               <AnimatedMoney value={net} currency={currency} />
             </strong>
+            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={average} currency={currency} /></small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
@@ -1515,12 +1516,7 @@ function Dashboard({ onSignedOut }) {
             <CurrencyDonuts totals={tipTotals} money={money} />
             <small>Alınan toplam · ödenmiş kayıtlar</small>
           </article>
-          <article>
-            <span>Tur başı ortalama</span>
-            <strong>
-              <AnimatedMoney value={average} currency={currency} />
-            </strong>
-          </article>
+          <article className="average-kpi-legacy" aria-hidden="true" />
         </div>
         <div className="v7-insights">
           <article>
