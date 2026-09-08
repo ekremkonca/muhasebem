@@ -28,7 +28,7 @@ export default function FinanceScore({ score, onDetails }) {
   }, [score, active, replay]);
   return <article className="v8-score-card finance-score-card">
     <div className="v8-card-title"><span>Kişisel finans skoru</span><button className="finance-score-info" onClick={onDetails} aria-label="Skor detayları">i</button></div>
-    <button className="finance-score-dial" onClick={() => { setActive(true); setReplay(n => n + 1); }} aria-label={`Finans skoru ${score}/100. Dolumu başlat`} title="Dolumu başlatmak için tıkla">
+    <button className="finance-score-dial finance-donut-control" onClick={() => { setActive(true); setReplay(n => n + 1); }} aria-label={`Finans skoru ${score}/100. Dolumu başlat`} title="Dolumu başlatmak için tıkla">
       <svg viewBox="0 0 120 120" aria-hidden="true"><circle className="finance-score-track" cx="60" cy="60" r="50"/><circle className="finance-score-fill" cx="60" cy="60" r="50" pathLength="100" strokeDasharray="100" strokeDashoffset={100 - value}/></svg>
       <span aria-hidden="true"><strong>{Math.round(value)}</strong><small>/100</small></span>
     </button>

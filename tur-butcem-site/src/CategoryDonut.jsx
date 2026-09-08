@@ -23,11 +23,11 @@ export default function CategoryDonut({ cats, currency, money }) {
     setProgress(0); frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [active, replay]);
-  const radius = 43; const circumference = 2 * Math.PI * radius;
+  const radius = 50; const circumference = 2 * Math.PI * radius;
   let offset = 0;
   return <article className="category-donut-card">
     <div className="v8-card-title"><span>Kategori dağılımı</span><div className="category-donut-title-actions"><small>{currency}</small><button className="category-donut-info" onClick={() => setDetails((value) => !value)} aria-label="Kategori toplamlarını göster" aria-expanded={details}>i</button></div></div>
-    <button className="category-donut" onClick={() => { setActive(true); setReplay(n => n + 1); }} aria-label="Kategori dağılımını doldur" title="Doldurmak için tıkla">
+    <button className="category-donut finance-donut-control" onClick={() => { setActive(true); setReplay(n => n + 1); }} aria-label="Kategori dağılımını doldur" title="Doldurmak için tıkla">
       <svg viewBox="0 0 120 120" aria-hidden="true">
         <circle className="category-donut-track" cx="60" cy="60" r={radius}/>
         {cats.map((cat, index) => {

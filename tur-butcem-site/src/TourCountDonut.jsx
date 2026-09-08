@@ -37,14 +37,14 @@ export default function TourCountDonut({ count }) {
       <div className="v8-card-title"><span>Tur sayısı</span><small>Tur geliri günleri</small></div>
       <button
         type="button"
-        className="tour-count-donut"
+        className="tour-count-donut finance-donut-control"
         onClick={() => setReplay(n => n + 1)}
         aria-label={`Tur sayısı ${count}. Dolumu yeniden oynat`}
         title="Dolumu yeniden oynat"
       >
         <svg viewBox="0 0 120 120" aria-hidden="true">
-          <circle className="tour-count-track" cx="60" cy="60" r="47" />
-          <circle className="tour-count-fill" cx="60" cy="60" r="47" pathLength="100" strokeDasharray="100" strokeDashoffset={100 * (1 - progress)} />
+          <circle className="tour-count-track" cx="60" cy="60" r="50" />
+          <circle className="tour-count-fill" cx="60" cy="60" r="50" pathLength="100" strokeDasharray="100" strokeDashoffset={100 * (1 - progress)} />
         </svg>
         <strong>{count}</strong>
       </button>
