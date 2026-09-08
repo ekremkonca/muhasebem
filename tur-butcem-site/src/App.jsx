@@ -867,7 +867,14 @@ function Dashboard({ onSignedOut }) {
     [history, setHistory] = useState([]),
     [trash, setTrash] = useState([]),
     [undo, setUndo] = useState(null),
-    [installPrompt, setInstallPrompt] = useState(null);
+    [installPrompt, setInstallPrompt] = useState(null),
+    [recordsCollapsed, setRecordsCollapsed] = useState(() => {
+      try {
+        return localStorage.getItem("records-collapsed") === "1";
+      } catch {
+        return false;
+      }
+    });
   const undoTimer = useRef(null);
 
   const refresh = async () => {
@@ -1558,13 +1565,29 @@ function Dashboard({ onSignedOut }) {
               <div className="records-head">
                 <div>
                   <span className="eyebrow">KAYITLAR</span>
-                  <h2>
-                    {datePreset === "all"
-                      ? "Nisan 2026 sonrası"
-                      : "Seçili dönem"}
-                  </h2>
+                  <div className="records-title-line">
+                    <h2>
+                      {datePreset === "all"
+                        ? "Nisan 2026 sonrası"
+                        : "Seçili dönem"}
+                    </h2>
+                    <button
+                      className="records-collapse"
+                      onClick={() => setRecordsCollapsed((collapsed) => {
+                        const next = !collapsed;
+                        try { localStorage.setItem("records-collapsed", next ? "1" : "0"); } catch {}
+                        return next;
+                      })}
+                      aria-expanded={!recordsCollapsed}
+                      aria-label={recordsCollapsed ? "Muhasebe kayıtlarını aç" : "Muhasebe kayıtlarını küçült"}
+                      title={recordsCollapsed ? "Kayıtları aç" : "Kayıtları küçült"}
+                    >
+                      {recordsCollapsed ? "⌄" : "⌃"}
+                    </button>
+                  </div>
+                  {recordsCollapsed && <small className="records-collapsed-summary">{filteredRows.length} kayıt · Açmak için oka tıkla</small>}
                 </div>
-                <div className="records-tools">
+                {!recordsCollapsed && <div className="records-tools">
                   <div className="filter">
                     <Icon name="filter" size={16} />
                     <select
@@ -1618,8 +1641,9 @@ function Dashboard({ onSignedOut }) {
                     <Icon name="plus" />
                     Yeni kayıt
                   </button>
-                </div>
+                </div>}
               </div>
+              {!recordsCollapsed && <>
               <div className="table-scroll">
                 <table className="records-table" role="table" aria-label="Muhasebe kayıtları">
                   <thead>
@@ -1751,6 +1775,7 @@ function Dashboard({ onSignedOut }) {
                   </div>
                 </div>
               )}
+              </>}
             </section>
             <AnalyticsChart
               rows={accountingRows}
