@@ -168,9 +168,9 @@
 
 :root[data-mode="dark"] .standalone-calendar-page .modern-calendar-head {
   background:
-    radial-gradient(circle at 72% 72%, rgba(78,205,245,.14), transparent 26%),
-    radial-gradient(circle at 98% 8%, rgba(139,124,246,.18), transparent 32%),
-    linear-gradient(125deg, #0a342a 0%, #0b5542 43%, #0e5f59 70%, #353366 125%) !important;
+    radial-gradient(circle at 72% 72%, color-mix(in srgb, var(--green2) 14%, transparent), transparent 26%),
+    radial-gradient(circle at 98% 8%, color-mix(in srgb, var(--green) 18%, transparent), transparent 32%),
+    linear-gradient(125deg, color-mix(in srgb, var(--green) 50%, #071015), color-mix(in srgb, var(--green) 62%, #0a1117), color-mix(in srgb, var(--green2) 56%, #0a1117)) !important;
 }
 
 :root[data-mode="dark"] .standalone-calendar-page .calendar-toolbar {
