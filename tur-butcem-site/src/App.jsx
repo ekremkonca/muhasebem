@@ -805,7 +805,11 @@ function SystemPanel({
   );
 }
 
-function TourCountDonut({ count }) { return <article className="tour-count-donut-card"><div className="v8-card-title"><span>Tur sayısı</span><small>Tur geliri günleri</small></div><div className="tour-count-donut"><svg viewBox="0 0 120 120"><circle className="tour-count-track" cx="60" cy="60" r="47"/><circle className="tour-count-fill" cx="60" cy="60" r="47" pathLength="100"/></svg><strong>{count}</strong></div><p>Her farklı gün 1 tur</p></article>; }
+function TourCountDonut({ count }) {
+  const [active, setActive] = useState(false);
+  const [replay, setReplay] = useState(0);
+  return <article className="tour-count-donut-card"><div className="v8-card-title"><span>Tur sayısı</span><small>Tur geliri günleri</small></div><button className={`tour-count-donut${active ? " is-active" : ""}`} onClick={() => { setActive(true); setReplay(n => n + 1); }} aria-label="Tur sayısı dolumunu başlat" title="Dolumu başlatmak için tıkla"><svg viewBox="0 0 120 120"><circle className="tour-count-track" cx="60" cy="60" r="47"/><circle key={replay} className="tour-count-fill" cx="60" cy="60" r="47" pathLength="100"/></svg><strong>{count}</strong></button></article>;
+}
 
 function V8Enhancements({ rows, income, expense, pending, currency, tourCount }) {
   const [customize, setCustomize] = useState(false);
