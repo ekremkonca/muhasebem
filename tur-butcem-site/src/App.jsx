@@ -953,7 +953,7 @@ function Dashboard({ onSignedOut }) {
     income = paid.filter(isIncome).reduce((s, r) => s + converted(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + converted(r), 0),
     pending = accountingRows
-      .filter((r) => r.status === "Ödenmedi" && isIncome(r))
+      .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + convertedOutstanding(r), 0),
     net = income - expense,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
@@ -998,9 +998,8 @@ function Dashboard({ onSignedOut }) {
   const receivables = useMemo(
     () =>
       rows
-        .filter((r) => r.status === "Ödenmedi" && isIncome(r))
-        .sort((a, b) => convertedOutstanding(b) - convertedOutstanding(a))
-        .slice(0, 6),
+        .filter((r) => r.status === "Ödenmedi")
+        .sort((a, b) => convertedOutstanding(b) - convertedOutstanding(a)),
     [rows, currency, rates],
   );
   const cashForecast = useMemo(() => {
@@ -1743,7 +1742,7 @@ function Dashboard({ onSignedOut }) {
                   <h2>
                     {money(
                       rows
-                        .filter((r) => r.status === "Ödenmedi" && isIncome(r))
+                        .filter((r) => r.status === "Ödenmedi")
                         .reduce((s, r) => s + convertedOutstanding(r), 0),
                       currency,
                     )}
@@ -1751,7 +1750,7 @@ function Dashboard({ onSignedOut }) {
                 </div>
                 <span>
                   {
-                    rows.filter((r) => r.status === "Ödenmedi" && isIncome(r))
+                    rows.filter((r) => r.status === "Ödenmedi")
                       .length
                   }{" "}
                   kayıt
@@ -1761,10 +1760,8 @@ function Dashboard({ onSignedOut }) {
                 {receivables.map((r) => (
                   <article key={r.id}>
                     <div>
-                      <strong>{r.tour}</strong>
-                      <span>
-                        {r.agency || r.guest || r.ship || fmtDate(r.date)}
-                      </span>
+                      <strong>{[r.agency, r.note].filter(Boolean).join(" · ") || r.tour || "Kayıt"}</strong>
+                      <span>{r.type} · {fmtDate(r.date)}</span>
                     </div>
                     <div>
                       <strong>{money(convertedOutstanding(r), currency)}</strong>
