@@ -68,12 +68,14 @@ const fmtDateTime = (d) =>
         minute: "2-digit",
       }).format(new Date(d))
     : "—";
-const money = (n, c) =>
-  new Intl.NumberFormat("tr-TR", {
+const money = (n, c) => {
+  const formatted = new Intl.NumberFormat("tr-TR", {
     style: "currency",
     currency: c,
     maximumFractionDigits: 2,
   }).format(Number(n) || 0);
+  return formatted.replace(/,00$/, "");
+};
 
 function AnimatedMoney({ value, currency }) {
   const target = Number(value) || 0;

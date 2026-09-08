@@ -6,7 +6,7 @@ const SERIES=[
  {key:'Bahşiş',label:'Bahşiş',className:'tip'},
  {key:'Komisyon',label:'Komisyon',className:'commission'}
 ];
-const money=(n,c)=>new Intl.NumberFormat('tr-TR',{style:'currency',currency:c,maximumFractionDigits:0}).format(Number(n)||0);
+const money=(n,c)=>new Intl.NumberFormat('tr-TR',{style:'currency',currency:c,maximumFractionDigits:0}).format(Number(n)||0).replace(/,00$/,'');
 const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const parse=s=>new Date(`${s}T12:00:00`);
 const startOf=(d,mode)=>{const x=new Date(d);x.setHours(12,0,0,0);if(mode==='week'){const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day)}else if(mode==='month'){x.setDate(1)}else if(mode==='year'){x.setMonth(0,1)}return x};
