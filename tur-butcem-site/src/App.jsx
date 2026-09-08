@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import FinanceScore from './FinanceScore.jsx';
 import CategoryDonut from './CategoryDonut.jsx';
+import CurrencyDonuts from './CurrencyDonuts.jsx';
 import {
   createBackup,
   deleteBackup,
@@ -1467,7 +1468,7 @@ function Dashboard({ onSignedOut }) {
           </article>
           <article className="currency-totals-kpi">
             <span>Komisyon</span>
-            <div className="native-currency-totals">{commissionTotals.map(({code, amount}) => <div key={code}><small>{code}</small><b>{money(amount, code)}</b></div>)}</div>
+            <CurrencyDonuts totals={commissionTotals} money={money} />
             <small>Hak edilen toplam · tüm durumlar</small>
           </article>
           <article className="net">
@@ -1484,7 +1485,7 @@ function Dashboard({ onSignedOut }) {
           </article>
           <article className="currency-totals-kpi">
             <span>Bahşiş</span>
-            <div className="native-currency-totals">{tipTotals.map(({code, amount}) => <div key={code}><small>{code}</small><b>{money(amount, code)}</b></div>)}</div>
+            <CurrencyDonuts totals={tipTotals} money={money} />
             <small>Alınan toplam · ödenmiş kayıtlar</small>
           </article>
           <article>
