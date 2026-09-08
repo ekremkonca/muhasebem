@@ -4,7 +4,7 @@ import './styles/category-donut.css';
 const COLORS = ['#08a66c', '#3182ce', '#8064d9', '#e58b24'];
 
 export default function CategoryDonut({ cats, currency, money }) {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
   const [progress, setProgress] = useState(0);
   const [replay, setReplay] = useState(0);
   const [hovered, setHovered] = useState(null);
@@ -42,5 +42,6 @@ export default function CategoryDonut({ cats, currency, money }) {
       <span><strong>{cats.filter(cat => cat.value > 0).length}</strong><small>kategori</small></span>
       {hovered && <span className="category-donut-tooltip" style={{ color: COLORS[cats.indexOf(hovered)] }}><b>{hovered.type}</b><small>{money(hovered.value, currency)}</small></span>}
     </button>
+    <div className="category-donut-legend">{cats.map((cat, index) => <span key={cat.type}><i style={{ background: COLORS[index] }}/><b>{cat.type.replace('Tur ', '')}</b><small>{money(cat.value, currency)}</small></span>)}</div>
   </article>;
 }

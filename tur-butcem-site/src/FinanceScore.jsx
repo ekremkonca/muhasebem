@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './styles/finance-score.css';
 
 export default function FinanceScore({ score, onDetails }) {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
   const [replay, setReplay] = useState(0);
   const [value, setValue] = useState(0);
   useEffect(() => {
