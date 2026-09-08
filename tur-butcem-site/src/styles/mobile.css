@@ -212,7 +212,7 @@
   #root .v8-enhance-grid .v8-card-title{gap:2px;justify-content:center}
   #root .v8-enhance-grid .v8-card-title span{font-size:9px!important;text-align:center;line-height:1.15}
   #root .v8-enhance-grid .v8-card-title small{display:none}
-  #root .v8-enhance-grid .finance-score-dial,#root .v8-enhance-grid .category-donut,#root .v8-enhance-grid .tour-count-donut{width:110px!important;height:110px!important;margin:7px auto 0!important}
+  #root .v8-enhance-grid .finance-score-dial,#root .v8-enhance-grid .category-donut,#root .v8-enhance-grid .tour-count-donut{width:144px!important;height:144px!important;margin:7px auto 0!important}
   #root .v8-enhance-grid .finance-score-dial strong,#root .v8-enhance-grid .tour-count-donut strong{font-size:20px!important}
   #root .v8-enhance-grid .category-donut>span strong{font-size:17px!important}
   #root .v8-enhance-grid .category-donut>span small{font-size:7px!important}
