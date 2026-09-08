@@ -208,7 +208,7 @@
   #root .v7-kpis .average-under-net{display:block;margin-top:5px;font-size:10px!important;color:var(--muted)!important;line-height:1.25}
   #root .v7-kpis .average-under-net .money-animated{font-size:inherit!important;color:inherit!important}
   #root .v8-enhance-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
-  #root .v8-enhance-grid>*{min-width:0!important;min-height:116px!important;padding:9px 5px!important;border-radius:13px!important}
+  #root .v8-enhance-grid>*{min-width:0!important;min-height:158px!important;padding:9px 5px!important;border-radius:13px!important}
   #root .v8-enhance-grid .v8-card-title{gap:2px;justify-content:center}
   #root .v8-enhance-grid .v8-card-title span{font-size:9px!important;text-align:center;line-height:1.15}
   #root .v8-enhance-grid .v8-card-title small{display:none}
@@ -216,6 +216,12 @@
   #root .v8-enhance-grid .finance-score-dial strong,#root .v8-enhance-grid .tour-count-donut strong{font-size:20px!important}
   #root .v8-enhance-grid .category-donut>span strong{font-size:17px!important}
   #root .v8-enhance-grid .category-donut>span small{font-size:7px!important}
+  #root .v8-enhance-grid .category-donut-card{overflow:visible!important}
+  #root .v8-enhance-grid .category-donut-legend{display:grid!important;gap:3px!important;margin-top:2px!important}
+  #root .v8-enhance-grid .category-donut-legend span{padding:3px 3px!important;grid-template-columns:5px minmax(0,1fr)!important;column-gap:3px!important;min-width:0!important}
+  #root .v8-enhance-grid .category-donut-legend i{width:5px!important;height:5px!important}
+  #root .v8-enhance-grid .category-donut-legend b{font-size:7px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #root .v8-enhance-grid .category-donut-legend small{font-size:6px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #root .v8-enhance-grid .finance-score-dial small{font-size:8px!important}
   #root .v7-insights{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
   #root .v7-insights article{min-width:0!important;min-height:92px!important;padding:11px 10px!important;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}

@@ -32,7 +32,7 @@ export default function CategoryDonut({ cats, currency, money }) {
           const share = cat.value / total;
           const dash = circumference * share * progress;
           const gap = cat.value ? 1.8 : 0;
-          const item = <circle key={cat.type} className="category-donut-segment" cx="60" cy="60" r={radius} stroke={COLORS[index]} strokeDasharray={`${Math.max(0, dash - gap)} ${circumference - Math.max(0, dash - gap)}`} strokeDashoffset={-offset} onMouseEnter={() => setHovered(cat)} onMouseLeave={() => setHovered(null)}>
+          const item = <circle key={cat.type} className="category-donut-segment" cx="60" cy="60" r={radius} stroke={COLORS[index]} strokeDasharray={`${Math.max(0, dash - gap)} ${circumference - Math.max(0, dash - gap)}`} strokeDashoffset={-offset} onMouseEnter={() => setHovered(cat)} onMouseLeave={() => setHovered(null)} onClick={(event) => { event.stopPropagation(); setHovered(cat); }} tabIndex="0" role="button" aria-label={`${cat.type}: ${money(cat.value, currency)}`}>
             <title>{`${cat.type}: ${money(cat.value, currency)}`}</title>
           </circle>;
           offset += circumference * share * progress;
