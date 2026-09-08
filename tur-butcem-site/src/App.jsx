@@ -1611,7 +1611,7 @@ function Dashboard({ onSignedOut }) {
                         <td className="record-select">
                           <input
                             type="checkbox"
-                            aria-label={`${r.tour || 'Muhasebe'} kaydını seç`}
+                            aria-label={`${r.agency || r.tour || 'Muhasebe'} kaydını seç`}
                             checked={selected.includes(r.id)}
                             onChange={() =>
                               setSelected((x) =>
@@ -1624,13 +1624,9 @@ function Dashboard({ onSignedOut }) {
                         </td>
                         <td className="record-date" data-label="Tarih">{fmtDate(r.date)}</td>
                         <td className="record-source" data-label="Tur / Kaynak">
-                          <strong>{r.tour}</strong>
+                          <strong>{r.agency || r.tour || r.guest || r.ship || "Kayıt"}</strong>
                           <span>
-                            {[r.guest, r.agency, r.ship]
-                              .filter(Boolean)
-                              .join(" · ") ||
-                              r.note ||
-                              "—"}
+                            {r.note || [r.guest, r.ship].filter(Boolean).join(" · ") || "—"}
                           </span>
                           {(r.due_date || r.tags) && <small>{[r.due_date && `Vade: ${fmtDate(r.due_date)}`, r.tags].filter(Boolean).join(" · ")}</small>}
                         </td>
