@@ -9,5 +9,5 @@
 .finance-score-dial>span { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:2px; }
 .finance-score-dial strong { font-size:38px; line-height:1; font-variant-numeric:tabular-nums; }
 .finance-score-dial small { font-size:13px; color:var(--muted); margin-top:15px; }
-.finance-score-replay { border:0; background:transparent; color:var(--green); padding:6px; font-size:12px; font-weight:700; }
+.finance-score-replay { display:none; }
 .finance-score-dial:focus-visible,.finance-score-replay:focus-visible { outline:2px solid var(--green); outline-offset:4px; }
