@@ -788,7 +788,9 @@ function SystemPanel({
   );
 }
 
-function V8Enhancements({ rows, income, expense, pending, currency }) {
+function TourCountDonut({ count }) { return <article className="tour-count-donut-card"><div className="v8-card-title"><span>Tur sayısı</span><small>Tur geliri günleri</small></div><div className="tour-count-donut"><svg viewBox="0 0 120 120"><circle className="tour-count-track" cx="60" cy="60" r="47"/><circle className="tour-count-fill" cx="60" cy="60" r="47" pathLength="100"/></svg><strong>{count}</strong></div><p>Her farklı gün 1 tur</p></article>; }
+
+function V8Enhancements({ rows, income, expense, pending, currency, tourCount }) {
   const [customize, setCustomize] = useState(false);
   const [cardOrder, setCardOrder] = useState(() => { try { return JSON.parse(localStorage.getItem("v8-card-order") || '["score","chart","notice"]'); } catch { return ["score","chart","notice"]; } });
   const [dragCard, setDragCard] = useState(null);
@@ -811,6 +813,7 @@ function V8Enhancements({ rows, income, expense, pending, currency }) {
     <div className="v8-enhance-grid">
       {!hidden.includes("score") && <FinanceScore score={score} onDetails={() => setDetail(true)} />}
       {!hidden.includes("chart") && <CategoryDonut cats={cats} currency={currency} money={money} />}
+      <TourCountDonut count={tourCount} />
     </div>
     <div className="v8-suite-grid">
       <article><div className="v8-card-title"><span>Gelir / gider trendi</span><button className="v8-link trend-replay" onClick={()=>setTrendReplay(n=>n+1)}>↻ Oynat</button></div><div className="v8-line-chart" key={trendReplay}>{monthBars.map((m,i)=><div key={i} title={`${m.label}: ${money(m.value,currency)}`}><i style={{height:`${Math.max(8,Math.min(100,m.value/(Math.max(...monthBars.map(x=>x.value),1))*100))}%`}}/><small>{m.label}</small></div>)}</div></article>
@@ -948,7 +951,7 @@ function Dashboard({ onSignedOut }) {
       .filter((r) => r.status === "Ödenmedi" && isIncome(r))
       .reduce((s, r) => s + convertedOutstanding(r), 0),
     net = income - expense,
-    tourCount = new Set(accountingRows.map((r) => `${r.date}|${r.tour}`)).size,
+    tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
     average = tourCount ? net / tourCount : 0;
   const totalsByCurrency = (type, receivedOnly) => ['EUR', 'GBP', 'USD', 'TRY'].map(code => ({
     code,
@@ -1519,7 +1522,7 @@ function Dashboard({ onSignedOut }) {
             <small>{fmtDateTime(ratesUpdatedAt)}</small>
           </article>
         </div>
-        <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} />
+        <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} />
         <div className="v7-layout">
           <div className="v7-left">
             <section className="records workspace-records">
