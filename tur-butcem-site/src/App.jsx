@@ -1268,23 +1268,6 @@ function Dashboard({ onSignedOut }) {
     await logout();
     onSignedOut();
   };
-  const refreshMarketRates = async () => {
-    try {
-      setError("");
-      const response = await fetch("/api/markets?symbols=USDTRY,EURTRY,GBPTRY", { cache: "no-store" });
-      const payload = await response.json();
-      if (!response.ok || !payload?.quotes?.length) throw new Error(payload?.error || "Piyasa kurları alınamadı.");
-      const next = { ...rates };
-      payload.quotes.forEach((quote) => {
-        if (quote.symbol === "USDTRY") next.USD = Number(quote.price);
-        if (quote.symbol === "EURTRY") next.EUR = Number(quote.price);
-        if (quote.symbol === "GBPTRY") next.GBP = Number(quote.price);
-      });
-      const saved = await saveRates(next);
-      setRates(saved.rates);
-      setRatesUpdatedAt(saved.updatedAt || payload.fetchedAt);
-    } catch (e) { setError(e.message); }
-  };
   const sharePdf = ({ text, month: reportMonth } = {}) => {
     if (window.AndroidAuth?.sharePdfText) {
       window.AndroidAuth.sharePdfText(`Muhasebe-${reportMonth || today()}`, text || "Muhasebe raporu");
@@ -1533,7 +1516,6 @@ function Dashboard({ onSignedOut }) {
             >
               <Icon name="settings" size={16} />
             </button>
-            <button className="rates-live-refresh" onClick={refreshMarketRates} title="USD/TRY, EUR/TRY ve GBP/TRY paritelerini yenile">↻ Güncelle</button>
             <strong>
               USD {Number(rates.USD).toFixed(2)} · EUR{" "}
               {Number(rates.EUR).toFixed(2)}
