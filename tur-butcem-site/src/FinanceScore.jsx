@@ -17,7 +17,8 @@ export default function FinanceScore({ score, onDetails }) {
     let frame;
     const stop = () => { cancelAnimationFrame(frame); setValue(score); };
     reduced.addEventListener('change', stop);
-    if (reduced.matches) setValue(score);
+    // An explicit replay is a user request for motion, even with reduced motion enabled.
+    if (reduced.matches && replay === 0) setValue(score);
     else {
       setValue(0);
       let start;
