@@ -187,6 +187,7 @@ function Icon({ name, size = 18 }) {
     filter: <path d="M4 5h16l-6 7v5l-4 2v-7z" />,
     close: <path d="m6 6 12 12M18 6 6 18" />,
     check: <path d="m5 12 4 4L19 6" />,
+    chevron: <path d="m7 10 5 5 5-5" />,
     temple: (
       <>
         <path d="M3 21h18M5 18h14M6 18V10h12v8M3 10h18L12 3z" />
@@ -1572,7 +1573,7 @@ function Dashboard({ onSignedOut }) {
                         : "Seçili dönem"}
                     </h2>
                     <button
-                      className="records-collapse"
+                      className={`records-collapse${recordsCollapsed ? " is-collapsed" : ""}`}
                       onClick={() => setRecordsCollapsed((collapsed) => {
                         const next = !collapsed;
                         try { localStorage.setItem("records-collapsed", next ? "1" : "0"); } catch {}
@@ -1582,7 +1583,7 @@ function Dashboard({ onSignedOut }) {
                       aria-label={recordsCollapsed ? "Muhasebe kayıtlarını aç" : "Muhasebe kayıtlarını küçült"}
                       title={recordsCollapsed ? "Kayıtları aç" : "Kayıtları küçült"}
                     >
-                      {recordsCollapsed ? "⌄" : "⌃"}
+                      <Icon name="chevron" size={18} />
                     </button>
                   </div>
                   {recordsCollapsed && <small className="records-collapsed-summary">{filteredRows.length} kayıt · Açmak için oka tıkla</small>}
