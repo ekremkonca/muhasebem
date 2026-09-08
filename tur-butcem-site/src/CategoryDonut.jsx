@@ -9,6 +9,7 @@ export default function CategoryDonut({ cats, currency, money }) {
   const [replay, setReplay] = useState(0);
   const [hovered, setHovered] = useState(null);
   const [selected, setSelected] = useState(null);
+  const [details, setDetails] = useState(false);
   const total = Math.max(cats.reduce((sum, cat) => sum + cat.value, 0), 1);
   useEffect(() => {
     if (!active) return;
@@ -25,7 +26,7 @@ export default function CategoryDonut({ cats, currency, money }) {
   const radius = 43; const circumference = 2 * Math.PI * radius;
   let offset = 0;
   return <article className="category-donut-card">
-    <div className="v8-card-title"><span>Kategori dağılımı</span><small>{currency}</small></div>
+    <div className="v8-card-title"><span>Kategori dağılımı</span><div className="category-donut-title-actions"><small>{currency}</small><button className="category-donut-info" onClick={() => setDetails((value) => !value)} aria-label="Kategori toplamlarını göster" aria-expanded={details}>i</button></div></div>
     <button className="category-donut" onClick={() => { setActive(true); setReplay(n => n + 1); }} aria-label="Kategori dağılımını doldur" title="Doldurmak için tıkla">
       <svg viewBox="0 0 120 120" aria-hidden="true">
         <circle className="category-donut-track" cx="60" cy="60" r={radius}/>
@@ -43,6 +44,7 @@ export default function CategoryDonut({ cats, currency, money }) {
       <span><strong>{cats.filter(cat => cat.value > 0).length}</strong><small>kategori</small></span>
       {(selected || hovered) && <span className={`category-donut-tooltip${selected ? " is-selected" : ""}`} style={{ color: COLORS[cats.indexOf(selected || hovered)] }}><b>{(selected || hovered).type}</b><small>{money((selected || hovered).value, currency)}</small></span>}
     </button>
+    {details && <div className="category-donut-details" role="status">{cats.map((cat, index) => <div key={cat.type}><i style={{ background: COLORS[index] }} /><span>{cat.type}</span><b>{money(cat.value, currency)}</b></div>)}</div>}
     <div className="category-donut-legend">{cats.map((cat, index) => <span key={cat.type}><i style={{ background: COLORS[index] }}/><b>{cat.type.replace('Tur ', '')}</b><small>{money(cat.value, currency)}</small></span>)}</div>
   </article>;
 }
