@@ -44,7 +44,7 @@ export default function CategoryDonut({ cats, currency, money }) {
       <span><strong>{cats.filter(cat => cat.value > 0).length}</strong><small>kategori</small></span>
       {(selected || hovered) && <span className={`category-donut-tooltip${selected ? " is-selected" : ""}`} style={{ color: COLORS[cats.indexOf(selected || hovered)] }}><b>{(selected || hovered).type}</b><small>{money((selected || hovered).value, currency)}</small></span>}
     </button>
-    {details && <div className="category-donut-details" role="status">{cats.map((cat, index) => <div key={cat.type}><i style={{ background: COLORS[index] }} /><span>{cat.type}</span><b>{money(cat.value, currency)}</b></div>)}</div>}
+    {details && <div className="category-details-backdrop" onClick={() => setDetails(false)}><div className="category-details-modal" role="dialog" aria-modal="true" aria-label="Kategori toplamları" onClick={(event) => event.stopPropagation()}><button className="category-details-close" onClick={() => setDetails(false)} aria-label="Kapat">×</button><h3>Kategori dağılımı</h3><p>Kayıt defterindeki güncel toplamlar</p>{cats.map((cat, index) => <div className="category-details-row" key={cat.type}><i style={{ background: COLORS[index] }} /><span>{cat.type}</span><b>{money(cat.value, currency)}</b></div>)}</div></div>}
     <div className="category-donut-legend">{cats.map((cat, index) => <span key={cat.type}><i style={{ background: COLORS[index] }}/><b>{cat.type.replace('Tur ', '')}</b><small>{money(cat.value, currency)}</small></span>)}</div>
   </article>;
 }
