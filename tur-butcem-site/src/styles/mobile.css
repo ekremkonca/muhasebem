@@ -217,4 +217,15 @@
   #root .v8-enhance-grid .category-donut>span strong{font-size:17px!important}
   #root .v8-enhance-grid .category-donut>span small{font-size:7px!important}
   #root .v8-enhance-grid .finance-score-dial small{font-size:8px!important}
+  #root .v7-insights{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  #root .v7-insights article{min-width:0!important;min-height:92px!important;padding:11px 10px!important;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+  #root .v7-insights span{font-size:10px!important;line-height:1.2!important;white-space:normal}
+  #root .v7-insights strong{font-size:15px!important;line-height:1.25!important;white-space:nowrap!important;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  #root .v7-insights small{font-size:9px!important;line-height:1.2!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  #root .v7-insights .rates-insight{padding-right:10px!important}
+  #root .v7-insights .insight-corner-button{width:25px!important;height:25px!important;right:7px!important;top:7px!important}
+  #root .v7-kpis .net,#root .v7-kpis .pending{align-items:center!important;text-align:center!important;justify-items:center}
+  #root .v7-kpis .net>span,#root .v7-kpis .pending>span{width:100%;text-align:center}
+  #root .v7-kpis .net>strong,#root .v7-kpis .pending>strong{width:100%;text-align:center}
+  #root .v7-kpis .average-under-net{font-size:11px!important}
 }
