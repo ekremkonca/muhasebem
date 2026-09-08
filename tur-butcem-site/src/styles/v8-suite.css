@@ -3,3 +3,4 @@
 .v8-line-chart i{background-size:200% 100%;animation:v8-bar-rise .8s cubic-bezier(.2,.8,.2,1) both,v8-bar-shimmer 3.2s ease-in-out 1s infinite alternate}.v8-progress i,.v8-bar-row>div i{background-size:200% 100%;animation:v8-progress-fill .8s cubic-bezier(.2,.8,.2,1) both,v8-bar-shimmer 3.2s ease-in-out 1s infinite alternate}@keyframes v8-bar-shimmer{from{background-position:0 0;filter:brightness(1)}to{background-position:100% 0;filter:brightness(1.16)}}
 .v8-line-chart>div{cursor:pointer;transition:transform .2s}.v8-line-chart>div:hover{transform:translateY(-3px)}.v8-line-chart>div:hover small{color:var(--v8-green);font-weight:800}
 .trend-replay{display:none}
+.recent-debt small{display:block;color:var(--muted);font-size:9px;margin-top:2px}.recent-debt b{font-size:11px;white-space:nowrap}
