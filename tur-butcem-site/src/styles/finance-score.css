@@ -1,0 +1,13 @@
+.finance-score-card { text-align:center; }
+.finance-score-card .v8-card-title { text-align:left; }
+.finance-score-info { border:1px solid var(--line); border-radius:50%; width:26px; height:26px; background:var(--paper); color:var(--green); flex-shrink:0; }
+.finance-score-dial { position:relative; display:block; width:144px; height:144px; margin:12px auto 4px; padding:0; border:0; background:transparent; color:var(--green); border-radius:50%; }
+.finance-score-dial svg { display:block; width:100%; height:100%; transform:rotate(-90deg); overflow:visible; }
+.finance-score-dial circle { fill:none; stroke-width:9; }
+.finance-score-track { stroke:var(--line); }
+.finance-score-fill { stroke:var(--green); stroke-linecap:round; }
+.finance-score-dial>span { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:2px; }
+.finance-score-dial strong { font-size:38px; line-height:1; font-variant-numeric:tabular-nums; }
+.finance-score-dial small { font-size:13px; color:var(--muted); margin-top:15px; }
+.finance-score-replay { border:0; background:transparent; color:var(--green); padding:6px; font-size:12px; font-weight:700; }
+.finance-score-dial:focus-visible,.finance-score-replay:focus-visible { outline:2px solid var(--green); outline-offset:4px; }

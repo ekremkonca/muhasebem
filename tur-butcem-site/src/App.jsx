@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import FinanceScore from './FinanceScore.jsx';
 import {
   createBackup,
   deleteBackup,
@@ -804,7 +805,7 @@ function V8Enhancements({ rows, income, expense, pending, currency }) {
     <div className="v8-enhance-head"><div><span className="eyebrow">V8 ÖZET</span><h3>Finans görünümü</h3></div><button className="btn secondary" onClick={() => setCustomize((x) => !x)}>{customize ? "Tamam" : "Kartları düzenle"}</button></div>
     {customize && <div className="v8-card-picker">{[["score","Finans skoru"],["chart","Kategori grafiği"],["notice","Bildirimler"]].map(([id,label]) => <label key={id}><input type="checkbox" checked={!hidden.includes(id)} onChange={() => toggle(id)}/>{label}</label>)}</div>}
     <div className="v8-enhance-grid">
-      {!hidden.includes("score") && <article className="v8-score-card"><button className="v8-info-button" onClick={()=>setDetail(true)} aria-label="Skor detayları">i</button><span>Kişisel finans skoru</span><strong>{score}<small>/100</small></strong><div className="v8-score-ring" style={{"--score":"0deg","--score-target":`${score * 3.6}deg`}}/><p>{score >= 80 ? "Finansal durumun çok iyi." : score >= 60 ? "Dengeli gidiyorsun." : "Bütçeni biraz daha yakından takip et."}</p></article>}
+      {!hidden.includes("score") && <FinanceScore score={score} onDetails={() => setDetail(true)} />}
       {!hidden.includes("chart") && <article className="v8-chart-card"><div className="v8-card-title"><span>Kategori dağılımı</span><small>{currency}</small></div><div className="v8-bars">{cats.map((cat) => <div className="v8-bar-row" key={cat.type}><span>{cat.type.replace("Tur ", "")}</span><div><i style={{width:`${Math.max(4,cat.value/max*100)}%`}}/></div><b>{money(cat.value, currency)}</b></div>)}</div></article>}
       {!hidden.includes("notice") && <article className="v8-notice-card"><div className="v8-card-title"><span>Bildirim merkezi</span><small>{notices.length} bekleyen</small></div>{notices.length ? notices.map((r) => <div className="v8-notice" key={r.id}><i/><span>{r.tour || "Kayıt"}<small>{r.due_date ? `Vade: ${r.due_date}` : "Ödeme bekliyor"}</small></span></div>) : <p>Yeni bildirimin yok.</p>}</article>}
     </div>
