@@ -10,7 +10,7 @@
 .date-presets button.active{background:var(--primary,#111827);color:#fff}
 .custom-range{display:flex;align-items:center;gap:6px}
 .custom-range input{min-height:40px;border:1px solid var(--line,#d9dee7);border-radius:10px;padding:0 8px;background:var(--surface,#fff);color:inherit}
-.v7-kpis{grid-template-columns:repeat(6,minmax(0,1fr))!important;margin-bottom:12px}
+.v7-kpis{grid-template-columns:repeat(5,minmax(0,1fr))!important;margin-bottom:12px}
 .v7-kpis article{min-width:0;min-height:92px!important;padding:13px 15px!important}
 .v7-kpis article>span{font-size:11px!important}
 .v7-kpis strong{font-size:clamp(22px,1.7vw,28px)!important;line-height:1.12;margin:9px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

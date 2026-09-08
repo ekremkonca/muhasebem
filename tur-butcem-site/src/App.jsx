@@ -1451,27 +1451,13 @@ function Dashboard({ onSignedOut }) {
           )}
         </section>
         <div className="kpis compact v7-kpis">
-          <article className="income-kpi">
-            <span>Gelir</span>
-            <select
-              className="kpi-currency"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              aria-label="Gösterim para birimi"
-            >
-              {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
-            </select>
-            <strong>
-              <AnimatedMoney value={income} currency={currency} />
-            </strong>
-          </article>
           <article className="currency-totals-kpi">
             <span>Komisyon</span>
             <CurrencyDonuts totals={commissionTotals} money={money} />
             <small>Hak edilen toplam · tüm durumlar</small>
           </article>
           <article className="net">
-            <span>Net</span>
+            <span>Net gelir</span>
             <strong>
               <AnimatedMoney value={net} currency={currency} />
             </strong>
