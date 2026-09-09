@@ -1672,12 +1672,16 @@ function Dashboard({ onSignedOut }) {
                   <button
                     className="btn secondary"
                     onClick={() => setSelected(all ? [] : ids)}
+                    aria-label={all ? "Seçimi kaldır" : "Tümünü seç"}
+                    title={all ? "Seçimi kaldır" : "Tümünü seç"}
                   >
                     {all ? "Seçimi kaldır" : "Tümünü seç"}
                   </button>
                   <button
                     className="btn secondary"
                     onClick={removeSelected}
+                    aria-label="Seçilenleri sil"
+                    title="Seçilenleri sil"
                     disabled={!selected.length}
                   >
                     <Icon name="trash" />
@@ -1686,6 +1690,8 @@ function Dashboard({ onSignedOut }) {
                   <button
                     className="btn primary"
                     onClick={() => setModal({ currency })}
+                    aria-label="Yeni kayıt"
+                    title="Yeni kayıt"
                   >
                     <Icon name="plus" />
                     Yeni kayıt
@@ -1967,4 +1973,3 @@ export default function App() {
     />
   );
 }
-
