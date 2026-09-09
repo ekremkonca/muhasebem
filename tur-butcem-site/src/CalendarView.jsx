@@ -51,7 +51,7 @@ function buildCalendar(viewDate) {
   });
 }
 
-function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete, onConvert }) {
+function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
   const [form, setForm] = useState(() => ({
     id: initialEvent?.id,
     date: initialEvent?.date || selectedDate || today,
@@ -237,9 +237,6 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete, onC
               Sil
             </button>
           )}
-          {initialEvent && form.amount > 0 && !form.linked_record_id && ["Gelir", "Gider", "Tahsilat"].includes(form.category) && (
-            <button type="button" className="btn secondary" disabled={busy} onClick={async()=>{setBusy(true);setError("");try{await onConvert?.(form);onClose()}catch(err){setError(err.message||"Muhasebe kaydı oluşturulamadı.")}finally{setBusy(false)}}}>Muhasebeye aktar</button>
-          )}
           <span />
           <button
             type="button"
@@ -334,7 +331,6 @@ export default function CalendarView({
   onCreateEvent,
   onUpdateEvent,
   onDeleteEvent,
-  onConvertEvent,
 }) {
   const now = new Date();
   const [viewDate, setViewDate] = useState(
@@ -623,7 +619,6 @@ export default function CalendarView({
           onClose={() => setModal(null)}
           onSave={saveEvent}
           onDelete={onDeleteEvent}
-          onConvert={onConvertEvent}
         />
       )}
     </section>

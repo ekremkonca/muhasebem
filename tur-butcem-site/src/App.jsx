@@ -1824,12 +1824,11 @@ function Dashboard({ onSignedOut }) {
               onOpenCalendar={() => navigateTo("/takvim/")}
             />
             <CalendarView
-              rows={rows}
+              rows={[]}
               events={events}
               onCreateEvent={persistEvent}
               onUpdateEvent={persistEvent}
               onDeleteEvent={removeEvent}
-              onConvertEvent={convertEventToRecord}
             />
           </aside>
         </div>

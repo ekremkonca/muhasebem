@@ -215,12 +215,11 @@ function TakvimPage() {
         <>
           {error && <p className="system-error">{error}</p>}
           <CalendarView
-            rows={rows}
+            rows={[]}
             events={events}
             onCreateEvent={persistEvent}
             onUpdateEvent={persistEvent}
             onDeleteEvent={removeEvent}
-            onConvertEvent={convertEventToRecord}
           />
         </>
       )}
