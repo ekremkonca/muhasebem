@@ -48,6 +48,7 @@ export default function TourCountDonut({ count }) {
         </svg>
         <strong>{count}</strong>
       </button>
+      <p className="tour-motivation">{['Damlaya damlaya göl olur.', 'İşleyen demir ışıldar.', 'Emek olmadan yemek olmaz.'][Math.floor(Date.now()/86400000)%3]}<small>Türk atasözü · Günün sözü</small></p>
     </article>
   );
 }

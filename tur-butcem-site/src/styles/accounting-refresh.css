@@ -1,0 +1,38 @@
+html body #root .v7-dashboard article{padding:12px!important}
+html body #root .v7-dashboard .average-kpi-legacy{display:none!important}
+html body #root .v8-suite-grid>.scroll-summary{height:252px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+html body #root .scroll-summary>.v8-card-title{flex-shrink:0;padding-bottom:10px}
+.summary-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:5px}
+.summary-scroll .v8-debt{padding:8px 0;border-top:1px solid var(--line);margin:0;align-items:center}
+.summary-scroll .v8-debt span{min-width:0;overflow-wrap:anywhere}.summary-scroll b{flex-shrink:0}
+html body #root .workspace-records .records-head{flex-direction:row;align-items:center;flex-wrap:nowrap;overflow-x:auto;gap:12px;padding:12px}
+html body #root .workspace-records .records-title-line{display:flex;align-items:center;gap:8px;white-space:nowrap}
+html body #root .workspace-records .records-title-line h2{margin:0;font-size:15px}
+html body #root .workspace-records .records-tools{display:flex;align-items:center;flex-wrap:nowrap;width:auto;gap:6px;margin-left:auto}
+html body #root .workspace-records .records-tools>*{flex-shrink:0;min-height:36px}
+html body #root .workspace-records .records-tools select{min-height:36px;font-size:12px}
+html body #root .workspace-records .records-tools .btn{min-height:36px;white-space:nowrap;padding:7px 10px}
+.selection-count{display:inline-block;border-radius:20px;padding:3px 7px;background:var(--soft);color:var(--green);font-size:11px;white-space:nowrap}
+.currency-donuts{grid-template-columns:repeat(var(--currency-count,4),minmax(0,1fr))!important}
+.tour-motivation{margin:10px 0 0;font-size:12px;line-height:1.45;color:var(--muted);text-align:center}
+.tour-motivation small{display:block;font-size:10px;margin-top:5px;color:var(--green)}
+.v8-progress i{transition:width .6s ease}
+.finance-modern{isolation:isolate;background:radial-gradient(ellipse at 85% 0,color-mix(in srgb,var(--green) 14%,transparent),transparent 70%),var(--paper)!important;border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.finance-modern .analytics-head{padding:0!important}
+.finance-modern .finance-legend{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.finance-modern .finance-legend button{display:grid;grid-template-columns:9px 1fr;gap:4px 8px;align-items:center;padding:10px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);cursor:pointer}
+.finance-modern .finance-legend button[aria-pressed=false]{opacity:.4}
+.finance-modern .finance-legend small{grid-column:2;font-size:13px;font-weight:800;color:var(--ink)}
+.finance-modern .finance-legend b{font-size:11px}.finance-modern .legend-dot{width:8px;height:8px;border-radius:50%}
+.finance-modern .finance-line-scroll{background:linear-gradient(180deg,color-mix(in srgb,var(--green) 5%,var(--paper)),var(--paper));border:1px solid var(--line);border-radius:14px}
+.finance-modern .finance-line{stroke-width:3;filter:drop-shadow(0 2px 5px color-mix(in srgb,currentColor 35%,transparent));stroke-dasharray:1;stroke-dashoffset:0;animation:draw-finance 1.2s ease-out}
+.finance-modern .finance-area{opacity:.2;pointer-events:none}
+.finance-modern .finance-cursor{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 5}
+.finance-modern .chart-hit{fill:transparent;cursor:crosshair}
+.finance-modern .chart-hit:focus{outline:none;fill:color-mix(in srgb,var(--green) 10%,transparent)}
+.finance-readout{padding:12px;border-radius:12px;background:var(--soft);margin-top:10px;font-size:12px;display:flex;gap:10px;flex-wrap:wrap;min-height:48px;align-items:center}
+.finance-readout span{display:flex;gap:5px;align-items:center}.finance-readout i{width:7px;height:7px;border-radius:50%}
+.finance-caption{font-size:11px;color:var(--muted);margin:8px 0 0}
+@keyframes draw-finance{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.finance-modern .finance-line{animation:none}.v8-progress i{transition:none}}
+@media(max-width:720px){html body #root .v8-enhance-grid>article{padding:9px 5px!important}.tour-motivation{font-size:11px}.tour-motivation small{font-size:9px}.finance-modern .finance-legend{grid-template-columns:1fr 1fr!important}}
