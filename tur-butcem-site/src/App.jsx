@@ -54,6 +54,19 @@ const TYPES = ["Tur Geliri", "Tur Masrafı", "Bahşiş", "Komisyon"],
   PAGE_SIZE = 20;
 const INCOME_TYPES = new Set(["Tur Geliri", "Bahşiş", "Komisyon"]);
 const EXPENSE_TYPES = new Set(["Tur Masrafı"]);
+const REALIZED_FX_EXCHANGES = [
+  { code: "USD", amount: 260, rate: 46.44 },
+  { code: "GBP", amount: 320, rate: 62.34 },
+  { code: "EUR", amount: 545, rate: 53.07 },
+];
+const REALIZED_FX_TRY = REALIZED_FX_EXCHANGES.reduce(
+  (sum, item) => sum + item.amount * item.rate,
+  0,
+);
+const CASH_FX_BALANCES = [
+  { code: "USD", amount: 159 },
+  { code: "EUR", amount: 123 },
+];
 const pad = (n) => String(n).padStart(2, "0");
 const localISO = (d = new Date()) =>
   `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -502,7 +515,9 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onWhatsApp, onCl
   const [month, setMonth] = useState(today().slice(0, 7));
   const monthRows = rows.filter((r) => r.date.startsWith(month));
   const paid = monthRows.filter((r) => r.status === "Ödendi");
-  const income = paid.filter(isIncome).reduce((s, r) => s + convert(r), 0),
+  const income = paid
+      .filter((r) => normalizeType(r.type) === "Tur Geliri")
+      .reduce((s, r) => s + convert(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + convert(r), 0),
     tips = paid
       .filter((r) => r.type === "Bahşiş")
@@ -830,7 +845,7 @@ function V8Enhancements({ rows, income, expense, pending, currency, tourCount, n
   const [detail, setDetail] = useState(false);
   const [trendReplay, setTrendReplay] = useState(0);
   const saveGoal = () => { const value = Number(goalInput); if (!value) return; const next = {target:value, current:Math.max(0,income-expense)}; setGoal(next); localStorage.setItem("v8-goal", JSON.stringify(next)); setGoalInput(""); };
-  const monthBars = Array.from({length:6}, (_, i) => { const d = new Date(); d.setMonth(d.getMonth()-5+i); const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`; const value = rows.filter(r => String(r.date||"").startsWith(key)).reduce((s,r)=>s+(r.status === "Ödendi" ? (r.type === "Tur Masrafı" ? -convert(r) : convert(r)) : 0),0); return {label:d.toLocaleDateString("tr-TR",{month:"short"}),value}; });
+  const monthBars = Array.from({length:6}, (_, i) => { const d = new Date(); d.setMonth(d.getMonth()-5+i); const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`; const value = rows.filter(r => String(r.date||"").startsWith(key)).reduce((s,r)=>s+(r.status === "Ödendi" ? (normalizeType(r.type) === "Tur Masrafı" ? -convert(r) : normalizeType(r.type) === "Tur Geliri" ? convert(r) : 0) : 0),0); return {label:d.toLocaleDateString("tr-TR",{month:"short"}),value}; });
   return <section className="v8-enhancements" aria-label="V8 finans araçları">
     <div className="v8-enhance-head"><div><span className="eyebrow">V8 ÖZET</span><h3>Finans görünümü</h3></div><button className="btn secondary" onClick={() => setCustomize((x) => !x)}>{customize ? "Tamam" : "Kartları düzenle"}</button></div>
     {customize && <div className="v8-card-picker">{[["score","Finans skoru"],["chart","Kategori grafiği"]].map(([id,label]) => <label key={id}><input type="checkbox" checked={!hidden.includes(id)} onChange={() => toggle(id)}/>{label}</label>)}</div>}
@@ -982,20 +997,30 @@ function Dashboard({ onSignedOut }) {
   }, [accountingRows, typeFilter, statusFilter, sortOrder, search]);
   useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter, datePreset, customFrom, customTo]);
   const paid = accountingRows.filter((r) => r.status === "Ödendi"),
-    income = paid.filter(isIncome).reduce((s, r) => s + accountingValue(r), 0),
+    tourIncome = paid
+      .filter((r) => normalizeType(r.type) === "Tur Geliri")
+      .reduce((s, r) => s + accountingValue(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + accountingOutstanding(r), 0),
-    net = income - expense,
+    realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
+    income = tourIncome + realizedFxValue,
+    operatingNet = tourIncome - expense,
+    net = operatingNet + realizedFxValue,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
-    average = tourCount ? net / tourCount : 0;
+    average = tourCount ? operatingNet / tourCount : 0;
   const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
   const commissionTotals = currencyTotals(accountingRows, 'Komisyon');
+  const cashFxTotals = CASH_FX_BALANCES.map((item) => ({ ...item }));
+  const cashFxTryValue = CASH_FX_BALANCES.reduce(
+    (sum, item) => sum + convertAmount(item.amount, item.code, "TRY"),
+    0,
+  );
   const topTour = useMemo(() => {
     const m = {};
     paid
-      .filter(isIncome)
+      .filter((r) => normalizeType(r.type) === "Tur Geliri")
       .forEach((r) => (m[r.tour] = (m[r.tour] || 0) + accountingValue(r)));
     return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
   }, [paid, currency, rates]);
@@ -1017,7 +1042,12 @@ function Dashboard({ onSignedOut }) {
     const calc = (m) =>
       rows
         .filter((r) => r.date.startsWith(m) && r.status === "Ödendi")
-        .reduce((s, r) => s + (isExpense(r) ? -1 : 1) * accountingValue(r), 0);
+        .reduce((s, r) => {
+          const type = normalizeType(r.type);
+          if (type === "Tur Masrafı") return s - accountingValue(r);
+          if (type === "Tur Geliri") return s + accountingValue(r);
+          return s;
+        }, 0);
     const a = calc(current),
       b = calc(prev);
     return b === 0 ? (a ? 100 : 0) : ((a - b) / Math.abs(b)) * 100;
@@ -1511,6 +1541,7 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={net} currency={currency} />
             </strong>
             <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={average} currency={currency} /></small>
+            <small>Gerçekleşmiş döviz dahil · +{money(REALIZED_FX_TRY, "TRY")}</small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
@@ -1523,7 +1554,11 @@ function Dashboard({ onSignedOut }) {
             <CurrencyDonuts totals={tipTotals} money={money} />
             <small>Alınan toplam · tahsil edilen</small>
           </article>
-          <article className="average-kpi-legacy" aria-hidden="true" />
+          <article className="currency-totals-kpi cash-fx-kpi">
+            <span>Kasa Döviz</span>
+            <CurrencyDonuts totals={cashFxTotals} money={money} />
+            <small>TL karşılığı · <b>{money(cashFxTryValue, "TRY")}</b> · Net gelire dahil değil</small>
+          </article>
         </div>
         <div className="v7-insights">
           <article>
