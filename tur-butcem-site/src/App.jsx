@@ -514,14 +514,18 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onWhatsApp, onCl
     pending = monthRows
       .filter((r) => r.status === "Ödenmedi" && isIncome(r))
       .reduce((s, r) => s + convert(r), 0);
+  const nativeSummary = (type) => currencyTotals(paid, type)
+    .filter((item) => item.amount !== 0)
+    .map((item) => money(item.amount, item.code))
+    .join(" · ") || money(0, "TRY");
   const reportText = [
     `REHBERLİK MUHASEBE — ${month}`,
     "",
     `Gelir: ${money(income, currency)}`,
     `Masraf: ${money(expense, currency)}`,
     `Net: ${money(income - expense, currency)}`,
-    `Bahşiş: ${money(tips, currency)}`,
-    `Komisyon: ${money(commission, currency)}`,
+    `Bahşiş: ${nativeSummary("Bahşiş")}`,
+    `Komisyon: ${nativeSummary("Komisyon")}`,
     `Tur sayısı: ${tourCount}`,
     `Bekleyen tahsilat: ${money(pending, currency)}`,
   ].join("\n");
@@ -575,11 +579,11 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onWhatsApp, onCl
           </article>
           <article>
             <span>Bahşiş</span>
-            <strong>{money(tips, currency)}</strong>
+            <strong>{nativeSummary("Bahşiş")}</strong>
           </article>
           <article>
             <span>Komisyon</span>
-            <strong>{money(commission, currency)}</strong>
+            <strong>{nativeSummary("Komisyon")}</strong>
           </article>
           <article>
             <span>Alacak</span>
@@ -604,7 +608,7 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onWhatsApp, onCl
                   <td>{r.tour}</td>
                   <td>{r.type}</td>
                   <td>{r.status}</td>
-                  <td className="right">{money(convert(r), currency)}</td>
+                  <td className="right">{["Bahşiş", "Komisyon"].includes(normalizeType(r.type)) && normalizeCurrency(r.currency) !== currency ? money(r.amount, r.currency) : money(convert(r), currency)}</td>
                 </tr>
               ))}
             </tbody>
@@ -925,6 +929,12 @@ function Dashboard({ onSignedOut }) {
   const converted = (r) => convertAmount(r.amount, r.currency, currency);
   const convertedOutstanding = (r) =>
     convertAmount(Math.max(0, r.amount - r.paid_amount), r.currency, currency);
+  const keepNativeCurrency = (r) =>
+    ["Bahşiş", "Komisyon"].includes(normalizeType(r.type)) &&
+    normalizeCurrency(r.currency) !== currency;
+  const accountingValue = (r) => keepNativeCurrency(r) ? 0 : converted(r);
+  const accountingOutstanding = (r) =>
+    keepNativeCurrency(r) ? 0 : convertedOutstanding(r);
 
   const dateRange = useMemo(() => {
     const now = new Date(),
@@ -973,21 +983,21 @@ function Dashboard({ onSignedOut }) {
   }, [accountingRows, typeFilter, statusFilter, sortOrder, search]);
   useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter, datePreset, customFrom, customTo]);
   const paid = accountingRows.filter((r) => r.status === "Ödendi"),
-    income = paid.filter(isIncome).reduce((s, r) => s + converted(r), 0),
-    expense = paid.filter(isExpense).reduce((s, r) => s + converted(r), 0),
+    income = paid.filter(isIncome).reduce((s, r) => s + accountingValue(r), 0),
+    expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
-      .reduce((s, r) => s + convertedOutstanding(r), 0),
+      .reduce((s, r) => s + accountingOutstanding(r), 0),
     net = income - expense,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
     average = tourCount ? net / tourCount : 0;
   const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
-  const commissionTotals = currencyTotals(accountingRows, 'Komisyon').filter(item => item.code !== 'GBP');
+  const commissionTotals = currencyTotals(accountingRows, 'Komisyon');
   const topTour = useMemo(() => {
     const m = {};
     paid
       .filter(isIncome)
-      .forEach((r) => (m[r.tour] = (m[r.tour] || 0) + converted(r)));
+      .forEach((r) => (m[r.tour] = (m[r.tour] || 0) + accountingValue(r)));
     return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
   }, [paid, currency, rates]);
   const topCommission = useMemo(() => {
@@ -996,7 +1006,7 @@ function Dashboard({ onSignedOut }) {
       .filter((r) => r.type === "Komisyon")
       .forEach((r) => {
         const k = r.agency || r.guest || r.ship || "Diğer";
-        m[k] = (m[k] || 0) + converted(r);
+        m[k] = (m[k] || 0) + accountingValue(r);
       });
     return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
   }, [paid, currency, rates]);
@@ -1008,7 +1018,7 @@ function Dashboard({ onSignedOut }) {
     const calc = (m) =>
       rows
         .filter((r) => r.date.startsWith(m) && r.status === "Ödendi")
-        .reduce((s, r) => s + (isExpense(r) ? -1 : 1) * converted(r), 0);
+        .reduce((s, r) => s + (isExpense(r) ? -1 : 1) * accountingValue(r), 0);
     const a = calc(current),
       b = calc(prev);
     return b === 0 ? (a ? 100 : 0) : ((a - b) / Math.abs(b)) * 100;
@@ -1024,8 +1034,8 @@ function Dashboard({ onSignedOut }) {
     const end = new Date();
     end.setDate(end.getDate() + 30);
     const endKey = localISO(end);
-    const expectedIn = rows.filter((r) => isIncome(r) && r.status === "Ödenmedi" && (r.due_date || r.date) <= endKey).reduce((s, r) => s + convertedOutstanding(r), 0);
-    const expectedOut = rows.filter((r) => isExpense(r) && r.status === "Ödenmedi" && (r.due_date || r.date) <= endKey).reduce((s, r) => s + convertedOutstanding(r), 0);
+    const expectedIn = rows.filter((r) => isIncome(r) && r.status === "Ödenmedi" && (r.due_date || r.date) <= endKey).reduce((s, r) => s + accountingOutstanding(r), 0);
+    const expectedOut = rows.filter((r) => isExpense(r) && r.status === "Ödenmedi" && (r.due_date || r.date) <= endKey).reduce((s, r) => s + accountingOutstanding(r), 0);
     return { expectedIn, expectedOut, net: expectedIn - expectedOut };
   }, [rows, currency, rates]);
   const pageCount = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
@@ -1552,7 +1562,7 @@ function Dashboard({ onSignedOut }) {
             <small>{fmtDateTime(ratesUpdatedAt)}</small>
           </article>
         </div>
-        <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={converted} />
+        <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
         <div className="v7-layout">
           <div className="v7-left">
             <section className="records workspace-records">
@@ -1692,9 +1702,9 @@ function Dashboard({ onSignedOut }) {
                           {r.paid_amount > 0 && r.paid_amount < r.amount && <small>{money(r.paid_amount, r.currency)} tahsil</small>}
                         </td>
                         <td className="right amount record-amount" data-label="Tutar">
-                          <strong>{money(converted(r), currency)}</strong>
-                          {r.status === "Ödenmedi" && <small>Kalan: {money(convertedOutstanding(r), currency)}</small>}
-                          {r.currency !== currency && (
+                          <strong>{keepNativeCurrency(r) ? money(r.amount, r.currency) : money(converted(r), currency)}</strong>
+                          {r.status === "Ödenmedi" && <small>Kalan: {keepNativeCurrency(r) ? money(Math.max(0, r.amount - r.paid_amount), r.currency) : money(convertedOutstanding(r), currency)}</small>}
+                          {r.currency !== currency && !keepNativeCurrency(r) && (
                             <small>{money(r.amount, r.currency)}</small>
                           )}
                         </td>
@@ -1770,7 +1780,7 @@ function Dashboard({ onSignedOut }) {
             <AnalyticsChart
               rows={accountingRows}
               currency={currency}
-              convert={converted}
+              convert={accountingValue}
             />
           </div>
           <aside className="v7-right">
@@ -1782,7 +1792,7 @@ function Dashboard({ onSignedOut }) {
                     {money(
                       rows
                         .filter((r) => r.status === "Ödenmedi")
-                        .reduce((s, r) => s + convertedOutstanding(r), 0),
+                        .reduce((s, r) => s + accountingOutstanding(r), 0),
                       currency,
                     )}
                   </h2>
@@ -1803,7 +1813,7 @@ function Dashboard({ onSignedOut }) {
                       <span>{r.type} · {fmtDate(r.date)}</span>
                     </div>
                     <div>
-                      <strong>{money(convertedOutstanding(r), currency)}</strong>
+                      <strong>{keepNativeCurrency(r) ? money(Math.max(0, r.amount - r.paid_amount), r.currency) : money(convertedOutstanding(r), currency)}</strong>
                       <button onClick={() => status(r)}>Ödendi yap</button>
                     </div>
                   </article>
@@ -1839,7 +1849,7 @@ function Dashboard({ onSignedOut }) {
         <ReportModal
           rows={rows}
           currency={currency}
-          convert={converted}
+          convert={accountingValue}
           onExcel={excel}
           onPdf={sharePdf}
           onWhatsApp={shareWhatsApp}
