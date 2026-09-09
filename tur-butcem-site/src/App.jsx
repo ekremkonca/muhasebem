@@ -1013,8 +1013,12 @@ function Dashboard({ onSignedOut }) {
   const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
   const commissionTotals = currencyTotals(accountingRows, 'Komisyon');
   const cashFxTotals = CASH_FX_BALANCES.map((item) => ({ ...item }));
-  const cashFxTryValue = CASH_FX_BALANCES.reduce(
-    (sum, item) => sum + convertAmount(item.amount, item.code, "TRY"),
+  const cashFxTryBreakdown = CASH_FX_BALANCES.map((item) => {
+    const rate = Number(rates?.[item.code]) || 0;
+    return { ...item, rate, tryValue: item.amount * rate };
+  });
+  const cashFxTryValue = cashFxTryBreakdown.reduce(
+    (sum, item) => sum + item.tryValue,
     0,
   );
   const topTour = useMemo(() => {
@@ -1557,7 +1561,13 @@ function Dashboard({ onSignedOut }) {
           <article className="currency-totals-kpi cash-fx-kpi">
             <span>Kasa Döviz</span>
             <CurrencyDonuts totals={cashFxTotals} money={money} />
-            <small>TL karşılığı · <b>{money(cashFxTryValue, "TRY")}</b> · Net gelire dahil değil</small>
+            {cashFxTryBreakdown.map((item) => (
+              <small key={`cash-try-${item.code}`}>
+                {item.code}: {money(item.tryValue, "TRY")} · kur {item.rate.toFixed(2)}
+              </small>
+            ))}
+            <small><b>Toplam TL karşılığı · {money(cashFxTryValue, "TRY")}</b></small>
+            <small>Net gelire dahil değil</small>
           </article>
         </div>
         <div className="v7-insights">
