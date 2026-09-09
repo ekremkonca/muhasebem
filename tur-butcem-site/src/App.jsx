@@ -1560,14 +1560,19 @@ function Dashboard({ onSignedOut }) {
           </article>
           <article className="currency-totals-kpi cash-fx-kpi">
             <span>Kasa Döviz</span>
+            <div className="cash-fx-try-summary">
+              <small>Güncel TL karşılığı</small>
+              <strong>{money(cashFxTryValue, "TRY")}</strong>
+            </div>
             <CurrencyDonuts totals={cashFxTotals} money={money} />
-            {cashFxTryBreakdown.map((item) => (
-              <small key={`cash-try-${item.code}`}>
-                {item.code}: {money(item.tryValue, "TRY")} · kur {item.rate.toFixed(2)}
-              </small>
-            ))}
-            <small><b>Toplam TL karşılığı · {money(cashFxTryValue, "TRY")}</b></small>
-            <small>Net gelire dahil değil</small>
+            <div className="cash-fx-rate-breakdown">
+              {cashFxTryBreakdown.map((item) => (
+                <small key={`cash-try-${item.code}`}>
+                  {item.code}: {money(item.tryValue, "TRY")} · kur {item.rate.toFixed(2)}
+                </small>
+              ))}
+            </div>
+            <small className="cash-fx-net-note">Net gelire dahil değil</small>
           </article>
         </div>
         <div className="v7-insights">
