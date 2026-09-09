@@ -932,9 +932,8 @@ function Dashboard({ onSignedOut }) {
   const keepNativeCurrency = (r) =>
     ["Bahşiş", "Komisyon"].includes(normalizeType(r.type)) &&
     normalizeCurrency(r.currency) !== currency;
-  const accountingValue = (r) => keepNativeCurrency(r) ? 0 : converted(r);
-  const accountingOutstanding = (r) =>
-    keepNativeCurrency(r) ? 0 : convertedOutstanding(r);
+  const accountingValue = (r) => converted(r);
+  const accountingOutstanding = (r) => convertedOutstanding(r);
 
   const dateRange = useMemo(() => {
     const now = new Date(),
