@@ -1,0 +1,40 @@
+name: Restore FX values to net income calculations
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-net-native-currency.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Patch accounting totals
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('tur-butcem-site/src/App.jsx')
+          text = path.read_text()
+          old = '''  const accountingValue = (r) => keepNativeCurrency(r) ? 0 : converted(r);
+  const accountingOutstanding = (r) =>
+    keepNativeCurrency(r) ? 0 : convertedOutstanding(r);'''
+          new = '''  const accountingValue = (r) => converted(r);
+  const accountingOutstanding = (r) => convertedOutstanding(r);'''
+          if old not in text:
+              raise SystemExit('Target accounting snippet not found')
+          path.write_text(text.replace(old, new, 1))
+      - name: Commit change and remove temporary workflow
+        run: |
+          rm .github/workflows/fix-net-native-currency.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tur-butcem-site/src/App.jsx .github/workflows/fix-net-native-currency.yml
+          git commit -m "Include FX tips and commissions in net income"
+          git push origin main
