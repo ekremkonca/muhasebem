@@ -1,0 +1,54 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'mobile-android/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Build debug APK
+        run: gradle -p mobile-android --no-daemon :app:assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rehberlik-Muhasebe-APK
+          path: mobile-android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Publish APK release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="mobile-android/app/build/outputs/apk/debug/app-debug.apk"
+          TAG="mobile-v1.0.0"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$APK#RehberlikMuhasebe.apk" --clobber
+          else
+            gh release create "$TAG" "$APK#RehberlikMuhasebe.apk" --target "${GITHUB_SHA}" --title "Rehberlik Muhasebe Android v1.0.0" --notes "Android APK. Canlı rehberlikmuhasebe.pages.dev sitesini kullanır; web ve APK aynı D1 veritabanını görür."
+          fi
