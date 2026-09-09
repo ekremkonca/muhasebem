@@ -1,0 +1,47 @@
+name: Cashbox Rate Fix
+
+on:
+  push:
+    paths:
+      - '.cashbox-rate-fix-trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch cashbox conversion
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tur-butcem-site/src/App.jsx')
+          text = p.read_text()
+
+          old_calc = '''  const cashFxTotals = CASH_FX_BALANCES.map((item) => ({ ...item }));\n  const cashFxTryValue = CASH_FX_BALANCES.reduce(\n    (sum, item) => sum + convertAmount(item.amount, item.code, "TRY"),\n    0,\n  );'''
+          new_calc = '''  const cashFxTotals = CASH_FX_BALANCES.map((item) => ({ ...item }));\n  const cashFxTryBreakdown = CASH_FX_BALANCES.map((item) => {\n    const rate = Number(rates?.[item.code]) || 0;\n    return { ...item, rate, tryValue: item.amount * rate };\n  });\n  const cashFxTryValue = cashFxTryBreakdown.reduce(\n    (sum, item) => sum + item.tryValue,\n    0,\n  );'''
+          if old_calc not in text:
+              raise SystemExit('Cashbox calculation target not found')
+          text = text.replace(old_calc, new_calc, 1)
+
+          old_card = '''          <article className="currency-totals-kpi cash-fx-kpi">\n            <span>Kasa Döviz</span>\n            <CurrencyDonuts totals={cashFxTotals} money={money} />\n            <small>TL karşılığı · <b>{money(cashFxTryValue, "TRY")}</b> · Net gelire dahil değil</small>\n          </article>'''
+          new_card = '''          <article className="currency-totals-kpi cash-fx-kpi">\n            <span>Kasa Döviz</span>\n            <CurrencyDonuts totals={cashFxTotals} money={money} />\n            {cashFxTryBreakdown.map((item) => (\n              <small key={`cash-try-${item.code}`}>\n                {item.code}: {money(item.tryValue, "TRY")} · kur {item.rate.toFixed(2)}\n              </small>\n            ))}\n            <small><b>Toplam TL karşılığı · {money(cashFxTryValue, "TRY")}</b></small>\n            <small>Net gelire dahil değil</small>\n          </article>'''
+          if old_card not in text:
+              raise SystemExit('Cashbox card target not found')
+          text = text.replace(old_card, new_card, 1)
+          p.write_text(text)
+          PY
+
+      - name: Commit fix and clean trigger files
+        shell: bash
+        run: |
+          rm -f .github/workflows/fix-cashbox-rate.yml .cashbox-rate-fix-trigger
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fix cashbox TRY conversion from saved FX rates"
+          git push
