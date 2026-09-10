@@ -1541,15 +1541,15 @@ function Dashboard({ onSignedOut }) {
           <article className="net filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Tümü"); }}>
             <span>Net gelir</span>
             <strong>
-              <AnimatedMoney value={net} currency={currency} />
+              <AnimatedMoney value={loading ? 0 : net} currency={currency} />
             </strong>
-            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={average} currency={currency} /></small>
+            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={loading ? 0 : average} currency={currency} /></small>
             <small>Gerçekleşmiş döviz dahil · +{money(REALIZED_FX_TRY, "TRY")}</small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
             <strong>
-              <AnimatedMoney value={pending} currency={currency} />
+              <AnimatedMoney value={loading ? 0 : pending} currency={currency} />
             </strong>
           </article>
           <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
