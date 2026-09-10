@@ -86,4 +86,4 @@ export async function onRequestGet(context){
   });
  }catch(error){return errorResponse(error,'TEFAS verisi alınamadı.')}
 }
-import { errorResponse, getDb, requireSession } from '../_lib.js';
+
