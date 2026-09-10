@@ -110,7 +110,8 @@ function AnimatedMoney({ value, currency }) {
     }
     const startValue = Math.sign(target);
     const startedAt = performance.now();
-    const duration = 820;
+    // Fast count-up after the authoritative D1 value arrives.
+    const duration = 165;
     let frame;
     const tick = (time) => {
       const progress = Math.min(1, (time - startedAt) / duration);
@@ -1439,7 +1440,7 @@ function Dashboard({ onSignedOut }) {
         </div>
       </header>
       <MarketTicker />
-      <main className="main-dashboard v7-dashboard">
+      <main className={`main-dashboard v7-dashboard${loading ? " is-loading" : ""}`} aria-busy={loading}>
         {error && (
           <p className="system-error" onClick={() => setError("")}>
             {error}
