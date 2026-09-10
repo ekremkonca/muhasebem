@@ -96,12 +96,11 @@ const money = (n, c) => {
   return formatted.replace(/,00$/, "");
 };
 
-function AnimatedMoney({ value, currency, ready = true }) {
+function AnimatedMoney({ value, currency }) {
   const target = Number(value) || 0;
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!ready) { setDisplay(0); return undefined; }
     if (target === 0) {
       setDisplay(target);
       return undefined;
@@ -121,11 +120,11 @@ function AnimatedMoney({ value, currency, ready = true }) {
     setDisplay(startValue);
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [target, ready]);
+  }, [target]);
 
   return (
-    <span className="animated-money" data-counter="linear-300" aria-label={ready ? money(target, currency) : "Hesaplanıyor"}>
-      {ready ? money(display, currency) : "…"}
+    <span className="animated-money" data-counter="linear-300" aria-label={money(target, currency)}>
+      {money(display, currency)}
     </span>
   );
 }
@@ -1542,15 +1541,15 @@ function Dashboard({ onSignedOut }) {
           <article className="net filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Tümü"); }}>
             <span>Net gelir</span>
             <strong>
-              <AnimatedMoney value={net} currency={currency} ready={!loading} />
+              <AnimatedMoney value={net} currency={currency} />
             </strong>
-            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={average} currency={currency} ready={!loading} /></small>
+            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={average} currency={currency} /></small>
             <small>Gerçekleşmiş döviz dahil · +{money(REALIZED_FX_TRY, "TRY")}</small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
             <strong>
-              <AnimatedMoney value={pending} currency={currency} ready={!loading} />
+              <AnimatedMoney value={pending} currency={currency} />
             </strong>
           </article>
           <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>

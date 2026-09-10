@@ -1,7 +1,5 @@
 html body #root .v7-dashboard article{padding:12px!important}
 html body #root .v7-dashboard .average-kpi-legacy{display:none!important}
-html body #root .v7-dashboard.is-loading{position:relative;pointer-events:none}
-html body #root .v7-dashboard.is-loading::after{content:'Hesaplanıyor…';position:absolute;inset:0;z-index:20;display:grid;place-items:start center;padding-top:180px;background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(3px);color:var(--muted);font-weight:800;font-size:14px;letter-spacing:.02em}
 html body #root .v8-suite-grid>.scroll-summary{height:252px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
 html body #root .scroll-summary>.v8-card-title{flex-shrink:0;padding-bottom:10px}
 .summary-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:5px}
