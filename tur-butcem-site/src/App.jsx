@@ -1563,7 +1563,7 @@ function Dashboard({ onSignedOut }) {
               <small>Güncel TL karşılığı</small>
               <strong>{money(cashFxTryValue, "TRY")}</strong>
             </div>
-            <CurrencyDonuts totals={cashFxTotals} money={money} />
+            <CurrencyDonuts totals={cashFxTotals} money={money} fast />
             <div className="cash-fx-rate-breakdown">
               {cashFxTryBreakdown.map((item) => (
                 <small key={`cash-try-${item.code}`}>
