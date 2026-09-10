@@ -78,7 +78,9 @@
     if (!root || !model) return;
 
     const total = findKpi(root, 'Toplam Para');
-    setText(total?.querySelector('strong'), money(model.currentTotal));
+    if (!total?.querySelector('.fast-count')) {
+      setText(total?.querySelector('strong'), money(model.currentTotal));
+    }
     setText(total?.querySelector('small'), `${model.elapsed}/${model.days} gün net tahakkuk`);
 
     const accrued = findKpi(root, 'Birikmiş Kazanç');
