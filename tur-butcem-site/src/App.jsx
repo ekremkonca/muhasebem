@@ -96,11 +96,12 @@ const money = (n, c) => {
   return formatted.replace(/,00$/, "");
 };
 
-function AnimatedMoney({ value, currency }) {
+function AnimatedMoney({ value, currency, ready = true }) {
   const target = Number(value) || 0;
-  const [display, setDisplay] = useState(target ? Math.sign(target) : 0);
+  const [display, setDisplay] = useState(0);
 
   useEffect(() => {
+    if (!ready) { setDisplay(0); return undefined; }
     const reduceMotion = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)",
     )?.matches;
@@ -108,25 +109,26 @@ function AnimatedMoney({ value, currency }) {
       setDisplay(target);
       return undefined;
     }
-    const startValue = Math.sign(target);
-    const startedAt = performance.now();
-    // Fast count-up after the authoritative D1 value arrives.
-    const duration = 165;
+    const startValue = 0;
+    let startedAt;
+    // Start at the first frame, after the dashboard has rendered.
+    const duration = 300;
     let frame;
     const tick = (time) => {
+      startedAt ??= time;
       const progress = Math.min(1, (time - startedAt) / duration);
-      const eased = 1 - Math.pow(1 - progress, 4);
+      const eased = progress;
       setDisplay(startValue + (target - startValue) * eased);
       if (progress < 1) frame = requestAnimationFrame(tick);
     };
     setDisplay(startValue);
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [target]);
+  }, [target, ready]);
 
   return (
-    <span className="animated-money" aria-label={money(target, currency)}>
-      {money(display, currency)}
+    <span className="animated-money" data-counter="linear-300" aria-label={ready ? money(target, currency) : "Hesaplanıyor"}>
+      {ready ? money(display, currency) : "…"}
     </span>
   );
 }
@@ -1543,15 +1545,15 @@ function Dashboard({ onSignedOut }) {
           <article className="net filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Tümü"); }}>
             <span>Net gelir</span>
             <strong>
-              <AnimatedMoney value={net} currency={currency} />
+              <AnimatedMoney value={net} currency={currency} ready={!loading} />
             </strong>
-            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={average} currency={currency} /></small>
+            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={average} currency={currency} ready={!loading} /></small>
             <small>Gerçekleşmiş döviz dahil · +{money(REALIZED_FX_TRY, "TRY")}</small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
             <strong>
-              <AnimatedMoney value={pending} currency={currency} />
+              <AnimatedMoney value={pending} currency={currency} ready={!loading} />
             </strong>
           </article>
           <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
