@@ -5,6 +5,9 @@ const TEFAS_BASE='https://www.tefas.gov.tr/api/funds';
 const respond=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'}});
 
 async function tefas(endpoint,payload,fundCode){
+  // TEFAS now requires a short-lived session cookie before the public API POST.
+  const landing=await fetch('https://www.tefas.gov.tr/',{headers:{'accept':'text/html,application/xhtml+xml'}});
+  const cookie=landing.headers.get('set-cookie')?.split(';')[0]||'';
   const response=await fetch(`${TEFAS_BASE}/${endpoint}`,{
     method:'POST',
     headers:{
@@ -12,6 +15,7 @@ async function tefas(endpoint,payload,fundCode){
       'content-type':'application/json',
       'origin':'https://www.tefas.gov.tr',
       'referer':`https://www.tefas.gov.tr/tr/fon-detayli-analiz/${fundCode}`
+      ,...(cookie?{'cookie':cookie}:{})
     },
     body:JSON.stringify(payload)
   });
