@@ -102,10 +102,7 @@ function AnimatedMoney({ value, currency, ready = true }) {
 
   useEffect(() => {
     if (!ready) { setDisplay(0); return undefined; }
-    const reduceMotion = window.matchMedia?.(
-      "(prefers-reduced-motion: reduce)",
-    )?.matches;
-    if (reduceMotion || target === 0) {
+    if (target === 0) {
       setDisplay(target);
       return undefined;
     }
