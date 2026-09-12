@@ -10,8 +10,7 @@ export default defineConfig({
         root: resolve(process.cwd(), 'index.html'),
         muhasebe: resolve(process.cwd(), 'muhasebe/index.html'),
         varliklar: resolve(process.cwd(), 'varliklar/index.html'),
-        takvim: resolve(process.cwd(), 'takvim/index.html'),
-        demo: resolve(process.cwd(), 'demo/index.html')
+        takvim: resolve(process.cwd(), 'takvim/index.html')
       }
     }
   }
