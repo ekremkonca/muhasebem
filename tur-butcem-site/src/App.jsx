@@ -1695,6 +1695,8 @@ function Dashboard({ onSignedOut }) {
             </button>
           </div>
         </section>
+        <div className="accounting-overview-row">
+          <div className="accounting-primary-summary">
         <div className="kpis compact v7-kpis">
           <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
             <span>Komisyon</span>
@@ -1773,10 +1775,7 @@ function Dashboard({ onSignedOut }) {
             <small>{fmtDateTime(ratesUpdatedAt)}</small>
           </article>
         </div>
-        <VisualExperience rows={accountingRows} income={income} expense={expense} pending={pending} tourCount={tourCount} currency={currency} convert={accountingValue}/>
-        <MonthlySummary rows={accountingRows} currency={currency} convert={accountingValue} />
-        <div className="compact-finance-row">
-          <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
+          </div>
           <div className="compact-finance-side">
             <CompactReceivables rows={rows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/>
             <UpcomingEvents events={events} onOpenCalendar={() => navigateTo("/takvim/")} />
@@ -2059,6 +2058,14 @@ function Dashboard({ onSignedOut }) {
             />
           </aside>
         </div>
+        <details className="detailed-analysis">
+          <summary><span><b>Detaylı Analiz</b><small>Aylık özet, V8 göstergeleri ve ayrıntılı finans görünümü</small></span><i>⌄</i></summary>
+          <div className="detailed-analysis-content">
+            <MonthlySummary rows={accountingRows} currency={currency} convert={accountingValue} />
+            <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
+            <VisualExperience rows={accountingRows} income={income} expense={expense} pending={pending} tourCount={tourCount} currency={currency} convert={accountingValue}/>
+          </div>
+        </details>
       </main>
       {modal && (
         <EntryModal
