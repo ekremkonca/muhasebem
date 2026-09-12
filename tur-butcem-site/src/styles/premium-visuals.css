@@ -1,0 +1,48 @@
+:root{
+  --premium-glass:color-mix(in srgb,var(--surface,#fff) 90%,transparent);
+  --premium-line:color-mix(in srgb,var(--accent,#08b981) 24%,transparent);
+  --premium-glow:color-mix(in srgb,var(--accent,#08b981) 28%,transparent);
+  --premium-shadow:0 18px 54px rgba(3,18,28,.10),0 2px 8px rgba(3,18,28,.05);
+}
+
+html{scroll-behavior:smooth}
+body{position:relative;isolation:isolate;background:
+ radial-gradient(circle at 8% 5%,color-mix(in srgb,var(--accent,#08b981) 12%,transparent),transparent 32rem),
+ radial-gradient(circle at 92% 30%,color-mix(in srgb,var(--accent-2,#3b82f6) 10%,transparent),transparent 36rem),
+ var(--bg,#f5faf8)}
+body::before{content:"";position:fixed;z-index:-1;inset:-18%;pointer-events:none;background:
+ radial-gradient(circle at 24% 24%,color-mix(in srgb,var(--accent,#08b981) 9%,transparent),transparent 22%),
+ radial-gradient(circle at 78% 68%,color-mix(in srgb,var(--accent-2,#3b82f6) 8%,transparent),transparent 24%);
+ filter:blur(34px);animation:premiumAmbient 18s ease-in-out infinite alternate}
+
+.v7-header{background:color-mix(in srgb,var(--surface,#fff) 90%,transparent)!important;backdrop-filter:blur(18px) saturate(145%);border-color:var(--premium-line)!important;box-shadow:0 12px 42px rgba(3,18,28,.08)}
+.system-shortcut-card,.theme-trigger,.privacy-trigger,.mode-trigger,.header-tool,.header-actions .btn{position:relative;overflow:hidden;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease!important}
+.system-shortcut-card::after,.header-actions .btn::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.22) 45%,transparent 70%);transform:translateX(-140%);transition:transform .55s ease}
+.system-shortcut-card:hover::after,.header-actions .btn:hover::after{transform:translateX(140%)}
+.system-shortcut-card:hover,.theme-trigger:hover,.privacy-trigger:hover,.mode-trigger:hover,.header-tool:hover,.header-actions .btn:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent,#08b981) 55%,transparent)!important;box-shadow:0 10px 24px var(--premium-glow)}
+
+.summary-card,.v8-card,.analysis,.records,.receivables,.calendar-shell,.calendar-card,.assets-general-total,.fund-kpi,.fund-chart-card,.compact-details-card,.asset-side,.monthly-summary{
+  background:var(--premium-glass)!important;border-color:var(--premium-line)!important;box-shadow:var(--premium-shadow)!important;backdrop-filter:blur(14px) saturate(125%);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.summary-card:hover,.v8-card:hover,.fund-kpi:hover,.compact-details-card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent,#08b981) 42%,transparent)!important;box-shadow:0 22px 60px rgba(3,18,28,.14),0 0 0 1px var(--premium-glow)!important}
+
+.summary-card,.fund-kpi,.assets-general-total{position:relative;overflow:hidden}
+.summary-card::before,.fund-kpi::before,.assets-general-total::before{content:"";position:absolute;width:150px;height:150px;right:-58px;top:-70px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent,#08b981) 20%,transparent),transparent 68%);pointer-events:none}
+.summary-card::after,.fund-kpi::after{content:"";position:absolute;left:10%;right:8%;bottom:10px;height:24px;opacity:.13;pointer-events:none;background:linear-gradient(135deg,transparent 0 8%,var(--accent,#08b981) 9% 11%,transparent 12% 24%,var(--accent,#08b981) 25% 28%,transparent 29% 42%,var(--accent,#08b981) 43% 46%,transparent 47% 61%,var(--accent,#08b981) 62% 65%,transparent 66%);clip-path:polygon(0 88%,16% 61%,31% 76%,48% 25%,65% 50%,80% 12%,100% 34%,100% 100%,0 100%)}
+
+.market-ticker{border-color:var(--premium-line)!important;background:color-mix(in srgb,var(--surface,#fff) 86%,transparent)!important;backdrop-filter:blur(14px)}
+.market-ticker article{transition:background .22s ease,transform .22s ease}.market-ticker article:hover{background:color-mix(in srgb,var(--accent,#08b981) 9%,transparent);transform:translateY(-1px)}
+
+.calendar-hero,.calendar-page-hero{position:relative;overflow:hidden;background:linear-gradient(125deg,color-mix(in srgb,var(--accent,#08b981) 78%,#071c24),color-mix(in srgb,var(--accent-2,#3b82f6) 62%,#10232c))!important}
+.calendar-hero::after,.calendar-page-hero::after{content:"";position:absolute;inset:-80% -15%;pointer-events:none;background:conic-gradient(from 160deg,transparent,rgba(255,255,255,.14),transparent 28%);animation:premiumSweep 9s linear infinite}
+.calendar-day{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}.calendar-day:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent,#08b981) 58%,transparent)!important;box-shadow:0 10px 24px var(--premium-glow)}
+
+.btn.primary,.assets-report-button,.asset-edit-trigger{box-shadow:0 10px 26px color-mix(in srgb,var(--accent,#08b981) 28%,transparent);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}.btn.primary:hover,.assets-report-button:hover,.asset-edit-trigger:hover{transform:translateY(-2px);filter:saturate(1.12);box-shadow:0 14px 34px color-mix(in srgb,var(--accent,#08b981) 40%,transparent)}
+.finance-line,.fund-chartdepo-line{filter:drop-shadow(0 0 5px color-mix(in srgb,var(--accent,#08b981) 45%,transparent))}
+
+html[data-mode="dark"]{--premium-shadow:0 20px 58px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.025)}
+html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix(in srgb,var(--accent,#08b981) 12%,transparent),transparent 34rem),radial-gradient(circle at 92% 30%,color-mix(in srgb,var(--accent-2,#3b82f6) 10%,transparent),transparent 36rem),var(--bg,#06171d)}
+
+@keyframes premiumAmbient{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(3%,2%,0) scale(1.08)}}
+@keyframes premiumSweep{to{transform:rotate(360deg)}}
+@media(max-width:720px){body::before{filter:blur(24px)}.summary-card:hover,.v8-card:hover,.fund-kpi:hover,.compact-details-card:hover{transform:none}.v7-header{backdrop-filter:blur(12px) saturate(130%)}}
+@media(prefers-reduced-motion:reduce){body::before,.calendar-hero::after,.calendar-page-hero::after{animation:none}.system-shortcut-card,.summary-card,.v8-card,.calendar-day,.fund-kpi{transition:none}}
