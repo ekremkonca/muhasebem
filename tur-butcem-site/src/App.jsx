@@ -1670,36 +1670,6 @@ function Dashboard({ onSignedOut }) {
               />
             </div>
           )}
-          <div className="advanced-filterbar" aria-label="Gelişmiş filtreler">
-            <div className="filter">
-              <select value={agencyFilter} onChange={(e) => setAgencyFilter(e.target.value)}>
-                <option value="Tümü">Tüm acentalar</option>
-                {agencyOptions.map((agency) => (
-                  <option key={agency} value={agency}>{agency}</option>
-                ))}
-                <option value="Acentasız">Acentasız</option>
-              </select>
-            </div>
-            <div className="filter">
-              <select value={currencyFilter} onChange={(e) => setCurrencyFilter(e.target.value)}>
-                <option value="Tümü">Tüm para birimleri</option>
-                {CURRENCIES.map((item) => (
-                  <option key={item} value={item}>{item}</option>
-                ))}
-              </select>
-            </div>
-            <label className="amount-filter">
-              <span>Min</span>
-              <input type="number" min="0" step="0.01" value={amountMin} onChange={(e) => setAmountMin(e.target.value)} />
-            </label>
-            <label className="amount-filter">
-              <span>Max</span>
-              <input type="number" min="0" step="0.01" value={amountMax} onChange={(e) => setAmountMax(e.target.value)} />
-            </label>
-            <button className="btn secondary clear-filters" onClick={() => { setSearch(""); setTypeFilter("Tümü"); setStatusFilter("Tümü"); setCurrencyFilter("Tümü"); setAgencyFilter("Tümü"); setAmountMin(""); setAmountMax(""); setDatePreset("all"); }}>
-              Filtreleri temizle
-            </button>
-          </div>
         </section>
         <div className="v7-layout unified-accounting-layout">
           <div className="v7-left">
