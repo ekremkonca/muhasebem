@@ -2123,7 +2123,7 @@ function DemoScreen() {
 }
 
 export default function App() {
-  if (window.location.pathname === "/demo/" || window.location.pathname === "/demo") {
+  if (window.location.pathname === "/demo/" || window.location.pathname === "/demo" || document.title.includes("Finans Akışı")) {
     return <DemoScreen />;
   }
   const [state, setState] = useState({
