@@ -86,10 +86,11 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 /* Keep the working ledger beside its supporting cards. */
 .accounting-overview-row{grid-template-columns:minmax(0,1fr)}
 .entries-side-cards{width:100%;align-self:start}
+#root .unified-accounting-layout .v7-right,#root .unified-accounting-layout .entries-side-cards{position:static;top:auto;align-self:start}
 .entries-side-cards .compact-receivables{min-height:0}
 .entries-side-cards .compact-receivable-list{max-height:210px}
 .entries-side-cards>.upcoming-panel{max-height:300px}
-@media(min-width:1051px){.v7-layout{grid-template-columns:minmax(0,1fr) minmax(310px,390px)!important;align-items:start}.entries-side-cards{position:sticky;top:104px}}
+@media(min-width:1051px){.v7-layout{grid-template-columns:minmax(0,1fr) minmax(310px,390px)!important;align-items:start}}
 @media(max-width:1050px){.entries-side-cards{grid-template-columns:1fr 1fr;grid-template-rows:auto}}
 @media(max-width:650px){.entries-side-cards{grid-template-columns:1fr}}
 
