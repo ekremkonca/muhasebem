@@ -1,7 +1,7 @@
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import MarketTicker from './MarketTicker.jsx';
-import {logout} from './api.js';
+import {logout,loadBackups,loadHistory,loadRecords} from './api.js';
 import {navigateTo} from './navigation.js';
 
 function Icon({name,size=18}){
@@ -19,12 +19,15 @@ function Icon({name,size=18}){
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
-const openAccountingTool=(title)=>{
-  try{sessionStorage.setItem('muhasebe:open-header-tool',title)}catch{}
-  navigateTo('/muhasebe/');
-};
+export function HeaderToolPanel({tool,onClose}){
+  const [items,setItems]=React.useState([]),[loading,setLoading]=React.useState(true);
+  React.useEffect(()=>{let live=true;setLoading(true);const run=tool==='Yedekler'?loadBackups:tool==='İşlem geçmişi'?()=>loadHistory(100):()=>loadRecords(true);Promise.resolve(run()).then(data=>{if(live)setItems(data?.backups||data?.history||data||[])}).catch(()=>{if(live)setItems([])}).finally(()=>live&&setLoading(false));return()=>{live=false}},[tool]);
+  return <div className="header-tool-panel-backdrop" onClick={e=>e.target===e.currentTarget&&onClose()}><section className="header-tool-panel" role="dialog" aria-modal="true"><header><div><span className="eyebrow">SİSTEM</span><h2>{tool}</h2></div><button type="button" className="icon-btn" onClick={onClose} aria-label="Kapat">×</button></header>{loading?<p>Yükleniyor…</p>:<div className="header-tool-panel-list">{items.length?items.slice(0,30).map((item,i)=><article key={item.id||i}><strong>{item.title||item.tour||item.action||'Kayıt'}</strong><small>{item.created_at||item.date||item.status||''}</small></article>):<p>Henüz kayıt bulunmuyor.</p>}</div>}</section></div>;
+}
 
 export default function HomePage({children,contentClassName=''}){
+  const [activeTool,setActiveTool]=React.useState('');
+  const openAccountingTool=(title)=>setActiveTool(title);
   const signOut=async()=>{
     try{await logout()}finally{window.location.replace('/muhasebe/')}
   };
@@ -49,6 +52,6 @@ export default function HomePage({children,contentClassName=''}){
       </div>
     </header>
     <MarketTicker/>
-    <main className={contentClassName||'home-content-area'}>{children}</main>
+    <main className={contentClassName||'home-content-area'}>{children}</main>{activeTool&&<HeaderToolPanel tool={activeTool} onClose={()=>setActiveTool('')}/>} 
   </div>;
 }

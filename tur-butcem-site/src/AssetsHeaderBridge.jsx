@@ -2,10 +2,7 @@ import React,{useEffect}from'react';
 import{navigateTo}from'./navigation.js';
 
 const isAssets=()=>Boolean(document.querySelector('.assets-fund-page'));
-const openAccountingTool=(title)=>{
- try{sessionStorage.setItem('muhasebe:open-header-tool',title)}catch{}
- navigateTo('/muhasebe/');
-};
+const openAccountingTool=(title)=>window.dispatchEvent(new CustomEvent('muhasebe:open-header-tool',{detail:title}));
 
 export default function AssetsHeaderBridge(){
  useEffect(()=>{
