@@ -2106,7 +2106,26 @@ function Dashboard({ onSignedOut }) {
   );
 }
 
+function DemoScreen() {
+  const cards = [
+    ["Net gelir", "₺284.763", "+%18,4", "demo-green"],
+    ["Alacaklar", "₺38.516", "8 açık kayıt", "demo-blue"],
+    ["Bahşiş", "₺5.200", "4 para birimi", "demo-purple"],
+    ["Komisyon", "₺6.869", "Bu ay", "demo-orange"],
+  ];
+  return <div className="demo-shell">
+    <header className="demo-top"><div className="demo-brand"><span className="demo-mark">EK</span><div><b>Finans Akışı</b><small>Kişisel finans merkezi</small></div></div><div className="demo-actions"><button>⌕</button><button>☼</button><button>⋯</button></div></header>
+    <main className="demo-main"><div className="demo-intro"><div><span className="demo-kicker">YENİ NESİL FİNANS PANELİ</span><h1>Paranı tek bakışta<br/><em>anla ve yönet.</em></h1><p>Gelirlerini, alacaklarını ve planlarını sade bir akışta takip et.</p></div><button className="demo-primary">+ Yeni kayıt</button></div>
+      <section className="demo-card-grid">{cards.map(([label,value,meta,cls])=><article className={`demo-stat ${cls}`} key={label}><span>{label}</span><strong>{value}</strong><small>{meta}</small><i>↗</i></article>)}</section>
+      <section className="demo-columns"><article className="demo-panel demo-chart"><div className="demo-panel-head"><div><span className="demo-kicker">NAKİT AKIŞI</span><h2>Gelir ve gider trendi</h2></div><select><option>Son 6 ay</option></select></div><div className="demo-bars">{[42,58,48,76,64,88,72].map((h,i)=><div key={i}><b style={{height:`${h}%`}}/><b className="expense" style={{height:`${Math.max(18,h-28)}%`}}/><small>{['Nis','May','Haz','Tem','Ağu','Eyl','Eki'][i]}</small></div>)}</div></article><article className="demo-panel"><div className="demo-panel-head"><div><span className="demo-kicker">PLANLAMA</span><h2>Yaklaşanlar</h2></div><button className="demo-link">Tümü</button></div><div className="demo-list"><div><span className="demo-date">18<span>EYL</span></span><p><b>ABC Tour</b><small>Tur ödemesi · 12.500 TL</small></p><strong>›</strong></div><div><span className="demo-date purple">22<span>EYL</span></span><p><b>Otopark ücreti</b><small>Masraf · 650 TL</small></p><strong>›</strong></div><div><span className="demo-date orange">27<span>EYL</span></span><p><b>Komisyon tahsilatı</b><small>Alacak · 5.566 TL</small></p><strong>›</strong></div></div></article></section>
+      <div className="demo-footer-note">Demo görünümü · Mevcut site ve veritabanı bu sayfadan etkilenmez.</div>
+    </main></div>;
+}
+
 export default function App() {
+  if (window.location.pathname === "/demo/" || window.location.pathname === "/demo") {
+    return <DemoScreen />;
+  }
   const [state, setState] = useState({
     loading: true,
     configured: false,
