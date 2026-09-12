@@ -652,6 +652,10 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onWhatsApp, onCl
             <strong>{money(pending, currency)}</strong>
           </article>
         </div>
+        <div className="report-visual-summary" aria-label="Aylık grafik özeti">
+          <div className="report-visual-card"><div className="report-visual-title"><span>AYLIK AKIŞ</span><b>{money(income - expense, currency)} net</b></div><div className="report-bars"><i style={{height:`${Math.max(10, Math.min(100, income / Math.max(income, expense, 1) * 100))}%`}}/><i className="expense" style={{height:`${Math.max(10, Math.min(100, expense / Math.max(income, expense, 1) * 100))}%`}}/></div><div className="report-legend"><span><i/>Gelir</span><span><i className="expense"/>Masraf</span></div></div>
+          <div className="report-visual-card"><div className="report-visual-title"><span>KATEGORİLER</span><b>{monthRows.length} kayıt</b></div><div className="report-category-list">{[["💼","Gelir",income], ["🎁","Bahşiş",tips], ["🤝","Komisyon",commission], ["🧾","Masraf",expense]].map(([icon,label,value])=><div key={label}><span><b>{icon}</b>{label}</span><strong>{money(value,currency)}</strong></div>)}</div></div>
+        </div>
         <div className="report-table">
           <table>
             <thead>
