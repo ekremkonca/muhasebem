@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './styles/category-donut.css';
 
 const COLORS = ['#08a66c', '#3182ce', '#8064d9', '#e58b24'];
+const ICONS = { 'Tur Geliri': '💼', 'Bahşiş': '🎁', 'Komisyon': '🤝', 'Tur Masrafı': '🧾' };
 
 export default function CategoryDonut({ cats, currency, money }) {
   const [active, setActive] = useState(true);
@@ -103,9 +104,9 @@ export default function CategoryDonut({ cats, currency, money }) {
     </div>}
 
     <div className="category-donut-legend">
-      {cats.map((cat, index) => <span key={cat.type}>
+      {cats.map((cat, index) => <span key={cat.type} title={`${cat.type}: ${money(cat.value, currency)}`}>
         <i style={{ background: COLORS[index] }}/>
-        <b>{cat.type.replace('Tur ', '')}</b>
+        <b><em aria-hidden="true">{ICONS[cat.type] || '•'}</em>{cat.type.replace('Tur ', '')}</b>
         <small>{money(cat.value, currency)}</small>
       </span>)}
     </div>
