@@ -117,3 +117,18 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
   .unified-accounting-layout .entries-side-cards{position:static;top:auto}
   .unified-accounting-layout .v7-right{align-self:start}
 }
+
+/* Final compact sizing for the four primary accounting cards. */
+@media(min-width:1051px){
+  .unified-accounting-layout .accounting-primary-summary .v7-kpis>article,
+  .unified-accounting-layout .accounting-primary-summary .v7-kpis>.net,
+  .unified-accounting-layout .accounting-primary-summary .v7-kpis>.pending,
+  .unified-accounting-layout .accounting-primary-summary .v7-kpis>.currency-totals-kpi{height:128px!important;min-height:128px!important;padding:10px 12px!important}
+  .unified-accounting-layout .v7-kpis .currency-donuts{margin:5px 0 2px;gap:4px}
+  .unified-accounting-layout .v7-kpis .currency-donut-ring{width:38px;height:38px}
+  .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:2px;font-size:9px}
+  .unified-accounting-layout .v7-kpis .currency-totals-kpi>small{font-size:8px;line-height:1.15}
+  .unified-accounting-layout .v7-kpis>.net>strong,
+  .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(21px,1.8vw,27px);margin:5px 0 3px}
+  .unified-accounting-layout .v7-kpis .average-under-net{font-size:10px;line-height:1.15}
+}
