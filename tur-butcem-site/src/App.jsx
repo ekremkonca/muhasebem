@@ -1776,10 +1776,6 @@ function Dashboard({ onSignedOut }) {
           </article>
         </div>
           </div>
-          <div className="compact-finance-side">
-            <CompactReceivables rows={rows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/>
-            <UpcomingEvents events={events} onOpenCalendar={() => navigateTo("/takvim/")} />
-          </div>
         </div>
         <div className="v7-layout">
           <div className="v7-left">
@@ -2010,6 +2006,10 @@ function Dashboard({ onSignedOut }) {
             />
           </div>
           <aside className="v7-right">
+            <div className="compact-finance-side entries-side-cards">
+              <CompactReceivables rows={rows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/>
+              <UpcomingEvents events={events} onOpenCalendar={() => navigateTo("/takvim/")} />
+            </div>
             <section className="receivables-panel legacy-receivables-panel">
               <div className="panel-title">
                 <div>
