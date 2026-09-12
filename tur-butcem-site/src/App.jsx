@@ -95,6 +95,17 @@ const money = (n, c) => {
   }).format(Number(n) || 0);
   return formatted.replace(/,00$/, "");
 };
+const topValues = (rows, key, limit = 5) => {
+  const counts = new Map();
+  rows.forEach((row) => {
+    const value = String(row?.[key] || "").trim();
+    if (value) counts.set(value, (counts.get(value) || 0) + 1);
+  });
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "tr-TR"))
+    .slice(0, limit)
+    .map(([value]) => value);
+};
 
 function AnimatedMoney({ value, currency }) {
   const target = Number(value) || 0;
@@ -361,7 +372,7 @@ function AuthScreen({ configured, onDone }) {
   );
 }
 
-function EntryModal({ record, onClose, onSave, currency }) {
+function EntryModal({ record, onClose, onSave, currency, quickDefaults, agencyOptions = [], typeOptions = TYPES, currencyOptions = CURRENCIES }) {
   const editing = Boolean(record?.id);
   const [form, setForm] = useState(
     normalizeRecord(
@@ -370,11 +381,11 @@ function EntryModal({ record, onClose, onSave, currency }) {
         date: today(),
         tour: "",
         guest: "",
-        agency: "",
+        agency: quickDefaults?.agency || "",
         ship: "",
-        type: "Tur Geliri",
+        type: quickDefaults?.type || "Tur Geliri",
         amount: "",
-        currency,
+        currency: quickDefaults?.currency || currency,
         status: "Ödendi",
         due_date: "",
         paid_amount: "",
@@ -385,6 +396,7 @@ function EntryModal({ record, onClose, onSave, currency }) {
   );
   const [saving, setSaving] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const applyQuick = (values) => setForm((f) => normalizeRecord({ ...f, ...values, amount: f.amount }));
   const submit = async (e) => {
     e.preventDefault();
     if (!Number(form.amount) || saving) return;
@@ -419,6 +431,42 @@ function EntryModal({ record, onClose, onSave, currency }) {
             <Icon name="close" />
           </button>
         </div>
+        {!editing && (
+          <div className="quick-entry-panel" aria-label="Hızlı kayıt önerileri">
+            {agencyOptions.length > 0 && (
+              <div>
+                <span>Sık acentalar</span>
+                <div>
+                  {agencyOptions.map((agency) => (
+                    <button type="button" key={agency} onClick={() => applyQuick({ agency })}>
+                      {agency}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div>
+              <span>İşlem</span>
+              <div>
+                {typeOptions.map((type) => (
+                  <button type="button" key={type} className={form.type === type ? "active" : ""} onClick={() => applyQuick({ type })}>
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span>Para birimi</span>
+              <div>
+                {currencyOptions.map((item) => (
+                  <button type="button" key={item} className={form.currency === item ? "active" : ""} onClick={() => applyQuick({ currency: item })}>
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
         <div className="form-grid">
           <label>
             İşlem türü
@@ -864,6 +912,53 @@ function V8Enhancements({ rows, income, expense, pending, currency, tourCount, n
   </section>;
 }
 
+function MonthlySummary({ rows, currency, convert }) {
+  const [month, setMonth] = useState(today().slice(0, 7));
+  const monthRows = rows.filter((r) => String(r.date || "").startsWith(month));
+  const paid = monthRows.filter((r) => r.status === "Ödendi");
+  const incomeValue = paid.filter(isIncome).reduce((sum, row) => sum + convert(row), 0);
+  const expenseValue = paid.filter(isExpense).reduce((sum, row) => sum + convert(row), 0);
+  const pendingValue = monthRows.filter((r) => r.status === "Ödenmedi").reduce((sum, row) => sum + convert(row), 0);
+  const byAgency = {};
+  paid.forEach((row) => {
+    const key = row.agency || row.tour || "Diğer";
+    byAgency[key] = (byAgency[key] || 0) + (isExpense(row) ? -convert(row) : convert(row));
+  });
+  const topAgency = Object.entries(byAgency).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
+  const categories = TYPES.map((type) => ({
+    type,
+    value: monthRows.filter((row) => row.type === type).reduce((sum, row) => sum + Math.abs(convert(row)), 0),
+  }));
+  const max = Math.max(...categories.map((item) => item.value), 1);
+  return (
+    <section className="monthly-summary">
+      <div className="monthly-summary-head">
+        <div>
+          <span className="eyebrow">AYLIK ÖZET</span>
+          <h3>Bu ayın net resmi</h3>
+        </div>
+        <input type="month" min="2026-04" value={month} onChange={(event) => setMonth(event.target.value)} />
+      </div>
+      <div className="monthly-summary-grid">
+        <article><span>Kazanç</span><strong>{money(incomeValue, currency)}</strong><small>{paid.filter(isIncome).length} gelir kaydı</small></article>
+        <article><span>Masraf</span><strong>{money(expenseValue, currency)}</strong><small>{paid.filter(isExpense).length} masraf kaydı</small></article>
+        <article><span>Net</span><strong>{money(incomeValue - expenseValue, currency)}</strong><small>{monthRows.length} toplam kayıt</small></article>
+        <article><span>Alacak</span><strong>{money(pendingValue, currency)}</strong><small>{monthRows.filter((r) => r.status === "Ödenmedi").length} bekleyen</small></article>
+        <article className="wide"><span>En iyi kaynak</span><strong>{topAgency[0]}</strong><small>{money(topAgency[1], currency)}</small></article>
+      </div>
+      <div className="monthly-category-bars">
+        {categories.map((item) => (
+          <div key={item.type}>
+            <span>{item.type}</span>
+            <i><b style={{ width: `${Math.max(5, (item.value / max) * 100)}%` }} /></i>
+            <strong>{money(item.value, currency)}</strong>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Dashboard({ onSignedOut }) {
   const [rows, setRows] = useState([]),
     [events, setEvents] = useState([]),
@@ -872,6 +967,10 @@ function Dashboard({ onSignedOut }) {
     [ratesUpdatedAt, setRatesUpdatedAt] = useState(null),
     [typeFilter, setTypeFilter] = useState("Tümü"),
     [statusFilter, setStatusFilter] = useState("Tümü"),
+    [currencyFilter, setCurrencyFilter] = useState("Tümü"),
+    [agencyFilter, setAgencyFilter] = useState("Tümü"),
+    [amountMin, setAmountMin] = useState(""),
+    [amountMax, setAmountMax] = useState(""),
     [sortOrder, setSortOrder] = useState("desc"),
     [search, setSearch] = useState(""),
     [datePreset, setDatePreset] = useState("all"),
@@ -978,23 +1077,33 @@ function Dashboard({ onSignedOut }) {
   );
   const filteredRows = useMemo(() => {
     const q = tidy(search);
+    const min = amountMin === "" ? null : Number(amountMin);
+    const max = amountMax === "" ? null : Number(amountMax);
     return accountingRows
       .filter(
-        (r) =>
+        (r) => {
+          const value = Math.abs(accountingValue(r));
+          return (
           (typeFilter === "Tümü" || r.type === typeFilter) &&
           (statusFilter === "Tümü" || r.status === statusFilter) &&
+          (currencyFilter === "Tümü" || normalizeCurrency(r.currency) === currencyFilter) &&
+          (agencyFilter === "Tümü" || (r.agency || "Acentasız") === agencyFilter) &&
+          (min === null || value >= min) &&
+          (max === null || value <= max) &&
           (!q ||
             [r.tour, r.guest, r.agency, r.ship, r.note, r.tags, r.type, r.status].some(
               (v) => tidy(Array.isArray(v) ? v.join(" ") : v).includes(q),
-            )),
+            ))
+          );
+        },
       )
       .sort((a, b) =>
         sortOrder === "asc"
           ? a.date.localeCompare(b.date)
           : b.date.localeCompare(a.date),
       );
-  }, [accountingRows, typeFilter, statusFilter, sortOrder, search]);
-  useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter, datePreset, customFrom, customTo]);
+  }, [accountingRows, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, sortOrder, search, currency, rates]);
+  useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, datePreset, customFrom, customTo]);
   const paid = accountingRows.filter((r) => r.status === "Ödendi"),
     tourIncome = paid
       .filter((r) => normalizeType(r.type) === "Tur Geliri")
@@ -1089,6 +1198,12 @@ function Dashboard({ onSignedOut }) {
   const pageRows = filteredRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
     ids = filteredRows.map((r) => r.id),
     all = ids.length > 0 && ids.every((id) => selected.includes(id));
+  const agencyOptions = useMemo(() => topValues(rows, "agency", 8), [rows]);
+  const quickDefaults = useMemo(() => ({
+    agency: agencyOptions[0] || "",
+    type: topValues(rows, "type", 1)[0] || "Tur Geliri",
+    currency: topValues(rows, "currency", 1)[0] || currency,
+  }), [rows, agencyOptions, currency]);
   const reloadSide = async (tab) => {
     setToolTab(tab);
     try {
@@ -1160,16 +1275,20 @@ function Dashboard({ onSignedOut }) {
     setEvents((current) => current.map((item) => item.id === updatedEvent.id ? updatedEvent : item));
     return saved;
   };
-  const status = async (r) => {
-    const next = r.status === "Ödendi" ? "Ödenmedi" : "Ödendi",
-      old = r;
+  const setRecordStatus = async (r, next) => {
+    const old = r;
     setRows((x) => x.map((a) => (a.id === r.id ? { ...a, status: next, paid_amount: next === "Ödendi" ? a.amount : 0 } : a)));
     try {
       await updateRecordStatus(r.id, next);
+      setHistory((await loadHistory(50)).history || []);
     } catch (e) {
       setRows((x) => x.map((a) => (a.id === r.id ? old : a)));
       setError(e.message);
     }
+  };
+  const status = async (r) => {
+    const next = r.status === "Ödendi" ? "Ödenmedi" : "Ödendi";
+    await setRecordStatus(r, next);
   };
   const armUndo = (deletedRows) => {
     if (undoTimer.current) clearTimeout(undoTimer.current);
@@ -1531,6 +1650,36 @@ function Dashboard({ onSignedOut }) {
               />
             </div>
           )}
+          <div className="advanced-filterbar" aria-label="Gelişmiş filtreler">
+            <div className="filter">
+              <select value={agencyFilter} onChange={(e) => setAgencyFilter(e.target.value)}>
+                <option value="Tümü">Tüm acentalar</option>
+                {agencyOptions.map((agency) => (
+                  <option key={agency} value={agency}>{agency}</option>
+                ))}
+                <option value="Acentasız">Acentasız</option>
+              </select>
+            </div>
+            <div className="filter">
+              <select value={currencyFilter} onChange={(e) => setCurrencyFilter(e.target.value)}>
+                <option value="Tümü">Tüm para birimleri</option>
+                {CURRENCIES.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+            </div>
+            <label className="amount-filter">
+              <span>Min</span>
+              <input type="number" min="0" step="0.01" value={amountMin} onChange={(e) => setAmountMin(e.target.value)} />
+            </label>
+            <label className="amount-filter">
+              <span>Max</span>
+              <input type="number" min="0" step="0.01" value={amountMax} onChange={(e) => setAmountMax(e.target.value)} />
+            </label>
+            <button className="btn secondary clear-filters" onClick={() => { setSearch(""); setTypeFilter("Tümü"); setStatusFilter("Tümü"); setCurrencyFilter("Tümü"); setAgencyFilter("Tümü"); setAmountMin(""); setAmountMax(""); setDatePreset("all"); }}>
+              Filtreleri temizle
+            </button>
+          </div>
         </section>
         <div className="kpis compact v7-kpis">
           <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
@@ -1610,6 +1759,7 @@ function Dashboard({ onSignedOut }) {
             <small>{fmtDateTime(ratesUpdatedAt)}</small>
           </article>
         </div>
+        <MonthlySummary rows={accountingRows} currency={currency} convert={accountingValue} />
         <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
         <div className="v7-layout">
           <div className="v7-left">
@@ -1744,13 +1894,7 @@ function Dashboard({ onSignedOut }) {
                           </span>
                         </td>
                         <td className="record-status" data-label="Durum">
-                          <button
-                            className={
-                              "status " +
-                              (r.status === "Ödendi" ? "done" : r.status === "İade edildi" ? "refunded" : "open")
-                            }
-                            onClick={() => status(r)}
-                          >
+                          <button className={"status " + (r.status === "Ödendi" ? "done" : r.status === "İade edildi" ? "refunded" : "open")} onClick={() => status(r)}>
                             {r.paid_amount > 0 && r.paid_amount < r.amount ? "Kısmi" : r.status}
                           </button>
                           {r.paid_amount > 0 && r.paid_amount < r.amount && <small>{money(r.paid_amount, r.currency)} tahsil</small>}
@@ -1763,6 +1907,14 @@ function Dashboard({ onSignedOut }) {
                           )}
                         </td>
                         <td className="row-actions" data-label="İşlemler">
+                          <button className="quick-paid" onClick={() => setRecordStatus(r, "Ödendi")} aria-label="Ödendi yap" title="Ödendi yap" disabled={r.status === "Ödendi"}>
+                            <Icon name="check" />
+                            <span>Ödendi</span>
+                          </button>
+                          <button className="quick-refund" onClick={() => setRecordStatus(r, "İade edildi")} aria-label="İade edildi yap" title="İade edildi yap" disabled={r.status === "İade edildi"}>
+                            <Icon name="history" />
+                            <span>İade</span>
+                          </button>
                           <button
                             className="edit"
                             onClick={() => setModal(r)}
@@ -1897,6 +2049,8 @@ function Dashboard({ onSignedOut }) {
           currency={modal.currency || currency}
           onClose={() => setModal(null)}
           onSave={persist}
+          quickDefaults={quickDefaults}
+          agencyOptions={agencyOptions}
         />
       )}{" "}
       {reportOpen && (
@@ -1911,8 +2065,8 @@ function Dashboard({ onSignedOut }) {
         />
       )}{" "}
       {undo && (
-        <div className="undo-toast">
-          <span>{undo.rows.length} kayıt çöp kutusuna taşındı.</span>
+        <div className="undo-toast strong-undo">
+          <span><b>{undo.rows.length} kayıt silindi.</b> Yanlışlık olduysa geri alabilirsin.</span>
           <button onClick={undoDelete}>GERİ AL</button>
           <b>{undo.seconds}</b>
         </div>
