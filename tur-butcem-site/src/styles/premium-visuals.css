@@ -156,3 +156,8 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 #root .unified-accounting-layout .v7-kpis>.net>strong,#root .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(18px,3.3vw,24px)!important;margin:2px 0!important}
 #root .unified-accounting-layout .v7-kpis>.net>small:last-child{display:none}
 #root .unified-accounting-layout .v7-kpis .average-under-net{font-size:8px!important;line-height:1!important;margin:0!important}
+
+/* Both summary rows share one sizing contract, including column widths. */
+#root .unified-accounting-layout .accounting-primary-summary :is(.v7-kpis,.v7-insights){display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;align-items:stretch!important;width:100%;margin:0!important}
+#root .unified-accounting-layout .accounting-primary-summary :is(.v7-kpis,.v7-insights)>article:not(.cash-fx-kpi){box-sizing:border-box!important;width:100%!important;min-width:0!important;height:92px!important;min-height:92px!important;max-height:92px!important;padding:10px!important;border-radius:16px!important;grid-column:auto!important;grid-row:auto!important}
+@media(max-width:1050px){#root .unified-accounting-layout .accounting-primary-summary :is(.v7-kpis,.v7-insights){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
