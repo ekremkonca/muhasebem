@@ -485,7 +485,7 @@ export default function CalendarView({
               <button
                 type="button"
                 key={day.key}
-                className={`calendar-day${day.currentMonth ? "" : " muted"}${day.key === today ? " today" : ""}${day.key === selectedDate ? " selected" : ""}`}
+                className={`calendar-day density-${Math.min(3,dayEvents.length)}${day.currentMonth ? "" : " muted"}${day.key === today ? " today" : ""}${day.key === selectedDate ? " selected" : ""}`}
                 onClick={() => setSelectedDate(day.key)}
                 onDoubleClick={() => onCreateEvent && openCreate(day.key)}
                 title={`${summary}. Çift tıklayarak etkinlik ekleyebilirsin.`}

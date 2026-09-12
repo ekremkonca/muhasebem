@@ -959,6 +959,15 @@ function MonthlySummary({ rows, currency, convert }) {
   );
 }
 
+function VisualExperience({rows,income,expense,pending,tourCount,currency,convert}){
+  const now=new Date(),hour=now.getHours(),greeting=hour<12?'Günaydın':hour<18?'İyi günler':'İyi akşamlar',todayKey=localISO(now),todayRows=rows.filter(r=>r.date===todayKey&&r.status==='Ödendi');
+  const todayIncome=todayRows.filter(isIncome).reduce((s,r)=>s+convert(r),0),todayTours=todayRows.filter(r=>normalizeType(r.type)==='Tur Geliri').length;
+  const agencies={};rows.filter(r=>r.status==='Ödendi').forEach(r=>{const key=r.agency||r.tour||'Diğer';agencies[key]=(agencies[key]||0)+(isExpense(r)?-convert(r):convert(r))});
+  const top=Object.entries(agencies).sort((a,b)=>b[1]-a[1]).slice(0,4),net=income-expense,ratio=income?Math.max(0,Math.min(100,net/income*100)):0;
+  const badges=[tourCount>=50&&['🏆','50+ tur'],net>=100000&&['✦','₺100 bin+'],pending===0&&['✓','Alacaksız'],expense===0&&['◆','Masrafsız dönem']].filter(Boolean);
+  return <section className="visual-experience"><article className="daily-hello"><div><span className="eyebrow">GÜNÜN ÖZETİ</span><h2>{greeting}, Ekrem</h2><p>Bugün <b>{todayTours} tur</b> ve <b>{money(todayIncome,currency)}</b> kayıtlı kazanç var.</p></div><div className="daily-orbit"><i/><strong>{now.getDate()}</strong><small>{now.toLocaleDateString('tr-TR',{month:'short'}).toUpperCase()}</small></div></article><article className="success-story"><span>AYLIK BAŞARI HİKÂYESİ</span><h3>Gelirin %{Math.round(ratio)}’ı sende kaldı</h3><div className="story-track"><i style={{width:`${ratio}%`}}/></div><p>Net durum: <b>{money(net,currency)}</b> · Bekleyen: <b>{money(pending,currency)}</b></p></article><article className="money-flow"><span>CANLI FİNANS HARİTASI</span><div><i className="flow-income">Gelir<strong>{money(income,currency)}</strong></i><b className="flow-core">NET<em>{money(net,currency)}</em></b><i className="flow-expense">Masraf<strong>{money(expense,currency)}</strong></i></div></article><article className="agency-showcase"><span>ACENTA PROFİLLERİ</span><div>{top.map(([name,value],index)=><div key={name}><i>{String(name).split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()}</i><span><b>{name}</b><small>{money(value,currency)}</small></span><em>#{index+1}</em></div>)}</div></article>{badges.length>0&&<article className="achievement-strip"><span>BAŞARILAR</span><div>{badges.map(([icon,label])=><b key={label}><i>{icon}</i>{label}</b>)}</div></article>}</section>
+}
+
 function Dashboard({ onSignedOut }) {
   const [rows, setRows] = useState([]),
     [events, setEvents] = useState([]),
@@ -1759,6 +1768,7 @@ function Dashboard({ onSignedOut }) {
             <small>{fmtDateTime(ratesUpdatedAt)}</small>
           </article>
         </div>
+        <VisualExperience rows={accountingRows} income={income} expense={expense} pending={pending} tourCount={tourCount} currency={currency} convert={accountingValue}/>
         <MonthlySummary rows={accountingRows} currency={currency} convert={accountingValue} />
         <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
         <div className="v7-layout">
