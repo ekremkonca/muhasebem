@@ -1695,6 +1695,8 @@ function Dashboard({ onSignedOut }) {
             </button>
           </div>
         </section>
+        <div className="v7-layout unified-accounting-layout">
+          <div className="v7-left">
         <div className="accounting-overview-row">
           <div className="accounting-primary-summary">
         <div className="kpis compact v7-kpis">
@@ -1777,8 +1779,6 @@ function Dashboard({ onSignedOut }) {
         </div>
           </div>
         </div>
-        <div className="v7-layout">
-          <div className="v7-left">
             <section className="records workspace-records">
               <div className="records-head">
                 <div>
