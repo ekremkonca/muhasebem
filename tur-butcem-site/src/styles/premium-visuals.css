@@ -144,3 +144,15 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
   #root .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(19px,4vw,25px)!important;margin:3px 0 2px}
   #root .unified-accounting-layout .v7-kpis .average-under-net{font-size:9px!important;margin-top:1px}
 }
+
+/* Primary finance cards use the exact compact dimensions of insight cards. */
+#root .unified-accounting-layout .v7-kpis>article:not(.cash-fx-kpi){height:92px!important;min-height:92px!important;padding:12px!important;border-radius:16px!important}
+#root .unified-accounting-layout .v7-kpis .currency-donuts{margin:2px 0 0;gap:3px}
+#root .unified-accounting-layout .v7-kpis .currency-donut-ring{width:27px;height:27px}
+#root .unified-accounting-layout .v7-kpis .currency-donut-ring span{font-size:6px}
+#root .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:1px;font-size:7px;line-height:1}
+#root .unified-accounting-layout .v7-kpis .currency-totals-kpi>small{display:none}
+#root .unified-accounting-layout .v7-kpis>.net,#root .unified-accounting-layout .v7-kpis>.pending{justify-content:center}
+#root .unified-accounting-layout .v7-kpis>.net>strong,#root .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(18px,3.3vw,24px)!important;margin:2px 0!important}
+#root .unified-accounting-layout .v7-kpis>.net>small:last-child{display:none}
+#root .unified-accounting-layout .v7-kpis .average-under-net{font-size:8px!important;line-height:1!important;margin:0!important}
