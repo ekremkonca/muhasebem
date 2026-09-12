@@ -1775,7 +1775,13 @@ function Dashboard({ onSignedOut }) {
         </div>
         <VisualExperience rows={accountingRows} income={income} expense={expense} pending={pending} tourCount={tourCount} currency={currency} convert={accountingValue}/>
         <MonthlySummary rows={accountingRows} currency={currency} convert={accountingValue} />
-        <div className="compact-finance-row"><V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} /><CompactReceivables rows={rows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/></div>
+        <div className="compact-finance-row">
+          <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
+          <div className="compact-finance-side">
+            <CompactReceivables rows={rows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/>
+            <UpcomingEvents events={events} onOpenCalendar={() => navigateTo("/takvim/")} />
+          </div>
+        </div>
         <div className="v7-layout">
           <div className="v7-left">
             <section className="records workspace-records">
@@ -2044,10 +2050,6 @@ function Dashboard({ onSignedOut }) {
                 )}
               </div>
             </section>
-            <UpcomingEvents
-              events={events}
-              onOpenCalendar={() => navigateTo("/takvim/")}
-            />
             <CalendarView
               rows={[]}
               events={events}
