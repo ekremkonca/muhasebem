@@ -132,3 +132,15 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
   .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(21px,1.8vw,27px);margin:5px 0 3px}
   .unified-accounting-layout .v7-kpis .average-under-net{font-size:10px;line-height:1.15}
 }
+
+/* Compact primary cards also in narrow web/tablet windows. */
+@media(max-width:1050px){
+  #root .unified-accounting-layout .v7-kpis>article:not(.cash-fx-kpi){height:104px!important;min-height:104px!important;padding:8px 10px!important}
+  #root .unified-accounting-layout .v7-kpis .currency-donuts{margin:3px 0 1px;gap:3px}
+  #root .unified-accounting-layout .v7-kpis .currency-donut-ring{width:32px;height:32px}
+  #root .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:1px;font-size:8px}
+  #root .unified-accounting-layout .v7-kpis .currency-totals-kpi>small{font-size:7.5px;line-height:1}
+  #root .unified-accounting-layout .v7-kpis>.net>strong,
+  #root .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(19px,4vw,25px)!important;margin:3px 0 2px}
+  #root .unified-accounting-layout .v7-kpis .average-under-net{font-size:9px!important;margin-top:1px}
+}
