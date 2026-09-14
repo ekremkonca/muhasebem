@@ -170,7 +170,7 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 #root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-ring{width:48px!important;height:48px!important}
 #root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-ring span{font-size:10px!important}
 #root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-item{padding:0!important;min-width:0}
-#root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-item b{font-size:20px!important;line-height:1.25!important;margin-top:6px!important;overflow-wrap:anywhere;white-space:nowrap!important}
+#root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-item b{font-size:24px!important;line-height:1.25!important;margin-top:6px!important;overflow-wrap:anywhere;white-space:nowrap!important;display:block!important;transform:none!important}
 
 #root .unified-accounting-layout .accounting-primary-summary .v7-kpis>article.summary-greeting{height:auto!important;min-height:104px!important;max-height:none!important;grid-column:1/-1!important;padding:12px!important}
 .summary-greeting h2{font-size:18px;margin:3px 0}.summary-greeting p{font-size:12px;line-height:1.4}.summary-greeting .daily-orbit{position:relative;width:54px;height:54px;flex-shrink:0;margin:6px 8px 6px 14px}.summary-greeting .daily-orbit strong{font-size:20px}.summary-greeting .daily-orbit small{font-size:9px}.summary-greeting .daily-orbit i{display:block;inset:-6px;border:2px dashed var(--accent,#08b981);animation:premiumSweep 8s linear infinite;pointer-events:none}
