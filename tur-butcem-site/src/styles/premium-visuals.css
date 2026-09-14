@@ -9,6 +9,7 @@
 #root .accounting-currency-panel .currency-donut-item>b,#root .accounting-currency-panel .currency-donut-item>b .fast-count{display:block;font-size:20px!important;font-weight:800;line-height:26px;color:inherit;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
 #root .accounting-currency-panel .currency-donut-item>b{margin:3px 0 0}
 @media(min-width:1051px){#root .unified-accounting-layout .accounting-primary-summary div.v7-kpis{grid-template-rows:92px!important}#root .unified-accounting-layout .accounting-primary-summary .v7-kpis>article.net{grid-column:1!important;grid-row:1!important}#root .unified-accounting-layout .accounting-primary-summary .v7-kpis>article.pending{grid-column:2!important;grid-row:1!important}}
+@media(max-width:1400px){#root .unified-accounting-layout{grid-template-columns:minmax(0,1fr)!important}#root .unified-accounting-layout>.v7-left,#root .unified-accounting-layout>.v7-right{width:100%;min-width:0}}
 @media(max-width:850px){#root .accounting-currency-pair{grid-template-columns:1fr}}
 :root{
   --premium-glass:color-mix(in srgb,var(--surface,#fff) 90%,transparent);
