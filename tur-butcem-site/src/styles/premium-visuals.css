@@ -128,7 +128,7 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
   .unified-accounting-layout .accounting-primary-summary .v7-kpis>.currency-totals-kpi{height:128px!important;min-height:128px!important;padding:10px 12px!important}
   .unified-accounting-layout .v7-kpis .currency-donuts{margin:5px 0 2px;gap:4px}
   .unified-accounting-layout .v7-kpis .currency-donut-ring{width:38px;height:38px}
-  .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:2px;font-size:20px!important;line-height:1.25!important}
+  .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:2px;font-size:9px}
   .unified-accounting-layout .v7-kpis .currency-totals-kpi>small{font-size:8px;line-height:1.15}
   .unified-accounting-layout .v7-kpis>.net>strong,
   .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(21px,1.8vw,27px);margin:5px 0 3px}
@@ -140,7 +140,7 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
   #root .unified-accounting-layout .v7-kpis>article:not(.cash-fx-kpi){height:104px!important;min-height:104px!important;padding:8px 10px!important}
   #root .unified-accounting-layout .v7-kpis .currency-donuts{margin:3px 0 1px;gap:3px}
   #root .unified-accounting-layout .v7-kpis .currency-donut-ring{width:32px;height:32px}
-  #root .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:1px;font-size:20px!important;line-height:1.25!important}
+  #root .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:1px;font-size:8px}
   #root .unified-accounting-layout .v7-kpis .currency-totals-kpi>small{font-size:7.5px;line-height:1}
   #root .unified-accounting-layout .v7-kpis>.net>strong,
   #root .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(19px,4vw,25px)!important;margin:3px 0 2px}
@@ -152,7 +152,7 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 #root .unified-accounting-layout .v7-kpis .currency-donuts{margin:2px 0 0;gap:3px}
 #root .unified-accounting-layout .v7-kpis .currency-donut-ring{width:27px;height:27px}
 #root .unified-accounting-layout .v7-kpis .currency-donut-ring span{font-size:6px}
-#root .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:1px;font-size:20px!important;line-height:1.25!important}
+#root .unified-accounting-layout .v7-kpis .currency-donut-item b{margin-top:1px;font-size:7px;line-height:1}
 #root .unified-accounting-layout .v7-kpis .currency-totals-kpi>small{display:none}
 #root .unified-accounting-layout .v7-kpis>.net,#root .unified-accounting-layout .v7-kpis>.pending{justify-content:center}
 #root .unified-accounting-layout .v7-kpis>.net>strong,#root .unified-accounting-layout .v7-kpis>.pending>strong{font-size:clamp(18px,3.3vw,24px)!important;margin:2px 0!important}
@@ -170,7 +170,7 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 #root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-ring{width:48px!important;height:48px!important}
 #root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-ring span{font-size:10px!important}
 #root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-item{padding:0!important;min-width:0}
-#root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-item b{font-size:24px!important;line-height:1.25!important;margin-top:6px!important;overflow-wrap:anywhere;white-space:nowrap!important;display:block!important;transform:none!important}
+#root .unified-accounting-layout .v7-kpis .currency-totals-kpi:not(.cash-fx-kpi) .currency-donut-item b{font-size:13px!important;line-height:1.25!important;margin-top:4px!important;overflow-wrap:anywhere}
 
 #root .unified-accounting-layout .accounting-primary-summary .v7-kpis>article.summary-greeting{height:auto!important;min-height:104px!important;max-height:none!important;grid-column:1/-1!important;padding:12px!important}
 .summary-greeting h2{font-size:18px;margin:3px 0}.summary-greeting p{font-size:12px;line-height:1.4}.summary-greeting .daily-orbit{position:relative;width:54px;height:54px;flex-shrink:0;margin:6px 8px 6px 14px}.summary-greeting .daily-orbit strong{font-size:20px}.summary-greeting .daily-orbit small{font-size:9px}.summary-greeting .daily-orbit i{display:block;inset:-6px;border:2px dashed var(--accent,#08b981);animation:premiumSweep 8s linear infinite;pointer-events:none}
