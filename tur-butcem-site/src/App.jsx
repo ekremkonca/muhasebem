@@ -1,3 +1,4 @@
+import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { categoryTotals, currencyTotals, goalProgress } from './accountingSummary.js';
@@ -989,6 +990,7 @@ function Dashboard({ onSignedOut }) {
     [currency, setCurrency] = useState("TRY"),
     [rates, setRates] = useState({ TRY: 1, USD: 46.3, EUR: 53, GBP: 62.3 }),
     [ratesUpdatedAt, setRatesUpdatedAt] = useState(null),
+    [entryDate, setEntryDate] = useState(""),
     [typeFilter, setTypeFilter] = useState("Tümü"),
     [statusFilter, setStatusFilter] = useState("Tümü"),
     [currencyFilter, setCurrencyFilter] = useState("Tümü"),
@@ -1108,7 +1110,7 @@ function Dashboard({ onSignedOut }) {
         (r) => {
           const value = Math.abs(accountingValue(r));
           return (
-          (typeFilter === "Tümü" || r.type === typeFilter) &&
+          (!entryDate || r.date.slice(0, 10) === entryDate) && (typeFilter === "Tümü" || r.type === typeFilter) &&
           (statusFilter === "Tümü" || r.status === statusFilter) &&
           (currencyFilter === "Tümü" || normalizeCurrency(r.currency) === currencyFilter) &&
           (agencyFilter === "Tümü" || (r.agency || "Acentasız") === agencyFilter) &&
@@ -1126,8 +1128,8 @@ function Dashboard({ onSignedOut }) {
           ? a.date.localeCompare(b.date)
           : b.date.localeCompare(a.date),
       );
-  }, [accountingRows, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, sortOrder, search, currency, rates]);
-  useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, datePreset, customFrom, customTo]);
+  }, [accountingRows, entryDate, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, sortOrder, search, currency, rates]);
+  useEffect(() => { setPage(1); }, [search, entryDate, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, datePreset, customFrom, customTo]);
   const paid = accountingRows.filter((r) => r.status === "Ödendi"),
     tourIncome = paid
       .filter((r) => normalizeType(r.type) === "Tur Geliri")
@@ -1782,7 +1784,7 @@ function Dashboard({ onSignedOut }) {
                   </div>
                   {recordsCollapsed && <small className="records-collapsed-summary">{filteredRows.length} kayıt · Açmak için oka tıkla</small>}
                 </div>
-                {!recordsCollapsed && <div className="records-tools">
+                {!recordsCollapsed && <div className="records-tools"><label className="entry-date-filter" title="Girdileri tarihe göre filtrele"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 11h18M7 15h3M14 15h3"/></svg><input type="date" aria-label="Girdi tarihi" value={entryDate} onChange={e => { setEntryDate(e.target.value); if(e.target.value) setDatePreset("all"); setSelected([]); }} /></label>{entryDate && <button className="btn secondary" onClick={() => setEntryDate("")} aria-label="Tarih filtresini temizle">×</button>}
                   <div className="filter">
                     <Icon name="filter" size={16} />
                     <select
@@ -2131,3 +2133,5 @@ export default function App() {
     />
   );
 }
+
+
