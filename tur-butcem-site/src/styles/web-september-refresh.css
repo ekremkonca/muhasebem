@@ -14,3 +14,20 @@
 .finance-modern .finance-readout{padding:16px;border:1px solid var(--line);border-radius:14px;margin-top:12px;gap:14px;flex-wrap:wrap}
 .finance-modern .finance-cursor{stroke:var(--muted);stroke-dasharray:5 4;stroke-width:1.5}
 @media(max-width:700px){.finance-modern .finance-legend{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.breakdown-bars-card{background:linear-gradient(145deg,color-mix(in srgb,var(--paper) 92%,#fff),color-mix(in srgb,var(--paper) 84%,var(--soft)))!important;border-radius:24px!important;padding:22px!important;box-shadow:0 20px 48px rgba(15,23,42,.08)!important}
+.breakdown-bars-card .analytics-head{align-items:flex-start!important;margin-bottom:22px}
+.breakdown-bars-card .analytics-head h2{font-size:24px;letter-spacing:0;line-height:1.1}
+.breakdown-bar-plot{display:grid;gap:17px;margin-top:6px;padding:8px 0 0}
+.breakdown-bar-row{display:grid;grid-template-columns:116px minmax(160px,1fr) 120px;align-items:center;gap:16px}
+.breakdown-bar-row>span{font-size:15px;font-weight:820;color:var(--ink);text-align:right}
+.breakdown-bar-row>i{position:relative;height:32px;border-radius:4px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),color-mix(in srgb,var(--line) 78%,transparent) calc(25% - 1px),color-mix(in srgb,var(--line) 78%,transparent) 25%);overflow:hidden}
+.breakdown-bar-row>i b{display:block;height:100%;border-radius:0 4px 4px 0;box-shadow:0 0 18px color-mix(in srgb,currentColor 34%,transparent);animation:breakdown-bar-in .7s cubic-bezier(.2,.8,.2,1) both}
+.breakdown-bar-row strong{font-size:17px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
+.breakdown-axis{display:grid;grid-template-columns:repeat(5,1fr);padding:9px 120px 0 132px;color:var(--muted);font-size:12px;font-weight:850}
+.breakdown-axis span{text-align:center;white-space:nowrap}
+.breakdown-bars-card .finance-readout{margin-top:18px;background:color-mix(in srgb,var(--paper) 86%,var(--soft));border:1px solid var(--line)}
+@keyframes breakdown-bar-in{from{width:0;filter:brightness(1.2)}}
+:root[data-mode="dark"] .breakdown-bars-card{background:#151515!important;border-color:#2b2f36!important;box-shadow:0 20px 52px rgba(0,0,0,.34)!important}
+:root[data-mode="dark"] .breakdown-bar-row>span,:root[data-mode="dark"] .breakdown-bar-row strong{color:#f8fafc}
+:root[data-mode="dark"] .breakdown-bar-row>i{background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),rgba(255,255,255,.15) calc(25% - 1px),rgba(255,255,255,.15) 25%)}
+@media(max-width:760px){.breakdown-bar-row{grid-template-columns:78px minmax(90px,1fr);gap:10px}.breakdown-bar-row strong{grid-column:2;font-size:13px}.breakdown-bar-row>span{text-align:left;font-size:13px}.breakdown-axis{display:none}.breakdown-bars-card .analytics-head{gap:12px}.breakdown-bars-card .analytics-head h2{font-size:20px}}
