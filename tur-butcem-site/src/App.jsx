@@ -1682,7 +1682,7 @@ function Dashboard({ onSignedOut }) {
         <div className="accounting-overview-row">
           <div className="accounting-primary-summary">
         <div className="kpis compact v7-kpis">
-          <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
+          <article className="currency-totals-kpi rebuilt-currency-card filter-card" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
             <span>Komisyon</span>
             <CurrencyDonuts totals={commissionTotals} money={money} fast />
             <small>Hak edilen toplam · tüm durumlar</small>
@@ -1701,7 +1701,7 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={loading ? 0 : pending} currency={currency} />
             </strong>
           </article>
-          <article className="currency-totals-kpi filter-card" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
+          <article className="currency-totals-kpi rebuilt-currency-card filter-card" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
             <span>Bahşiş</span>
             <CurrencyDonuts totals={tipTotals} money={money} fast />
             <small>Alınan toplam · tahsil edilen</small>
