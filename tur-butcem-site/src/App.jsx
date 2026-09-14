@@ -1713,11 +1713,13 @@ function Dashboard({ onSignedOut }) {
             <small className="cash-fx-net-note">Net gelire dahil değil</small>
           </article>
 <DailyGreeting rows={accountingRows} currency={currency} convert={accountingValue}/>
-          <article className="currency-totals-kpi inline-currency-card filter-card" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
+        </div>
+        <div className="accounting-currency-pair">
+          <article className="accounting-currency-panel" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
             <span>Komisyon</span>
             <CurrencyDonuts totals={commissionTotals} money={money} fast />
           </article>
-          <article className="currency-totals-kpi inline-currency-card filter-card" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
+          <article className="accounting-currency-panel" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
             <span>Bahşiş</span>
             <CurrencyDonuts totals={tipTotals} money={money} fast />
           </article>

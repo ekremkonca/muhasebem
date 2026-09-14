@@ -1,3 +1,15 @@
+/* Isolated currency cards avoid historical KPI sizing rules. */
+#root .accounting-currency-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0}
+#root .accounting-currency-panel{box-sizing:border-box;min-width:0;height:112px;padding:8px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink)}
+#root .accounting-currency-panel>span{display:block;font-size:13px;font-weight:700;line-height:18px}
+#root .accounting-currency-panel .currency-donuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:3px 0 0}
+#root .accounting-currency-panel .currency-donut-item{min-width:0;padding:0;background:transparent;border:0;color:inherit}
+#root .accounting-currency-panel .currency-donut-ring{width:36px;height:36px}
+#root .accounting-currency-panel .currency-donut-ring span{font-size:9px}
+#root .accounting-currency-panel .currency-donut-item>b,#root .accounting-currency-panel .currency-donut-item>b .fast-count{display:block;font-size:20px!important;font-weight:800;line-height:26px;color:inherit;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+#root .accounting-currency-panel .currency-donut-item>b{margin:3px 0 0}
+@media(min-width:1051px){#root .unified-accounting-layout .accounting-primary-summary div.v7-kpis{grid-template-rows:92px!important}#root .unified-accounting-layout .accounting-primary-summary .v7-kpis>article.net{grid-column:1!important;grid-row:1!important}#root .unified-accounting-layout .accounting-primary-summary .v7-kpis>article.pending{grid-column:2!important;grid-row:1!important}}
+@media(max-width:850px){#root .accounting-currency-pair{grid-template-columns:1fr}}
 :root{
   --premium-glass:color-mix(in srgb,var(--surface,#fff) 90%,transparent);
   --premium-line:color-mix(in srgb,var(--accent,#08b981) 24%,transparent);
