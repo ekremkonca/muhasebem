@@ -41,7 +41,6 @@ import {
   updateRecordStatus,
   updateEvent,
 } from "./api";
-import AnalyticsChart from "./AnalyticsChart";
 import MarketTicker from "./MarketTicker";
 import CalendarView, { UpcomingEvents } from "./CalendarView";
 import { navigateTo } from "./navigation";
@@ -1981,11 +1980,6 @@ function Dashboard({ onSignedOut }) {
               )}
               </>}
             </section>
-            <AnalyticsChart
-              rows={accountingRows}
-              currency={currency}
-              convert={accountingValue}
-            />
           </div>
           <aside className="v7-right">
             <div className="compact-finance-side entries-side-cards">
