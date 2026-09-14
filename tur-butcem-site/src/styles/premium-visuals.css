@@ -196,4 +196,8 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 #root .unified-accounting-layout .v7-kpis .inline-currency-card .currency-donut-ring{width:42px!important;height:42px!important}
 #root .unified-accounting-layout .v7-kpis .inline-currency-card .currency-donut-ring span{font-size:8px!important}
 #root .unified-accounting-layout .v7-kpis .inline-currency-card .currency-donut-item>b{font-size:16px!important;line-height:1.1!important;font-weight:850!important;white-space:nowrap!important}
+#root .unified-accounting-layout .accounting-primary-summary .v7-kpis>article.inline-currency-card{height:92px!important;min-height:92px!important;max-height:92px!important;padding:10px!important;overflow:hidden!important}
+#root .unified-accounting-layout .v7-kpis>article.inline-currency-card .currency-donuts{margin:3px 0 0!important;gap:3px!important}
+#root .unified-accounting-layout .v7-kpis>article.inline-currency-card .currency-donut-ring{width:30px!important;height:30px!important}
+#root .unified-accounting-layout .v7-kpis>article.inline-currency-card .currency-donut-item>b{font-size:12px!important;line-height:1!important;margin-top:2px!important}
 }
