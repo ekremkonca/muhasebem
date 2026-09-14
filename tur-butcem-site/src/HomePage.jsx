@@ -1,3 +1,4 @@
+import HeaderSettings from './HeaderSettings.jsx';
 import React from 'react';
 import ThemeSwitcher from './ThemeSwitcher.jsx';
 import MarketTicker from './MarketTicker.jsx';
@@ -41,13 +42,13 @@ export default function HomePage({children,contentClassName=''}){
         <div className="brand-mark brand-logo-mark">
           <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
         </div>
-        <div className="header-tool-grid"><ThemeSwitcher/>
+        <HeaderSettings><div className="header-tool-grid"><ThemeSwitcher/>
         <div className="system-shortcuts" aria-label="Sistem araçları">
           <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('Yedekler')} title="Yedekler"><Icon name="backup"/><span>Yedekler</span></button>
           <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('İşlem geçmişi')} title="İşlem geçmişi"><Icon name="history"/><span>İşlem geçmişi</span></button>
           <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('Çöp kutusu')} title="Çöp kutusu"><Icon name="box"/><span>Çöp kutusu</span></button>
           <button className="system-shortcut-card" type="button" onClick={()=>openAccountingTool('Güvenlik')} title="Güvenlik"><Icon name="settings"/><span>Güvenlik</span></button>
-        </div></div>
+        </div></div></HeaderSettings>
       </div>
       <div className="header-actions home-header-actions">
         <button className="btn secondary" type="button" onClick={()=>openAccountingTool('Aylık rapor')}><Icon name="report"/>Aylık rapor</button>
@@ -59,3 +60,5 @@ export default function HomePage({children,contentClassName=''}){
     <main className={contentClassName||'home-content-area'}>{children}</main>{activeTool&&<HeaderToolPanel tool={activeTool} onClose={()=>setActiveTool('')}/>} 
   </div>;
 }
+
+

@@ -1,0 +1,13 @@
+html body #root .global-category-nav-host{display:block!important;position:fixed!important;top:0!important;left:0!important;bottom:0!important;width:184px!important;max-width:none!important;transform:none!important;z-index:80!important;background:var(--paper);border-right:1px solid var(--line);padding:24px 12px!important}
+html body #root .global-category-nav{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;padding:0!important;height:auto!important;overflow:visible!important;border:0!important;background:transparent!important}
+html body #root .global-category-nav a{height:48px!important;border:1px solid var(--line)!important;border-radius:12px!important;padding:0 12px!important;font-size:14px!important;justify-content:flex-start!important}
+body{padding-left:184px!important}
+html body #root .unified-settings{position:relative;display:block!important;width:auto!important}
+html body #root .unified-settings-panel[hidden]{display:none!important}
+html body #root .unified-settings-panel{position:absolute;top:56px;left:0;width:300px;max-width:80vw;background:var(--paper);color:var(--ink);padding:18px;border:1px solid var(--line);border-radius:16px;box-shadow:0 16px 45px #0003;z-index:9999}
+html body #root .unified-settings-panel .header-tool-grid{display:grid!important;gap:16px!important;margin-top:14px!important;width:100%!important}
+html body #root .unified-settings-panel .system-shortcuts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important}
+html body #root .unified-settings-panel .system-shortcut-card{width:100%!important;height:auto!important;min-height:54px!important}
+html body #root .unified-settings-panel .system-shortcut-card span{display:block!important;font-size:12px!important}
+html body #root .v7-header{overflow:visible!important;position:relative;z-index:90}
+@media(max-width:700px){body{padding-left:108px!important}html body #root .global-category-nav-host{width:108px!important;padding:16px 6px!important}html body #root .global-category-nav a{font-size:11px!important;padding:0 6px!important}}

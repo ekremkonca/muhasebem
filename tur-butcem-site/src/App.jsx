@@ -1,3 +1,4 @@
+import HeaderSettings from './HeaderSettings.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -1522,7 +1523,7 @@ function Dashboard({ onSignedOut }) {
           <div className="brand-mark brand-logo-mark">
             <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
           </div>
-          <div className="header-tool-grid"><ThemeSwitcher />
+          <HeaderSettings><div className="header-tool-grid"><ThemeSwitcher />
           <div className="system-shortcuts" aria-label="Sistem araçları">
             <button
               className="system-shortcut-card"
@@ -1556,7 +1557,7 @@ function Dashboard({ onSignedOut }) {
               <Icon name="settings" />
               <span>Güvenlik</span>
             </button>
-          </div></div>
+          </div></div></HeaderSettings>
         </div>
         <div className="header-actions home-header-actions">
           {installPrompt && (
@@ -2131,5 +2132,7 @@ export default function App() {
     />
   );
 }
+
+
 
 
