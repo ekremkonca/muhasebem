@@ -22,3 +22,14 @@
 :root[data-mode="dark"] .breakdown-head span,:root[data-mode="dark"] .breakdown-head button,:root[data-mode="dark"] .breakdown-list span,:root[data-mode="dark"] .breakdown-list b,:root[data-mode="dark"] .category-donut>span strong{color:#f8fafc}
 @media(max-width:900px){.breakdown-body{grid-template-columns:136px minmax(0,1fr);gap:15px}.category-donut{width:136px;height:136px}.category-donut>span strong{font-size:20px;max-width:104px}.breakdown-list b{font-size:13px}.breakdown-list span{font-size:13px}}
 @media(max-width:560px){.dashboard-breakdown-card{padding:14px!important}.breakdown-body{grid-template-columns:1fr;justify-items:center}.breakdown-list{width:100%}.category-donut{width:148px;height:148px}}
+
+.v8-enhance-grid .dashboard-breakdown-card{min-height:150px!important;padding:16px!important;border:1px solid var(--line)!important;border-radius:16px!important;background:var(--paper,#fff)!important;box-shadow:none!important;gap:10px!important}
+.v8-enhance-grid .dashboard-breakdown-card .breakdown-head span{font-size:15px!important}
+.v8-enhance-grid .dashboard-breakdown-card .breakdown-body{grid-template-columns:112px minmax(0,1fr);gap:12px!important}
+.v8-enhance-grid .dashboard-breakdown-card .category-donut{width:112px;height:112px}
+.v8-enhance-grid .dashboard-breakdown-card .category-donut>span strong{font-size:17px!important;max-width:92px}
+.v8-enhance-grid .dashboard-breakdown-card .category-donut>span small{font-size:9px!important}
+.v8-enhance-grid .dashboard-breakdown-card .breakdown-list{gap:5px!important}
+.v8-enhance-grid .dashboard-breakdown-card .breakdown-list span{font-size:11px!important}
+.v8-enhance-grid .dashboard-breakdown-card .breakdown-list b{font-size:11px!important}
+@media(max-width:560px){.v8-enhance-grid .dashboard-breakdown-card .breakdown-body{grid-template-columns:1fr}.v8-enhance-grid .dashboard-breakdown-card .category-donut{width:112px;height:112px}}
