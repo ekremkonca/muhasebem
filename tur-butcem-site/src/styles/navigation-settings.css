@@ -1,18 +1,7 @@
-html body #root .global-category-nav-host{display:block!important;position:fixed!important;top:0!important;left:0!important;bottom:0!important;width:184px!important;max-width:none!important;transform:translateX(-100%)!important;transition:transform .22s ease!important;z-index:180!important;background:var(--paper);border-right:1px solid var(--line);padding:150px 12px 24px!important;box-shadow:12px 0 32px #0002}
-html body #root .global-category-nav-host.sidebar-open,html body[data-sidebar-open="1"] #root .global-category-nav-host{transform:translateX(0)!important}
-html body #root .sidebar-menu-toggle{position:fixed!important;top:14px!important;left:14px!important;z-index:220!important;width:40px!important;height:40px!important;display:grid!important;place-content:center!important;gap:4px!important;border:1px solid var(--line)!important;border-radius:10px!important;background:var(--paper)!important;color:var(--ink)!important;cursor:pointer!important;box-shadow:0 5px 18px #0002}
-html body #root .sidebar-menu-toggle span{display:block!important;width:20px!important;height:2px!important;border-radius:2px!important;background:currentColor!important}
-html body #root .v7-header>.brand{position:fixed!important;left:0!important;top:58px!important;width:184px!important;min-width:184px!important;height:78px!important;z-index:210!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;padding:0!important;margin:0!important;pointer-events:none!important}
-html body #root .v7-header>.brand{transform:translateX(-100%)!important;transition:transform .22s ease!important}
-html body[data-sidebar-open="1"] #root .v7-header>.brand{transform:translateX(0)!important}
-html body #root .v7-header>.brand .brand-mark,html body #root .v7-header>.brand .unified-settings{pointer-events:auto!important}
-html body #root .v7-header .brand-mark{width:72px!important;height:58px!important}
-html body #root .v7-header .brand-logo-image{width:72px!important;height:58px!important}
-html body #root .v7-header>.brand .unified-settings{width:44px!important}
-html body #root .v7-header>.brand .unified-settings-trigger{width:42px!important;height:42px!important}
+html body #root .global-category-nav-host{display:block!important;position:fixed!important;top:0!important;left:0!important;bottom:0!important;width:184px!important;max-width:none!important;transform:none!important;z-index:80!important;background:var(--paper);border-right:1px solid var(--line);padding:24px 12px!important}
 html body #root .global-category-nav{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;padding:0!important;height:auto!important;overflow:visible!important;border:0!important;background:transparent!important}
 html body #root .global-category-nav a{height:48px!important;border:1px solid var(--line)!important;border-radius:12px!important;padding:0 12px!important;font-size:14px!important;justify-content:flex-start!important}
-body{padding-left:0!important}
+body{padding-left:184px!important}
 html body #root .unified-settings{position:relative;display:block!important;width:auto!important}
 html body #root .unified-settings-panel[hidden]{display:none!important}
 html body #root .unified-settings-panel{position:absolute;top:56px;left:0;width:300px;max-width:80vw;background:var(--paper);color:var(--ink);padding:18px;border:1px solid var(--line);border-radius:16px;box-shadow:0 16px 45px #0003;z-index:9999}
@@ -21,4 +10,4 @@ html body #root .unified-settings-panel .system-shortcuts{display:grid!important
 html body #root .unified-settings-panel .system-shortcut-card{width:100%!important;height:auto!important;min-height:54px!important}
 html body #root .unified-settings-panel .system-shortcut-card span{display:block!important;font-size:12px!important}
 html body #root .v7-header{overflow:visible!important;position:relative;z-index:90}
-@media(max-width:700px){html body #root .global-category-nav-host{width:108px!important;padding:112px 6px 16px!important}html body #root .v7-header>.brand{width:108px!important;min-width:108px!important;gap:4px!important}html body #root .v7-header .brand-mark{width:52px!important;height:42px!important}html body #root .v7-header .brand-logo-image{width:52px!important;height:42px!important}html body #root .v7-header>.brand .unified-settings-trigger{width:38px!important;height:38px!important}html body #root .global-category-nav a{font-size:11px!important;padding:0 6px!important}}
+@media(max-width:700px){body{padding-left:108px!important}html body #root .global-category-nav-host{width:108px!important;padding:16px 6px!important}html body #root .global-category-nav a{font-size:11px!important;padding:0 6px!important}}
