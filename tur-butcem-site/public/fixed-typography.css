@@ -86,7 +86,10 @@ body,#root{font-size:var(--ui-text);line-height:1.45}
   #root .standalone-calendar-page .calendar-day-title{font-size:19px!important}
 }
 /* Shared responsive category navigation placement. */
-html body #root .global-category-nav-host{top:112px!important;z-index:60!important}
+html body #root .v7-header .global-category-nav-host{position:absolute!important;top:auto!important;bottom:8px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;z-index:120!important}
 @media(max-width:980px){
-  html body #root .global-category-nav-host{top:auto!important;bottom:0!important;inset-inline:0!important;transform:none!important;width:100%!important;max-width:none!important}
+  html body #root .v7-header{padding-bottom:72px!important}
+  html body #root .v7-header .global-category-nav-host{width:calc(100% - 24px)!important;max-width:none!important;padding:0!important}
+  html body #root .v7-header .global-category-nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));height:54px!important;padding:4px!important;gap:4px!important}
+  html body #root .v7-header .global-category-nav a{min-width:0!important;height:44px!important;padding:0 6px!important;font-size:13px!important}
 }
