@@ -1902,14 +1902,6 @@ function Dashboard({ onSignedOut }) {
                           )}
                         </td>
                         <td className="row-actions" data-label="İşlemler">
-                          <button className="quick-paid" onClick={() => setRecordStatus(r, "Ödendi")} aria-label="Ödendi yap" title="Ödendi yap" disabled={r.status === "Ödendi"}>
-                            <Icon name="check" />
-                            <span>Ödendi</span>
-                          </button>
-                          <button className="quick-refund" onClick={() => setRecordStatus(r, "İade edildi")} aria-label="İade edildi yap" title="İade edildi yap" disabled={r.status === "İade edildi"}>
-                            <Icon name="history" />
-                            <span>İade</span>
-                          </button>
                           <button
                             className="edit"
                             onClick={() => setModal(r)}
