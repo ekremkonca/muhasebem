@@ -13,7 +13,7 @@ html body #root .v7-header{overflow:visible!important;position:relative;z-index:
 @media(max-width:700px){body{padding-left:108px!important}html body #root .global-category-nav-host{width:108px!important;padding:16px 6px!important}html body #root .global-category-nav a{font-size:11px!important;padding:0 6px!important}}
 
 /* Page navigation stays in the centered top header. */
-html body #root .global-category-nav-host{position:absolute!important;top:0!important;left:50%!important;right:auto!important;bottom:auto!important;width:max-content!important;max-width:calc(100vw - 260px)!important;transform:translateX(-50%)!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;z-index:40!important}
+html body #root .global-category-nav-host{display:block!important;visibility:visible!important;position:absolute!important;top:0!important;left:50%!important;right:auto!important;bottom:auto!important;width:max-content!important;max-width:calc(100vw - 260px)!important;transform:translateX(-50%)!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;z-index:120!important}
 html body #root .global-category-nav{flex-direction:row!important;align-items:center!important;gap:8px!important;height:58px!important;padding:0 8px!important;overflow-x:auto!important;background:var(--paper)!important;border:1px solid var(--line)!important;border-radius:16px!important}
 html body #root .global-category-nav a{height:42px!important;border:1px solid transparent!important;border-radius:11px!important;padding:0 18px!important;justify-content:center!important;font-size:13px!important}
 body{padding-left:0!important}
