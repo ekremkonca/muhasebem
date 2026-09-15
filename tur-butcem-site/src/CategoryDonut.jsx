@@ -15,7 +15,7 @@ const LABELS = {
   'Tur Masrafı': 'Masraf',
 };
 
-export default function CategoryDonut({ cats, currency, money }) {
+export default function CategoryDonut({ cats, totalOverride, currency, money }) {
   const [progress, setProgress] = useState(0);
   const [replay, setReplay] = useState(0);
   const [details, setDetails] = useState(false);
@@ -25,7 +25,7 @@ export default function CategoryDonut({ cats, currency, money }) {
     return { type, label: LABELS[type], value: Number(found?.value || 0), color: COLORS[type] };
   }), [cats]);
 
-  const total = items.reduce((sum, item) => sum + Math.max(0, item.value), 0);
+  const total = Number.isFinite(Number(totalOverride)) ? Number(totalOverride) : items.reduce((sum, item) => sum + Math.max(0, item.value), 0);
   const radius = 48;
   const circumference = 2 * Math.PI * radius;
   let offset = 0;
