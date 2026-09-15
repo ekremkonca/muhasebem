@@ -86,7 +86,7 @@ body,#root{font-size:var(--ui-text);line-height:1.45}
   #root .standalone-calendar-page .calendar-day-title{font-size:19px!important}
 }
 /* Shared responsive category navigation placement. */
-html body #root .global-category-nav-host{top:126px!important;z-index:60!important}
-@media(max-width:720px){
+html body #root .global-category-nav-host{top:112px!important;z-index:60!important}
+@media(max-width:980px){
   html body #root .global-category-nav-host{top:auto!important;bottom:0!important;inset-inline:0!important;transform:none!important;width:100%!important;max-width:none!important}
 }
