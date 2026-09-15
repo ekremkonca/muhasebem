@@ -1146,14 +1146,13 @@ function Dashboard({ onSignedOut }) {
     tourIncome = paid
       .filter((r) => normalizeType(r.type) === "Tur Geliri")
       .reduce((s, r) => s + accountingValue(r), 0),
-    realizedIncome = paid.filter(isIncome).reduce((s, r) => s + accountingValue(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + accountingOutstanding(r), 0),
     realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    income = realizedIncome + realizedFxValue,
-    operatingNet = realizedIncome - expense,
+    income = tourIncome + realizedFxValue,
+    operatingNet = tourIncome - expense,
     net = operatingNet + realizedFxValue,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
     average = tourCount ? operatingNet / tourCount : 0;
