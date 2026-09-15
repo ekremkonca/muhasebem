@@ -1542,6 +1542,14 @@ function Dashboard({ onSignedOut }) {
             </button>
             <button
               className="system-shortcut-card"
+              onClick={() => reloadSide("rates")}
+              title="Kur güncellemesi"
+            >
+              <Icon name="settings" />
+              <span>Kur güncellemesi</span>
+            </button>
+            <button
+              className="system-shortcut-card"
               onClick={() => reloadSide("trash")}
               title="Çöp kutusu"
             >
@@ -1743,21 +1751,10 @@ function Dashboard({ onSignedOut }) {
             </strong>
             <small>Mevcut ay karşılaştırması</small>
           </article>
-          <article className="rates-insight">
-            <span>Kur güncellemesi</span>
-            <button
-              className="insight-corner-button"
-              onClick={() => reloadSide("rates")}
-              title="Kur ayarları"
-              aria-label="Kur ayarlarını aç"
-            >
-              <Icon name="settings" size={16} />
-            </button>
-            <strong>
-              USD {Number(rates.USD).toFixed(2)} · EUR{" "}
-              {Number(rates.EUR).toFixed(2)}
-            </strong>
-            <small>{fmtDateTime(ratesUpdatedAt)}</small>
+          <article className="rates-insight home-cash-kasa-card">
+            <span>EV KASA</span>
+            <strong>Elimizdeki döviz ve nakit</strong>
+            <CurrencyDonuts totals={[{ code: "USD", amount: 189 }, { code: "TRY", amount: 7000 }]} money={money} fast />
           </article>
         </div>
           </div>
