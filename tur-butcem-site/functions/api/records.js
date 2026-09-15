@@ -7,6 +7,8 @@ export async function onRequestGet(context) {
     const db = await getDb(context);
     await requireSession(context, db);
     await ensureDailyBackup(db);
+    // Eski sürümde kullanılan Alındı durumu, yeni sistemde Ödendi olarak saklanır.
+    await db.prepare("UPDATE records SET status='Ödendi', paid_amount=amount, updated_at=CURRENT_TIMESTAMP WHERE status='Alındı' AND deleted_at IS NULL").run();
     const url = new URL(context.request.url);
     const trash = url.searchParams.get('trash') === '1';
     const result = await db.prepare(`SELECT ${selectFields} FROM records WHERE deleted_at IS ${trash ? 'NOT NULL' : 'NULL'} ORDER BY date DESC, created_at DESC`).all();
