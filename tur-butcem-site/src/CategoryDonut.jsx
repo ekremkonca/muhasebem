@@ -13,6 +13,7 @@ const COLORS = {
   'Tur Masrafı': '#ff5f7a',
   'Masraf': '#ff5f7a',
 };
+const ORDER = ['Tur Geliri', 'Bahşiş', 'Komisyon', 'Tur Masrafı'];
 const LABELS = {
   'Tur Geliri': 'Gelir',
   'Bahşiş': 'Bahşiş',
@@ -25,12 +26,10 @@ export default function CategoryDonut({ cats, totalOverride, currency, money }) 
   const [replay, setReplay] = useState(0);
   const [details, setDetails] = useState(false);
 
-  const items = useMemo(() => cats.map((cat, index) => ({
-    type: cat.type,
-    label: LABELS[cat.type] || cat.type,
-    value: Number(cat.value || 0),
-    color: COLORS[cat.type] || ['#8b5cf6', '#14b8a6', '#f97316', '#ec4899'][index % 4],
-  })), [cats]);
+  const items = useMemo(() => ORDER.map((type) => {
+    const found = cats.find((cat) => cat.type === type);
+    return { type, label: LABELS[type], value: Number(found?.value || 0), color: COLORS[type] };
+  }), [cats]);
 
   const total = Number.isFinite(Number(totalOverride)) ? Number(totalOverride) : items.reduce((sum, item) => sum + Math.max(0, item.value), 0);
   const radius = 48;
