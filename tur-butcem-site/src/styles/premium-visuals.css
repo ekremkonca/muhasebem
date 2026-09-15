@@ -19,7 +19,11 @@
 }
 
 #root .home-cash-kasa-card{overflow:visible!important}
-#root .home-cash-kasa-card>strong{display:block!important;margin:9px 0 0!important;font-size:18px!important;line-height:1.15!important;font-weight:850!important;white-space:nowrap!important}
+#root .home-cash-kasa-card{border-left:4px solid var(--green)!important}
+#root .home-cash-kasa-card .currency-donuts{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;margin:7px 0 0!important}
+#root .home-cash-kasa-card .currency-donut-ring{width:38px;height:38px}
+#root .home-cash-kasa-card .currency-donut-ring span{font-size:8px}
+#root .home-cash-kasa-card .currency-donut-item>b{font-size:17px!important;font-weight:850!important;line-height:1.1!important;white-space:nowrap!important}
 
 /* Final web-only readability override for commission and tip currency amounts. */
 #root .unified-accounting-layout .v7-kpis article.currency-totals-kpi:not(.cash-fx-kpi) .currency-donuts .currency-donut-item > b{font-size:24px!important;line-height:1.2!important;font-weight:850!important;white-space:nowrap!important;display:block!important;visibility:visible!important;opacity:1!important}
