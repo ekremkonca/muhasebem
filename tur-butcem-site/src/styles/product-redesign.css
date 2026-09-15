@@ -100,7 +100,7 @@ input:hover,select:hover,textarea:hover{border-color:color-mix(in srgb,var(--gre
 .standalone-calendar-page .calendar-day.today{box-shadow:inset 0 0 0 2px var(--green),0 10px 24px color-mix(in srgb,var(--green) 13%,transparent)!important}
 
 /* Dark mode refinement */
-:root[data-mode="dark"] body{background:radial-gradient(circle at 10% 0%,rgba(31,116,82,.17),transparent 30rem),#0c1512!important}
+:root[data-mode="dark"] body{background:radial-gradient(circle at 10% 0%,color-mix(in srgb,var(--green) 17%,transparent),transparent 30rem),color-mix(in srgb,var(--green) 5%,#101214)!important}
 @media(max-width:900px){
  .global-category-nav-host{max-width:44vw}
  .v7-dashboard,.assets-fund-page,.standalone-calendar-page{padding-left:12px!important;padding-right:12px!important}

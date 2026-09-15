@@ -49,8 +49,8 @@ body{position:relative;isolation:isolate;background:
  radial-gradient(circle at 92% 30%,color-mix(in srgb,var(--accent-2,#3b82f6) 10%,transparent),transparent 36rem),
  var(--bg,#f5faf8)}
 body::before{content:"";position:fixed;z-index:-1;inset:-18%;pointer-events:none;background:
- radial-gradient(circle at 24% 24%,color-mix(in srgb,var(--accent,#08b981) 9%,transparent),transparent 22%),
- radial-gradient(circle at 78% 68%,color-mix(in srgb,var(--accent-2,#3b82f6) 8%,transparent),transparent 24%);
+ radial-gradient(circle at 24% 24%,color-mix(in srgb,var(--green) 9%,transparent),transparent 22%),
+ radial-gradient(circle at 78% 68%,color-mix(in srgb,var(--green2) 8%,transparent),transparent 24%);
  filter:blur(34px);animation:premiumAmbient 18s ease-in-out infinite alternate}
 
 .v7-header{background:color-mix(in srgb,var(--surface,#fff) 90%,transparent)!important;backdrop-filter:blur(18px) saturate(145%);border-color:var(--premium-line)!important;box-shadow:0 12px 42px rgba(3,18,28,.08)}
