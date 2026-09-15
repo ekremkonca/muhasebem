@@ -887,7 +887,7 @@ function V8Enhancements({ rows, income, expense, pending, currency, tourCount, n
   const score = Math.max(0, Math.min(100, Math.round(70 + (income > 0 ? Math.min(20, (income - expense) / Math.max(income, 1) * 20) : 0) - (pending > income * .4 ? 15 : 0))));
   const toggle = (id) => setHidden((items) => { const next = items.includes(id) ? items.filter((x) => x !== id) : [...items, id]; try { localStorage.setItem("v8-hidden-cards", JSON.stringify(next)); } catch {} return next; });
   const moveCard = (id) => { if (!dragCard || dragCard === id) return; const next = [...cardOrder]; const from = next.indexOf(dragCard); const to = next.indexOf(id); next.splice(from, 1); next.splice(to, 0, dragCard); setCardOrder(next); localStorage.setItem("v8-card-order", JSON.stringify(next)); setDragCard(null); };
-  const cats = categoryTotals(rows, convert);
+  const cats = categoryTotals(rows.filter((r) => r.status === "Ödendi"), convert);
   const max = Math.max(...cats.map((x) => x.value), 1);
   const notices = rows.filter((r) => r.status === "Ödenmedi");
   const recentRows = [...rows].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
@@ -1134,18 +1134,19 @@ function Dashboard({ onSignedOut }) {
     tourIncome = paid
       .filter((r) => normalizeType(r.type) === "Tur Geliri")
       .reduce((s, r) => s + accountingValue(r), 0),
+    realizedIncome = paid.filter(isIncome).reduce((s, r) => s + accountingValue(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + accountingOutstanding(r), 0),
     realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    income = tourIncome + realizedFxValue,
-    operatingNet = tourIncome - expense,
+    income = realizedIncome + realizedFxValue,
+    operatingNet = realizedIncome - expense,
     net = operatingNet + realizedFxValue,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
     average = tourCount ? operatingNet / tourCount : 0;
   const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
-  const commissionTotals = currencyTotals(accountingRows, 'Komisyon');
+  const commissionTotals = currencyTotals(accountingRows, 'Komisyon', true);
   const cashFxTotals = CASH_FX_BALANCES.map((item) => ({ ...item }));
   const cashFxTryBreakdown = CASH_FX_BALANCES.map((item) => {
     const rate = Number(rates?.[item.code]) || 0;
