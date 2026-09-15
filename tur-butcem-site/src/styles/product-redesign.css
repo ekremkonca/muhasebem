@@ -26,7 +26,7 @@ html body #root .v7-header{
  box-shadow:0 8px 32px rgba(12,34,27,.055)!important;
  backdrop-filter:blur(22px) saturate(150%)!important;
 }
-.global-category-nav-host{position:absolute!important;z-index:40!important;top:46px;left:50%;width:max-content;max-width:42vw;transform:translateX(-50%)}
+.global-category-nav-host{position:absolute!important;z-index:40!important;top:92px;left:50%;width:max-content;max-width:42vw;transform:translateX(-50%)}
 .global-category-nav{
  height:44px!important;padding:4px!important;align-items:center!important;justify-content:center!important;gap:5px!important;
  border:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important;border-radius:14px!important;
