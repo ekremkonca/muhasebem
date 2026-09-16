@@ -160,6 +160,8 @@ export async function deleteRecords(ids) {
 export const loadSettings = () => request("/api/settings");
 export const saveRates = (rates) =>
   request("/api/settings", { method: "PUT", body: JSON.stringify({ rates }) });
+export const refreshRates = () =>
+  request("/api/rates-refresh", { method: "POST" });
 export const loadBackups = () => request("/api/backups");
 export const createBackup = (title = "Manuel yedek") =>
   request("/api/backups", {

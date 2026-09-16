@@ -28,6 +28,7 @@ import {
   loadHistory,
   loadRecords,
   loadSettings,
+  refreshRates,
   login,
   logout,
   logoutAllSessions,
@@ -719,6 +720,7 @@ function SystemPanel({
   setRates,
   ratesUpdatedAt,
   onSaveRates,
+  onRefreshRates,
   backups,
   onCreateBackup,
   onRestoreBackup,
@@ -788,9 +790,14 @@ function SystemPanel({
               </label>
             ))}
           </div>
-          <button className="btn primary" onClick={onSaveRates}>
-            Kurları kaydet
-          </button>
+          <div className="panel-actions">
+            <button className="btn secondary" onClick={onRefreshRates}>
+              ↻ Güncel kurları getir
+            </button>
+            <button className="btn primary" onClick={onSaveRates}>
+              Kurları kaydet
+            </button>
+          </div>
         </div>
       )}
       {tab === "backups" && (
@@ -1397,6 +1404,16 @@ function Dashboard({ onSignedOut }) {
       setError(e.message);
     }
   };
+  const refreshRateSettings = async () => {
+    try {
+      const s = await refreshRates();
+      setRates(s.rates);
+      setRatesUpdatedAt(s.updatedAt);
+      setError("");
+    } catch (e) {
+      setError(e.message || "Güncel kurlar alınamadı.");
+    }
+  };
   const doBackup = async () => {
     await createBackup(
       `Manuel yedek — ${fmtDateTime(new Date().toISOString())}`,
@@ -1604,6 +1621,7 @@ function Dashboard({ onSignedOut }) {
           setRates={setRates}
           ratesUpdatedAt={ratesUpdatedAt}
           onSaveRates={saveRateSettings}
+          onRefreshRates={refreshRateSettings}
           backups={backups}
           onCreateBackup={doBackup}
           onRestoreBackup={doRestoreBackup}
