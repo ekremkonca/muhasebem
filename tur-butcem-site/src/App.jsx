@@ -1753,7 +1753,7 @@ function Dashboard({ onSignedOut }) {
           </article>
           <article className="rates-insight home-cash-kasa-card">
             <span>EV KASA</span>
-            <CurrencyDonuts totals={[{ code: "USD", amount: 189 }, { code: "TRY", amount: 9300 }]} money={money} fast />
+            <CurrencyDonuts totals={[{ code: "USD", amount: 189 }, { code: "TRY", amount: 9300 }, { code: "EUR", amount: 134, label: "Annem" }, { code: "EUR", amount: 20, label: "EURO" }]} money={money} fast />
           </article>
         </div>
           </div>
