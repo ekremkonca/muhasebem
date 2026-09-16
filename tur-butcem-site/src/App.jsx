@@ -66,8 +66,10 @@ const REALIZED_FX_TRY = REALIZED_FX_EXCHANGES.reduce(
   0,
 );
 const CASH_FX_BALANCES = [
-  { code: "USD", amount: 159 },
-  { code: "EUR", amount: 123 },
+  { code: "USD", amount: 189 },
+  { code: "TRY", amount: 9300 },
+  { code: "EUR", amount: 134, label: "Annem" },
+  { code: "EUR", amount: 20, label: "EURO" },
 ];
 const pad = (n) => String(n).padStart(2, "0");
 const localISO = (d = new Date()) =>
@@ -1141,14 +1143,14 @@ function Dashboard({ onSignedOut }) {
     tourIncome = paid
       .filter((r) => normalizeType(r.type) === "Tur Geliri")
       .reduce((s, r) => s + accountingValue(r), 0),
+    entryIncome = paid
+      .filter(isIncome)
+      .reduce((s, r) => s + accountingValue(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + accountingOutstanding(r), 0),
-    realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    income = tourIncome + realizedFxValue,
-    operatingNet = tourIncome - expense,
-    net = operatingNet + realizedFxValue,
+    operatingNet = entryIncome - expense,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
     average = tourCount ? operatingNet / tourCount : 0;
   const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
@@ -1162,6 +1164,9 @@ function Dashboard({ onSignedOut }) {
     (sum, item) => sum + item.tryValue,
     0,
   );
+  const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
+    income = entryIncome + cashFxValue,
+    net = operatingNet + cashFxValue;
   const topTour = useMemo(() => {
     const m = {};
     paid
@@ -1714,7 +1719,7 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={loading ? 0 : net} currency={currency} />
             </strong>
             <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={loading ? 0 : average} currency={currency} /></small>
-            <small>Gerçekleşmiş döviz dahil · +{money(REALIZED_FX_TRY, "TRY")}</small>
+            <small>Girdiler + EV KASA · {money(cashFxTryValue, "TRY")}</small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
@@ -1731,7 +1736,7 @@ function Dashboard({ onSignedOut }) {
             <CurrencyDonuts totals={cashFxTotals} money={money} fast />
             <div className="cash-fx-rate-breakdown">
               {cashFxTryBreakdown.map((item) => (
-                <small key={`cash-try-${item.code}`}>
+                <small key={`cash-try-${item.code}-${item.label || ""}`}>
                   {item.code}: {money(item.tryValue, "TRY")} · kur {item.rate.toFixed(2)}
                 </small>
               ))}
