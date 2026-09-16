@@ -61,10 +61,9 @@ const REALIZED_FX_EXCHANGES = [
   { code: "GBP", amount: 320, rate: 62.34 },
   { code: "EUR", amount: 545, rate: 53.07 },
 ];
-const REALIZED_FX_TRY = REALIZED_FX_EXCHANGES.reduce(
-  (sum, item) => sum + item.amount * item.rate,
-  0,
-);
+// 10 Temmuz'da bankada bozdurulan dövizlerin gerçekleşmiş TL toplamı.
+// Bu tutar sabittir; EV KASA bakiyeleriyle karıştırılmaz ve güncel kurla yeniden çevrilmez.
+const REALIZED_FX_TRY = 60946;
 const CASH_FX_BALANCES = [
   { code: "USD", amount: 189 },
   { code: "TRY", amount: 9300 },
@@ -1165,8 +1164,9 @@ function Dashboard({ onSignedOut }) {
     0,
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
-    income = entryIncome + cashFxValue,
-    net = operatingNet + cashFxValue;
+    realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
+    income = entryIncome + realizedFxValue + cashFxValue,
+    net = operatingNet + realizedFxValue + cashFxValue;
   const topTour = useMemo(() => {
     const m = {};
     paid
@@ -1719,7 +1719,7 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={loading ? 0 : net} currency={currency} />
             </strong>
             <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={loading ? 0 : average} currency={currency} /></small>
-            <small>Girdiler + EV KASA · {money(cashFxTryValue, "TRY")}</small>
+            <small>Girdiler + bozulan döviz + EV KASA · {money(REALIZED_FX_TRY + cashFxTryValue, "TRY")}</small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
