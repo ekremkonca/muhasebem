@@ -1149,7 +1149,9 @@ function Dashboard({ onSignedOut }) {
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + accountingOutstanding(r), 0),
-    operatingNet = entryIncome - expense,
+    // Mevcut net gelir hesabı tur gelirleri ve ödenmiş masraflar temellidir;
+    // 10 Temmuz'da bozdurulan 60.946 TL bu toplamın içinde zaten yer alır.
+    operatingNet = tourIncome - expense,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
     average = tourCount ? operatingNet / tourCount : 0;
   const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
@@ -1164,9 +1166,9 @@ function Dashboard({ onSignedOut }) {
     0,
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
-    realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    income = entryIncome + realizedFxValue + cashFxValue,
-    net = operatingNet + realizedFxValue + cashFxValue;
+    // operatingNet zaten mevcut net geliri (10 Temmuz bozdurması dahil) temsil eder.
+    income = operatingNet + cashFxValue,
+    net = operatingNet + cashFxValue;
   const topTour = useMemo(() => {
     const m = {};
     paid
@@ -1719,7 +1721,7 @@ function Dashboard({ onSignedOut }) {
               <AnimatedMoney value={loading ? 0 : net} currency={currency} />
             </strong>
             <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={loading ? 0 : average} currency={currency} /></small>
-            <small>Girdiler + bozulan döviz + EV KASA · {money(REALIZED_FX_TRY + cashFxTryValue, "TRY")}</small>
+            <small>Mevcut net + EV KASA · {money(cashFxTryValue, "TRY")} ek</small>
           </article>
           <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
             <span>Alacak</span>
