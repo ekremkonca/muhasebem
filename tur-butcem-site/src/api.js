@@ -158,6 +158,8 @@ export async function deleteRecords(ids) {
 }
 
 export const loadSettings = () => request("/api/settings");
+export const loadHomeCash = () => request('/api/home-cash');
+export const saveHomeCash = (balances) => request('/api/home-cash',{method:'PUT',body:JSON.stringify({balances})});
 export const saveRates = (rates) =>
   request("/api/settings", { method: "PUT", body: JSON.stringify({ rates }) });
 export const refreshRates = () =>

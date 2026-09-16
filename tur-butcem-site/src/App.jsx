@@ -1,4 +1,5 @@
 import HeaderSettings from './HeaderSettings.jsx';
+import HomeCashEditor from './HomeCashEditor.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -28,6 +29,7 @@ import {
   loadHistory,
   loadRecords,
   loadSettings,
+  loadHomeCash,
   refreshRates,
   login,
   logout,
@@ -998,6 +1000,7 @@ function Dashboard({ onSignedOut }) {
     [currency, setCurrency] = useState("TRY"),
     [rates, setRates] = useState({ TRY: 1, USD: 46.3, EUR: 53, GBP: 62.3 }),
     [ratesUpdatedAt, setRatesUpdatedAt] = useState(null),
+    [homeCash, setHomeCash] = useState(CASH_FX_BALANCES),
     [entryDate, setEntryDate] = useState(""),
     [typeFilter, setTypeFilter] = useState("Tümü"),
     [statusFilter, setStatusFilter] = useState("Tümü"),
@@ -1046,6 +1049,7 @@ function Dashboard({ onSignedOut }) {
       setEvents(e);
       setRates(s.rates);
       setRatesUpdatedAt(s.updatedAt);
+      setHomeCash((await loadHomeCash()).balances);
       setBackups(b.backups || []);
       setHistory(h.history || []);
     } catch (e) {
@@ -1152,8 +1156,8 @@ function Dashboard({ onSignedOut }) {
     average = tourCount ? operatingNet / tourCount : 0;
   const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
   const commissionTotals = currencyTotals(accountingRows, 'Komisyon', true);
-  const cashFxTotals = CASH_FX_BALANCES.map((item) => ({ ...item }));
-  const cashFxTryBreakdown = CASH_FX_BALANCES.map((item) => {
+  const cashFxTotals = homeCash.map((item) => ({ ...item }));
+  const cashFxTryBreakdown = homeCash.map((item) => {
     const rate = Number(rates?.[item.code]) || 0;
     return { ...item, rate, tryValue: item.amount * rate };
   });
@@ -1774,7 +1778,8 @@ function Dashboard({ onSignedOut }) {
           </article>
           <article className="rates-insight home-cash-kasa-card">
             <span>EV KASA</span>
-            <CurrencyDonuts totals={[{ code: "USD", amount: 189 }, { code: "TRY", amount: 9300 }, { code: "EUR", amount: 134, label: "Annem" }, { code: "EUR", amount: 20, label: "EURO" }]} money={money} fast />
+            <HomeCashEditor balances={homeCash} onSave={setHomeCash}/>
+            <CurrencyDonuts totals={homeCash} money={money} fast />
           </article>
         </div>
           </div>
