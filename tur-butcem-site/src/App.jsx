@@ -1142,15 +1142,11 @@ function Dashboard({ onSignedOut }) {
     tourIncome = paid
       .filter((r) => normalizeType(r.type) === "Tur Geliri")
       .reduce((s, r) => s + accountingValue(r), 0),
-    entryIncome = paid
-      .filter(isIncome)
-      .reduce((s, r) => s + accountingValue(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + accountingOutstanding(r), 0),
-    // Mevcut net gelir hesabı tur gelirleri ve ödenmiş masraflar temellidir;
-    // 10 Temmuz'da bozdurulan 60.946 TL bu toplamın içinde zaten yer alır.
+    // Yalnızca girdi tur gelirleri eksi masraflar; döviz satışı burada yoktur.
     operatingNet = tourIncome - expense,
     tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
     average = tourCount ? operatingNet / tourCount : 0;
@@ -1166,9 +1162,9 @@ function Dashboard({ onSignedOut }) {
     0,
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
-    // operatingNet zaten mevcut net geliri (10 Temmuz bozdurması dahil) temsil eder.
-    income = operatingNet + cashFxValue,
-    net = operatingNet + cashFxValue;
+    realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
+    income = tourIncome + realizedFxValue + cashFxValue,
+    net = income - expense;
   const topTour = useMemo(() => {
     const m = {};
     paid
