@@ -177,7 +177,7 @@ body {
   .budget-app-shell > .market-ticker-host,
   .budget-app-shell > .main-dashboard { margin-left:246px !important; width:calc(100% - 246px) !important; }
   .budget-app-shell > .v7-header { padding-left:30px !important; padding-right:30px !important; }
-  .budget-app-shell .global-category-nav-host { display:none !important; }
+  body:has(.budget-sidebar) .global-category-nav-host { display:none !important; }
   .budget-app-shell > .market-ticker-host { min-height:45px !important; }
   .budget-app-shell > .main-dashboard { max-width:none !important; padding:25px 30px 56px !important; }
   .budget-app-shell .home-v7-header { position:sticky !important; top:0; min-height:76px; background:color-mix(in srgb, var(--paper) 94%, transparent) !important; }
