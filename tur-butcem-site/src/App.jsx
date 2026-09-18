@@ -282,6 +282,39 @@ function Icon({ name, size = 18 }) {
   );
 }
 
+function BudgetSidebar() {
+  const page = (location.pathname || "/muhasebe/").split("/")[1] || "muhasebe";
+  const links = [
+    ["/muhasebe/", "M", "Muhasebe", "muhasebe"],
+    ["/varliklar/", "V", "Varlıklar", "varliklar"],
+    ["/takvim/", "T", "Takvim", "takvim"],
+  ];
+  return (
+    <aside className="budget-sidebar" aria-label="Bütçe menüsü">
+      <div className="budget-sidebar-brand">
+        <img src="/ek-logo-clean.png" alt="EK" />
+        <span>REHBERLİK<br />MUHASEBE</span>
+      </div>
+      <div className="budget-sidebar-period">
+        <strong>BUGÜN</strong>
+        <span>Gelirlerini ve kasanı takip et</span>
+      </div>
+      <nav>
+        {links.map(([href, mark, label, key]) => (
+          <a key={key} href={href} className={page === key ? "active" : ""} aria-current={page === key ? "page" : undefined}>
+            <i>{mark}</i><span>{label}</span>
+          </a>
+        ))}
+      </nav>
+      <div className="budget-sidebar-footer">
+        <span>SEZON ÖZETİ</span>
+        <strong>Kontrol sende</strong>
+        <small>Girdiler, kasa ve planlar tek yerde.</small>
+      </div>
+    </aside>
+  );
+}
+
 function AuthScreen({ configured, onDone }) {
   const [pin, setPin] = useState(""),
     [confirm, setConfirm] = useState(""),
@@ -1540,7 +1573,8 @@ function Dashboard({ onSignedOut }) {
     pageEnd = Math.min(page * PAGE_SIZE, filteredRows.length);
 
   return (
-    <>
+    <div className="budget-app-shell">
+      <BudgetSidebar />
       <header className="v7-header home-v7-header">
         <div className="brand home-brand">
           <div className="brand-mark brand-logo-mark">
@@ -2087,7 +2121,7 @@ function Dashboard({ onSignedOut }) {
           <b>{undo.seconds}</b>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
