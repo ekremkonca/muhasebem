@@ -35,7 +35,6 @@ export default function CategoryNavBridge(){
       <a className="gentelella-brand" href="/muhasebe/" onClick={event=>go(event,'/muhasebe/')}><img src="/ek-logo-clean.png" alt="EK"/><span>REHBERLİK<br/><b>MUHASEBE</b></span></a>
       <div className="gentelella-profile"><i>EK</i><div><strong>Ekrem Konca</strong><small><em/> Çevrimiçi</small></div></div>
       <nav className="gentelella-menu"> <span>ANA MENÜ</span>{LINKS.map(([href,label,key])=><a key={key} href={href} className={active===key?'active':''} onClick={event=>go(event,href)}>{icon(key)}<b>{label}</b>{active===key&&<i/>}</a>)}</nav>
-      <nav className="gentelella-menu gentelella-tools"><span>ARAÇLAR</span><button type="button" onClick={()=>document.querySelector('.unified-settings-trigger')?.click()}>{icon('varliklar')}<b>Tema ve görünüm</b><i className="gentelella-chevron">⌄</i></button><button type="button" onClick={()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}>{icon('takvim')}<b>Sayfa sonu</b></button></nav>
       <footer><small>EK MUHASEBE</small><b>v10 · Canlı kayıtlar</b></footer>
     </aside>
     {open&&<button className="gentelella-scrim" type="button" onClick={()=>setOpen(false)} aria-label="Menüyü kapat"/>}

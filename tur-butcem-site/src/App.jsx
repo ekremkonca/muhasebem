@@ -1590,49 +1590,6 @@ function Dashboard({ onSignedOut }) {
           <div className="brand-mark brand-logo-mark">
             <img className="brand-logo-image" src="/ek-logo-clean.png" alt="EK" />
           </div>
-          <HeaderSettings><div className="header-tool-grid"><ThemeSwitcher />
-          <div className="system-shortcuts" aria-label="Sistem araçları">
-            <button
-              className="system-shortcut-card"
-              onClick={() => reloadSide("backups")}
-              title="Yedekler"
-            >
-              <Icon name="backup" />
-              <span>Yedekler</span>
-            </button>
-            <button
-              className="system-shortcut-card"
-              onClick={() => reloadSide("history")}
-              title="İşlem geçmişi"
-            >
-              <Icon name="history" />
-              <span>İşlem geçmişi</span>
-            </button>
-            <button
-              className="system-shortcut-card"
-              onClick={() => reloadSide("rates")}
-              title="Kur güncellemesi"
-            >
-              <Icon name="settings" />
-              <span>Kur güncellemesi</span>
-            </button>
-            <button
-              className="system-shortcut-card"
-              onClick={() => reloadSide("trash")}
-              title="Çöp kutusu"
-            >
-              <Icon name="box" />
-              <span>Çöp kutusu</span>
-            </button>
-            <button
-              className="system-shortcut-card"
-              onClick={() => reloadSide("security")}
-              title="Güvenlik"
-            >
-              <Icon name="settings" />
-              <span>Güvenlik</span>
-            </button>
-          </div></div></HeaderSettings>
         </div>
         <div className="header-actions home-header-actions">
           {installPrompt && (
@@ -1640,6 +1597,14 @@ function Dashboard({ onSignedOut }) {
               Uygulamayı kur
             </button>
           )}
+          <HeaderSettings><div className="header-tool-grid"><ThemeSwitcher />
+          <div className="system-shortcuts" aria-label="Sistem araçları">
+            <button className="system-shortcut-card" onClick={() => reloadSide("backups")} title="Yedekler"><Icon name="backup" /><span>Yedekler</span></button>
+            <button className="system-shortcut-card" onClick={() => reloadSide("history")} title="İşlem geçmişi"><Icon name="history" /><span>İşlem geçmişi</span></button>
+            <button className="system-shortcut-card" onClick={() => reloadSide("rates")} title="Kur güncellemesi"><Icon name="settings" /><span>Kur güncellemesi</span></button>
+            <button className="system-shortcut-card" onClick={() => reloadSide("trash")} title="Çöp kutusu"><Icon name="box" /><span>Çöp kutusu</span></button>
+            <button className="system-shortcut-card" onClick={() => reloadSide("security")} title="Güvenlik"><Icon name="settings" /><span>Güvenlik</span></button>
+          </div></div></HeaderSettings>
 
           <button
             className="btn secondary"
