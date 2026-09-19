@@ -189,3 +189,74 @@ body {
 
 @media (max-width:1050px) { #root .command-dashboard { grid-template-columns:1fr 1fr; } #root .command-chart { grid-column:1/-1; } }
 @media (max-width:640px) { #root .command-dashboard { grid-template-columns:1fr; gap:10px; margin-bottom:10px; } #root .command-dashboard article { min-height:170px; border-radius:19px; padding:17px; } #root .command-chart { grid-column:auto; min-height:190px!important; } .command-net-copy>strong { font-size:30px; } .command-bars { gap:7px; } .command-bar span,.command-bar b { font-size:8px; } }
+
+/* A second, cohesive pass for the surrounding workspace. */
+@media (min-width: 721px) {
+  #root .home-v7-header { min-height:76px!important; }
+  #root .market-ticker-host { min-height:42px!important; opacity:.92; }
+  #root .native-market-viewport,#root .native-market-track,#root .native-market-copy,#root .native-market-card { height:42px!important; }
+  #root .native-market-card { padding:4px 14px!important; }
+  #root .global-category-nav-host { top:54px!important; }
+}
+
+#root .accounting-currency-pair {
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  margin:14px 0!important;
+}
+#root .accounting-currency-panel {
+  position:relative;
+  min-height:168px!important;
+  padding:18px 19px!important;
+  overflow:hidden;
+  border-radius:23px!important;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+#root .accounting-currency-panel:hover { transform:translateY(-3px); box-shadow:0 20px 46px rgba(18,29,55,.15)!important; }
+#root .accounting-currency-panel::after { content:""; position:absolute; z-index:0; width:160px; height:160px; right:-76px; top:-102px; border-radius:50%; border:28px solid color-mix(in srgb,var(--accent,var(--green)) 12%,transparent); pointer-events:none; }
+#root .accounting-currency-panel:first-child { background:linear-gradient(135deg,color-mix(in srgb,#7c4dff 10%,var(--paper)),var(--budget-surface))!important; border-top:4px solid #8b5cf6!important; }
+#root .accounting-currency-panel:last-child { background:linear-gradient(135deg,color-mix(in srgb,#fb7185 10%,var(--paper)),var(--budget-surface))!important; border-top:4px solid #fb7185!important; }
+#root .accounting-currency-panel>span { position:relative; z-index:1; display:flex!important; align-items:center; gap:8px; font-size:15px!important; font-weight:900!important; letter-spacing:-.02em; }
+#root .accounting-currency-panel>span::after { content:"Detay"; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.5); color:var(--muted); font-size:8px; letter-spacing:.06em; text-transform:uppercase; }
+#root .accounting-currency-panel .currency-donuts { position:relative; z-index:1; margin-top:17px!important; }
+#root .accounting-currency-panel .currency-donut-item b { font-size:clamp(14px,1.2vw,18px)!important; font-weight:900!important; }
+
+#root .unified-accounting-layout .v7-insights {
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px!important;
+  margin:0 0 18px!important;
+}
+#root .unified-accounting-layout .v7-insights>article {
+  min-height:110px!important;
+  padding:16px!important;
+  border-radius:18px!important;
+  background:var(--budget-surface)!important;
+}
+#root .unified-accounting-layout .v7-insights>article span { color:var(--muted)!important; font-size:10px!important; font-weight:850!important; }
+#root .unified-accounting-layout .v7-insights>article strong { display:block; margin-top:10px; font-size:16px!important; letter-spacing:-.03em; }
+#root .unified-accounting-layout .v7-insights>article small { display:block; margin-top:7px; font-size:10px!important; }
+#root .unified-accounting-layout .v7-insights .home-cash-kasa-card { padding:14px 16px!important; }
+#root .unified-accounting-layout .v7-insights .home-cash-kasa-card .currency-donuts { margin-top:10px!important; }
+
+#root .workspace-records { border:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important; overflow:clip!important; }
+#root .workspace-records .records-head { min-height:82px; padding:17px 20px!important; background:linear-gradient(100deg,color-mix(in srgb,var(--accent,var(--green)) 8%,var(--paper)),var(--budget-surface) 56%)!important; border-bottom:1px solid color-mix(in srgb,var(--line) 80%,transparent)!important; }
+#root .workspace-records .records-title-line h2 { font-size:18px!important; letter-spacing:-.025em; }
+#root .workspace-records .records-title-line h2::before { content:"KAYIT DEFTERİ"; display:block; margin-bottom:3px; color:var(--accent,var(--green)); font-size:8px; font-weight:900; letter-spacing:.13em; }
+#root .workspace-records .records-tools { gap:6px!important; }
+#root .workspace-records .records-tools .btn { min-height:37px!important; padding:0 10px!important; font-size:10px!important; }
+#root .workspace-records table { font-variant-numeric:tabular-nums; }
+#root .workspace-records table thead th { padding-top:13px!important; padding-bottom:13px!important; font-size:9px!important; }
+#root .workspace-records table tbody td { padding-top:15px!important; padding-bottom:15px!important; }
+#root .workspace-records table tbody tr:nth-child(even) { background:color-mix(in srgb,var(--soft) 45%,transparent); }
+#root .workspace-records .type { border-radius:999px!important; font-size:10px!important; }
+
+@media (max-width: 1050px) { #root .unified-accounting-layout .v7-insights { grid-template-columns:repeat(2,minmax(0,1fr))!important; } }
+@media (max-width: 720px) {
+  #root .accounting-currency-pair { grid-template-columns:1fr!important; gap:10px!important; }
+  #root .accounting-currency-panel { min-height:142px!important; border-radius:18px!important; }
+  #root .unified-accounting-layout .v7-insights { gap:9px!important; margin-bottom:12px!important; }
+  #root .unified-accounting-layout .v7-insights>article { min-height:100px!important; padding:13px!important; }
+  #root .workspace-records .records-head { padding:14px!important; }
+}
