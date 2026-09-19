@@ -70,6 +70,45 @@ html body #root .v7-header .header-actions .unified-settings-trigger::after{cont
 html body #root .v7-header .header-actions .unified-settings-trigger svg{position:relative;z-index:1;width:19px!important;height:19px!important;stroke-width:1.9!important}
 html body #root .v7-header .header-actions .unified-settings-trigger:hover{background:linear-gradient(145deg,#367fe5,#216bd4)!important;border-color:#216bd4!important;color:#fff!important;box-shadow:0 7px 17px rgba(35,111,215,.28)!important;transform:translateY(-1px)}
 html body #root .v7-header .header-actions .unified-settings-trigger[aria-expanded="true"]{background:#286fda!important;border-color:#286fda!important;color:#fff!important;box-shadow:0 7px 17px rgba(35,111,215,.24)!important}
+
+/* One dark surface palette for every workspace area, not only the page background. */
+:root[data-mode="dark"]{--gt-canvas:#0d1523;--gt-card:#141f31;--gt-line:#273650;--gt-muted:#97a7c3}
+:root[data-mode="dark"] body{background:#0d1523!important}
+:root[data-mode="dark"] #root .v7-header,
+:root[data-mode="dark"] #root .market-ticker-host,
+:root[data-mode="dark"] .native-market-card{background:#111b2b!important;border-color:#273650!important}
+:root[data-mode="dark"] #root .v7-filterbar,
+:root[data-mode="dark"] #root .command-chart,
+:root[data-mode="dark"] #root .workspace-records,
+:root[data-mode="dark"] #root .accounting-currency-panel,
+:root[data-mode="dark"] #root .unified-accounting-layout .v7-insights>article,
+:root[data-mode="dark"] #root .analysis,
+:root[data-mode="dark"] #root .finance-modern,
+:root[data-mode="dark"] #root .breakdown-bars-card,
+:root[data-mode="dark"] #root .assets-fund-page .asset-side,
+:root[data-mode="dark"] #root .assets-fund-page .assets-general-total,
+:root[data-mode="dark"] #root .assets-fund-page .fund-chart-card,
+:root[data-mode="dark"] #root .assets-fund-page .compact-details-card{background:#141f31!important;color:#edf3ff!important;border-color:#273650!important}
+:root[data-mode="dark"] #root .v7-filterbar .searchbox,
+:root[data-mode="dark"] #root .v7-filterbar .date-presets,
+:root[data-mode="dark"] #root .workspace-records table thead,
+:root[data-mode="dark"] #root .workspace-records table tbody tr:nth-child(even),
+:root[data-mode="dark"] #root .workspace-records .records-head{background:#19263a!important;color:#edf3ff!important;border-color:#273650!important}
+:root[data-mode="dark"] #root .command-today{background:linear-gradient(145deg,#2b2619,#141f31)!important;color:#edf3ff!important}
+:root[data-mode="dark"] #root .command-today>strong,
+:root[data-mode="dark"] #root .command-bar b,
+:root[data-mode="dark"] #root .accounting-currency-panel>span,
+:root[data-mode="dark"] #root .unified-accounting-layout .v7-insights>article strong{color:#edf3ff!important}
+:root[data-mode="dark"] #root .workspace-records table tbody tr:hover{background:#1d2e47!important}
+:root[data-mode="dark"] #root .v7-header .header-actions .unified-settings-trigger,
+:root[data-mode="dark"] #root .v7-header .header-actions .icon-btn,
+:root[data-mode="dark"] #root .v7-header .header-actions .btn.secondary{background:#18253a!important;color:#dce8fb!important;border-color:#30425f!important}
+:root[data-mode="dark"] #root .v7-header .header-actions .unified-settings-panel{background:#141f31!important;color:#edf3ff!important;border-color:#30425f!important}
+:root[data-mode="dark"] #root .v7-header .header-actions .unified-settings-panel>strong{color:#edf3ff!important}
+:root[data-mode="dark"] #root .v7-header .header-actions .unified-settings-panel .theme-icon-trigger,
+:root[data-mode="dark"] #root .v7-header .header-actions .unified-settings-panel .v8-privacy-trigger,
+:root[data-mode="dark"] #root .v7-header .header-actions .unified-settings-panel .v8-mode-trigger,
+:root[data-mode="dark"] #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card{background:#18253a!important;color:#dce8fb!important;border-color:#30425f!important}
 #root .market-ticker-host{margin-left:0!important;min-height:42px!important;background:#fff!important;border-bottom:1px solid var(--gt-line)!important}.native-market-card{background:#fff!important;border-color:var(--gt-line)!important}.native-market-card strong{color:#253553!important}
 #root .main-dashboard.v7-dashboard,#root .home-content-area,#root .standalone-calendar-page{max-width:none!important;margin-left:0!important;padding:25px 30px 50px!important}.global-category-nav-host{display:none!important}
 #root .v7-filterbar{border:1px solid var(--gt-line)!important;border-radius:12px!important;background:#fff!important;box-shadow:0 4px 15px rgba(30,52,91,.04)!important}.v7-filterbar .searchbox{background:#f7f9fc!important;border-color:#edf0f5!important}.v7-filterbar .date-presets{background:#f7f9fc!important;border-color:#edf0f5!important}.v7-filterbar .date-presets button.active{background:#2a81ea!important}
