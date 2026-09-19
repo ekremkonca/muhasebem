@@ -13,7 +13,7 @@ import './styles/premium-visuals.css';
 import './styles/budget-track-refresh.css';
 import { SITE_NAV_EVENT } from './navigation.js';
 
-const PUBLIC_ASSET_VERSION='20260918-budget-sidebar';
+const PUBLIC_ASSET_VERSION='20260919-no-sidebar';
 if (window.AndroidAuth) document.documentElement.classList.add('native-android-app');
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
