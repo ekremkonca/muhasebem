@@ -139,3 +139,53 @@ body {
   --budget-soft: color-mix(in srgb, var(--soft) 86%, #111523);
 }
 :root[data-mode="dark"] #root .workspace-records table tbody tr:hover { background: color-mix(in srgb, var(--accent, var(--green)) 16%, var(--paper)) !important; }
+
+/* Main dashboard composition: a purposeful visual hierarchy rather than a row
+   of unrelated summary boxes. Every displayed amount is passed from App data. */
+#root .command-dashboard {
+  display:grid;
+  grid-template-columns:1.15fr .72fr 1.45fr;
+  gap:14px;
+  margin:0 0 14px;
+}
+#root .command-dashboard article {
+  position:relative;
+  overflow:hidden;
+  min-height:208px;
+  padding:22px;
+  border:1px solid color-mix(in srgb,var(--line) 84%,transparent);
+  border-radius:24px;
+  background:var(--budget-surface);
+  box-shadow:0 16px 42px rgba(20,32,58,.08);
+}
+#root .command-net {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#fff;
+  border:0!important;
+  background:
+    radial-gradient(circle at 102% -4%,rgba(255,255,255,.21),transparent 37%),
+    linear-gradient(135deg,#3c57ff 0%,#6678ff 48%,#8b5cf6 100%)!important;
+}
+#root .command-net::after { content:""; position:absolute; width:180px; height:180px; right:-88px; bottom:-92px; border:25px solid rgba(255,255,255,.12); border-radius:50%; }
+.command-net-copy { position:relative; z-index:1; display:grid; gap:8px; }
+.command-net-copy>span,.command-today>span,.command-chart header span { font-size:10px; font-weight:900; letter-spacing:.12em; }
+.command-net-copy>span { color:rgba(255,255,255,.76); }
+.command-net-copy>strong { font-size:clamp(26px,2.3vw,38px); font-weight:900; letter-spacing:-.045em; line-height:1.03; }
+.command-net-copy p { max-width:240px; margin:0; color:rgba(255,255,255,.76); font-size:11px; line-height:1.42; }
+.command-orbit { position:relative; z-index:1; width:74px; height:74px; flex:0 0 74px; display:grid; place-items:center; border-radius:50%; border:1px solid rgba(255,255,255,.35); }
+.command-orbit i { position:absolute; inset:7px; border:2px solid rgba(255,255,255,.26); border-radius:50%; }
+.command-orbit i:nth-child(2) { inset:15px; border-color:rgba(255,255,255,.5); }
+.command-orbit b { font-size:22px; line-height:1; }.command-orbit small { position:absolute; bottom:8px; color:rgba(255,255,255,.72); font-size:7px; font-weight:900; letter-spacing:.1em; }
+
+#root .command-today { display:flex; flex-direction:column; gap:9px; background:linear-gradient(145deg,color-mix(in srgb,#f59e0b 16%,var(--paper)),var(--budget-surface))!important; }
+.command-today>span { color:#a46708; }.command-today>strong { font-size:27px; letter-spacing:-.04em; color:var(--ink); }.command-today>small { color:var(--muted); font-size:11px; }.command-today>div { margin-top:auto; padding-top:11px; border-top:1px solid color-mix(in srgb,#f59e0b 25%,var(--line)); display:flex; align-items:baseline; gap:6px; }.command-today>div b { font-size:20px; color:#b66d00; }.command-today>div span { color:var(--muted); font-size:10px; }
+
+#root .command-chart { padding:18px 20px!important; display:grid; grid-template-rows:auto 1fr; }
+.command-chart header { display:flex; align-items:flex-start; justify-content:space-between; }.command-chart header div { display:grid; gap:3px; }.command-chart header span { color:var(--accent,var(--green)); }.command-chart header strong { font-size:17px; }.command-chart header>small { padding:5px 8px; border-radius:999px; color:var(--accent,var(--green)); background:color-mix(in srgb,var(--accent,var(--green)) 10%,transparent); font-size:9px; font-weight:850; }
+.command-bars { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; align-items:end; min-height:134px; padding-top:12px; }.command-bar { display:grid; grid-template-rows:84px auto auto; align-items:end; gap:5px; min-width:0; }.command-bar>div { position:relative; height:84px; border-bottom:1px solid var(--line); background:repeating-linear-gradient(180deg,transparent 0,transparent 20px,color-mix(in srgb,var(--line) 58%,transparent) 21px); }.command-bar i { display:block; position:absolute; bottom:0; left:50%; width:min(26px,62%); transform:translateX(-50%); border-radius:9px 9px 3px 3px; box-shadow:0 8px 18px currentColor; }.command-bar.income i { color:#5068ff; background:#5068ff; }.command-bar.cash i { color:#23b6a2; background:#23b6a2; }.command-bar.pending i { color:#f59e0b; background:#f59e0b; }.command-bar.expense i { color:#fb7185; background:#fb7185; }.command-bar span { overflow:hidden; color:var(--muted); font-size:9px; font-weight:800; text-overflow:ellipsis; white-space:nowrap; }.command-bar b { overflow:hidden; color:var(--ink); font-size:10px; font-variant-numeric:tabular-nums; text-overflow:ellipsis; white-space:nowrap; }
+
+@media (max-width:1050px) { #root .command-dashboard { grid-template-columns:1fr 1fr; } #root .command-chart { grid-column:1/-1; } }
+@media (max-width:640px) { #root .command-dashboard { grid-template-columns:1fr; gap:10px; margin-bottom:10px; } #root .command-dashboard article { min-height:170px; border-radius:19px; padding:17px; } #root .command-chart { grid-column:auto; min-height:190px!important; } .command-net-copy>strong { font-size:30px; } .command-bars { gap:7px; } .command-bar span,.command-bar b { font-size:8px; } }

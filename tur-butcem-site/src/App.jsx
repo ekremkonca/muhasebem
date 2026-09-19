@@ -980,6 +980,50 @@ function DailyGreeting({rows,currency,convert}){
  return <article className="daily-hello summary-greeting"><div><span className="eyebrow">GÜNÜN ÖZETİ</span><h2>{greeting}, Ekrem</h2><p>Bugün <b>{todayTours} tur</b> ve <b>{money(todayIncome,currency)}</b> kayıtlı kazanç var.</p></div><div className="daily-orbit"><i/><strong>{now.getDate()}</strong><small>{now.toLocaleDateString('tr-TR',{month:'short'}).toUpperCase()}</small></div></article>;
 }
 
+function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, tourCount, currency, rows, convert }) {
+  const todayKey = today();
+  const todayIncome = rows
+    .filter((row) => row.date === todayKey && row.status === "Ödendi" && isIncome(row))
+    .reduce((sum, row) => sum + convert(row), 0);
+  const values = [
+    { label: "Tur gelirleri", value: tourIncome, tone: "income" },
+    { label: "EV KASA", value: cashValue, tone: "cash" },
+    { label: "Bekleyen", value: pending, tone: "pending" },
+    { label: "Masraflar", value: expense, tone: "expense" },
+  ];
+  const max = Math.max(1, ...values.map((item) => Math.abs(item.value)));
+  return (
+    <section className="command-dashboard" aria-label="Sezon özeti">
+      <article className="command-net">
+        <div className="command-net-copy">
+          <span>SEZON NET KAZANÇ</span>
+          <strong><AnimatedMoney value={net} currency={currency} /></strong>
+          <p>Ödenmiş tur gelirleri, sabit döviz bozumları ve EV KASA karşılığı.</p>
+        </div>
+        <div className="command-orbit" aria-hidden="true">
+          <i /><i /><b>{tourCount}</b><small>TUR</small>
+        </div>
+      </article>
+      <article className="command-today">
+        <span>BUGÜNÜN AKIŞI</span>
+        <strong>{money(todayIncome, currency)}</strong>
+        <small>Bugün kaydedilen ödenmiş gelir</small>
+        <div><b>{tourCount}</b><span>kayıtlı tur günü</span></div>
+      </article>
+      <article className="command-chart">
+        <header><div><span>FİNANS PULSU</span><strong>Gelir dağılımı</strong></div><small>Canlı özet</small></header>
+        <div className="command-bars" role="img" aria-label="Gelir, kasa, bekleyen ve masraf dağılımı">
+          {values.map((item) => <div key={item.label} className={`command-bar ${item.tone}`}>
+            <div><i style={{ height: `${Math.max(item.value ? 12 : 0, (Math.abs(item.value) / max) * 100)}%` }} /></div>
+            <span>{item.label}</span>
+            <b>{money(item.value, currency)}</b>
+          </div>)}
+        </div>
+      </article>
+    </section>
+  );
+}
+
 function VisualExperience({rows,income,expense,pending,tourCount,currency,convert}){
   const now=new Date(),hour=now.getHours(),greeting=hour<12?'Günaydın':hour<18?'İyi günler':'İyi akşamlar',todayKey=localISO(now),todayRows=rows.filter(r=>r.date===todayKey&&r.status==='Ödendi');
   const todayIncome=todayRows.filter(isIncome).reduce((s,r)=>s+convert(r),0),todayTours=todayRows.filter(r=>normalizeType(r.type)==='Tur Geliri').length;
@@ -1714,39 +1758,17 @@ function Dashboard({ onSignedOut }) {
           <div className="v7-left">
         <div className="accounting-overview-row">
           <div className="accounting-primary-summary">
-        <div className="kpis compact v7-kpis">
-          <article className="net filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Tümü"); }}>
-            <span>Net gelir</span>
-            <strong>
-              <AnimatedMoney value={loading ? 0 : net} currency={currency} />
-            </strong>
-            <small className="average-under-net">Tur başı ortalama · <AnimatedMoney value={loading ? 0 : average} currency={currency} /></small>
-            <small>Mevcut net + EV KASA · {money(cashFxTryValue, "TRY")} ek</small>
-          </article>
-          <article className="pending filter-card" onClick={() => { setTypeFilter("Tümü"); setStatusFilter("Ödenmedi"); }}>
-            <span>Alacak</span>
-            <strong>
-              <AnimatedMoney value={loading ? 0 : pending} currency={currency} />
-            </strong>
-          </article>
-          <article className="currency-totals-kpi cash-fx-kpi">
-            <span>Kasa Döviz</span>
-            <div className="cash-fx-try-summary">
-              <small>Güncel TL karşılığı</small>
-              <strong>{money(cashFxTryValue, "TRY")}</strong>
-            </div>
-            <CurrencyDonuts totals={cashFxTotals} money={money} fast />
-            <div className="cash-fx-rate-breakdown">
-              {cashFxTryBreakdown.map((item) => (
-                <small key={`cash-try-${item.code}-${item.label || ""}`}>
-                  {item.code}: {money(item.tryValue, "TRY")} · kur {item.rate.toFixed(2)}
-                </small>
-              ))}
-            </div>
-            <small className="cash-fx-net-note">Net gelire dahil değil</small>
-          </article>
-<DailyGreeting rows={accountingRows} currency={currency} convert={accountingValue}/>
-        </div>
+        <DashboardCommandCenter
+          net={loading ? 0 : net}
+          pending={loading ? 0 : pending}
+          cashValue={loading ? 0 : cashFxTryValue}
+          tourIncome={loading ? 0 : tourIncome}
+          expense={loading ? 0 : expense}
+          tourCount={tourCount}
+          currency={currency}
+          rows={accountingRows}
+          convert={accountingValue}
+        />
         <div className="accounting-currency-pair">
           <article className="accounting-currency-panel" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
             <span>Komisyon</span>
