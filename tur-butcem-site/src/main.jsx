@@ -11,9 +11,10 @@ import './styles/product-redesign.css';
 import './styles/mobile.css';
 import './styles/premium-visuals.css';
 import './styles/budget-track-refresh.css';
+import './styles/gentelella-refresh.css';
 import { SITE_NAV_EVENT } from './navigation.js';
 
-const PUBLIC_ASSET_VERSION='20260920-dashboard-polish';
+const PUBLIC_ASSET_VERSION='20260920-gentelella-shell';
 if (window.AndroidAuth) document.documentElement.classList.add('native-android-app');
 const versioned=path=>`${path}?v=${PUBLIC_ASSET_VERSION}`;
 
