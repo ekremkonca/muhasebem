@@ -44,6 +44,25 @@ html body #root .v7-header .header-actions .unified-settings-panel .system-short
 html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card span{display:block!important;font-size:10px!important}
 html body #root .v7-header .header-actions .unified-settings-panel .theme-panel{position:static!important;grid-column:1/-1!important;width:auto!important;margin-top:0!important;background:#fff!important;border-color:var(--gt-line)!important}
 @media(max-width:820px){html body #root .v7-header .header-actions .unified-settings-panel{right:-46px!important;width:min(292px,calc(100vw - 24px))!important;max-height:calc(100vh - 78px)!important}.gentelella-menu-toggle{z-index:520!important}}
+
+/* Compact toolbar: every tool uses the same small icon cell. */
+html body #root .v7-header .header-actions .unified-settings-trigger{width:38px!important;height:38px!important;min-height:38px!important;border-radius:9px!important;background:#f7f9fc!important;transition:background .16s ease,color .16s ease,border-color .16s ease!important}
+html body #root .v7-header .header-actions .unified-settings-trigger:hover{background:#2a81ea!important;border-color:#2a81ea!important;color:#fff!important}
+html body #root .v7-header .header-actions .unified-settings-panel{width:274px!important;padding:12px!important}
+html body #root .v7-header .header-actions .unified-settings-panel>strong{margin:1px 2px 10px!important;font-size:11px!important}
+html body #root .v7-header .header-actions .unified-settings-panel .header-tool-grid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:7px!important}
+html body #root .v7-header .header-actions .unified-settings-panel .v8-theme-menu,
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcuts{display:contents!important}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-icon-trigger,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-privacy-trigger,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-mode-trigger,
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card{display:grid!important;place-items:center!important;width:auto!important;height:38px!important;min-height:38px!important;padding:0!important;border:1px solid var(--gt-line)!important;border-radius:8px!important;background:#f7f9fc!important;color:#4b5d7a!important}
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card span,
+html body #root .v7-header .header-actions .unified-settings-panel .mobile-tool-label{display:none!important}
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card svg{width:17px!important;height:17px!important}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-panel{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;padding:7px!important}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-panel button{min-height:32px!important;font-size:10px!important}
+@media(max-width:820px){html body #root .v7-header .header-actions .unified-settings-panel{width:274px!important;right:-44px!important}}
 #root .market-ticker-host{margin-left:0!important;min-height:42px!important;background:#fff!important;border-bottom:1px solid var(--gt-line)!important}.native-market-card{background:#fff!important;border-color:var(--gt-line)!important}.native-market-card strong{color:#253553!important}
 #root .main-dashboard.v7-dashboard,#root .home-content-area,#root .standalone-calendar-page{max-width:none!important;margin-left:0!important;padding:25px 30px 50px!important}.global-category-nav-host{display:none!important}
 #root .v7-filterbar{border:1px solid var(--gt-line)!important;border-radius:12px!important;background:#fff!important;box-shadow:0 4px 15px rgba(30,52,91,.04)!important}.v7-filterbar .searchbox{background:#f7f9fc!important;border-color:#edf0f5!important}.v7-filterbar .date-presets{background:#f7f9fc!important;border-color:#edf0f5!important}.v7-filterbar .date-presets button.active{background:#2a81ea!important}
