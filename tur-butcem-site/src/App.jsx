@@ -1011,12 +1011,11 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
         <div><b>{tourCount}</b><span>kayıtlı tur günü</span></div>
       </article>
       <article className="command-chart">
-        <header><div><span>FİNANS PULSU</span><strong>Gelir dağılımı</strong></div><small>Canlı özet</small></header>
-        <div className="command-bars" role="img" aria-label="Gelir, kasa, bekleyen ve masraf dağılımı">
-          {values.map((item) => <div key={item.label} className={`command-bar ${item.tone}`}>
-            <div><i style={{ height: `${Math.max(item.value ? 12 : 0, (Math.abs(item.value) / max) * 100)}%` }} /></div>
-            <span>{item.label}</span>
-            <b>{money(item.value, currency)}</b>
+        <header className="command-pulse-head"><div><span>FİNANS PULSU</span><h3>Gelir dağılımı</h3></div><small><i/> Canlı</small></header>
+        <div className="command-flow-list" role="img" aria-label="Gelir, kasa, bekleyen ve masraf dağılımı">
+          {values.map((item) => <div key={item.label} className={`command-flow-row ${item.tone}`}>
+            <div className="command-flow-label"><span><i/>{item.label}</span><b>{money(item.value, currency)}</b></div>
+            <div className="command-flow-track"><i style={{ width: `${Math.max(item.value ? 4 : 0, (Math.abs(item.value) / max) * 100)}%` }} /></div>
           </div>)}
         </div>
       </article>
