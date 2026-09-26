@@ -3,40 +3,36 @@ import{createPortal}from'react-dom';
 import{navigateTo,SITE_NAV_EVENT}from'./navigation.js';
 
 const LINKS=[
-  ['/muhasebe/','Muhasebe','muhasebe'],
-  ['/varliklar/','Varlıklar','varliklar'],
-  ['/takvim/','Takvim','takvim']
+  ['/muhasebe/','Muhasebe'],
+  ['/varliklar/','Varlıklar'],
+  ['/takvim/','Takvim']
 ];
 const pageKey=()=>{
   const path=(location.pathname||'/').replace(/^\/+|\/+$/g,'');
-  if(path.startsWith('varliklar'))return'varliklar';
-  if(path.startsWith('takvim'))return'takvim';
-  return'muhasebe';
+  if(path.startsWith('varliklar'))return'Varlıklar';
+  if(path.startsWith('takvim'))return'Takvim';
+  return'Muhasebe';
 };
 
 export default function CategoryNavBridge(){
   const[active,setActive]=useState(pageKey);
-  const[open,setOpen]=useState(false);
-  const[dismissed,setDismissed]=useState(false);
+  const[header,setHeader]=useState(null);
   useEffect(()=>{
     const sync=()=>setActive(pageKey());
     window.addEventListener('popstate',sync);
     window.addEventListener(SITE_NAV_EVENT,sync);
     return()=>{window.removeEventListener('popstate',sync);window.removeEventListener(SITE_NAV_EVENT,sync)};
   },[]);
+  useEffect(()=>{
+    const sync=()=>setHeader(document.querySelector('.v7-header'));
+    sync();
+    const observer=new MutationObserver(sync);
+    observer.observe(document.getElementById('root'),{childList:true,subtree:true});
+    return()=>observer.disconnect();
+  },[]);
   const go=(event,href)=>{
     if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
-    event.preventDefault();setOpen(false);setDismissed(true);navigateTo(href);
+    event.preventDefault();navigateTo(href);
   };
-  const icon=(name)=><svg viewBox="0 0 24 24" aria-hidden="true"><path d={name==='muhasebe'?'M4 5h16v14H4zM4 9h16M8 5v14':name==='varliklar'?'M4 19V9m5 10V5m5 14v-7m5 7V3':'M7 3v3m10-3v3M4 10h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1'} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-  return createPortal(<>
-    <button className="gentelella-menu-toggle" type="button" onClick={()=>setOpen(value=>!value)} aria-label="Menüyü aç veya kapat"><span/><span/><span/></button>
-    <aside className={`gentelella-sidebar${open?' is-open':''}${dismissed?' is-dismissed':''}`} onMouseEnter={()=>setDismissed(false)} aria-label="Ana menü">
-      <a className="gentelella-brand" href="/muhasebe/" onClick={event=>go(event,'/muhasebe/')}><img src="/ek-logo-clean.png" alt="EK"/><span>REHBERLİK<br/><b>MUHASEBE</b></span></a>
-      <div className="gentelella-profile"><i>EK</i><div><strong>Ekrem Konca</strong><small><em/> Çevrimiçi</small></div></div>
-      <nav className="gentelella-menu"> <span>ANA MENÜ</span>{LINKS.map(([href,label,key])=><a key={key} href={href} className={active===key?'active':''} onClick={event=>go(event,href)}>{icon(key)}<b>{label}</b>{active===key&&<i/>}</a>)}</nav>
-      <footer><small>EK MUHASEBE</small><b>v10 · Canlı kayıtlar</b></footer>
-    </aside>
-    {open&&<button className="gentelella-scrim" type="button" onClick={()=>setOpen(false)} aria-label="Menüyü kapat"/>}
-  </>,document.body);
+  return header?createPortal(<div className="global-category-nav-host"><nav className="global-category-nav" aria-label="Ana sayfalar">{LINKS.map(([href,label])=><a key={label} href={href} className={active===label?'active':''} aria-current={active===label?'page':undefined} onClick={event=>go(event,href)}>{label}</a>)}</nav></div>,header):null;
 }
