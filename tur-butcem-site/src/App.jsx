@@ -3,7 +3,7 @@ import HomeCashEditor from './HomeCashEditor.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { categoryTotals, currencyTotals, goalProgress, paidIncomeTotal } from './accountingSummary.js';
+import { categoryTotals, currencyTotals, goalProgress } from './accountingSummary.js';
 import './styles/accounting-refresh.css';
 import FinanceScore from './FinanceScore.jsx';
 import CategoryDonut from './CategoryDonut.jsx';
@@ -998,7 +998,7 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
         <div className="command-net-copy">
           <span>SEZON NET KAZANÇ</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
-          <p>Ödenmiş tur gelirleri, bahşişler, komisyonlar, sabit döviz bozumları ve EV KASA karşılığı.</p>
+          <p>Ödenmiş tur gelirleri, sabit döviz bozumları ve EV KASA karşılığı.</p>
         </div>
         <div className="command-orbit" aria-hidden="true">
           <i /><i /><b>{tourCount}</b><small>TUR</small>
@@ -1208,10 +1208,9 @@ function Dashboard({ onSignedOut }) {
     (sum, item) => sum + item.tryValue,
     0,
   );
-  const paidInputIncome = paidIncomeTotal(accountingRows, accountingValue);
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
     realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    income = paidInputIncome + realizedFxValue + cashFxValue,
+    income = tourIncome + realizedFxValue + cashFxValue,
     net = income - expense;
   const topTour = useMemo(() => {
     const m = {};
