@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-export default function FundEditModal({fund, portfolio, onSave, onClose, saving}) {
+export default function FundEditModal({fund, portfolio, onSave, onClose, onOpenTransactions, saving}) {
   const [units,setUnits]=useState(String(portfolio.units));
   const [cost,setCost]=useState(String(portfolio.averagePrice));
   const [error,setError]=useState('');
@@ -21,9 +21,9 @@ export default function FundEditModal({fund, portfolio, onSave, onClose, saving}
     <form className="asset-editor-modal" role="dialog" aria-modal="true" aria-label="Fon hesabını düzenle" onSubmit={save}>
       <div className="asset-editor-head"><div><span className="eyebrow">FON HESABI</span><h3>{fund.fundCode} · Fon hesabını düzenle</h3></div><button type="button" className="asset-modal-close" onClick={onClose} disabled={saving} aria-label="Kapat">×</button></div>
       <div className="asset-form-grid"><label>Toplam fon adedi<input type="number" min="0" step="any" value={units} onChange={e=>setUnits(e.target.value)} required disabled={saving}/></label><label>Ortalama alış fiyatı (TL)<input type="number" min="0" step="any" value={cost} onChange={e=>setCost(e.target.value)} required disabled={saving}/></label></div>
-      <div className="asset-editor-note">Bu bilgiler yeni başlangıç bakiyen olur ve eski fon hareketlerini temizler. Güncel değer TEFAS fiyatıyla, kâr/zarar girdiğin maliyetle yeniden hesaplanır. Sonraki alım ve satımlar için “İşlem” düğmesini kullan.</div>
+      <div className="asset-editor-note">Adet ve ortalama alış maliyetini tamamen sen girersin; TEFAS bu alanları değiştirmez. Güncel değer yalnızca ekrandaki anlık piyasa değeri için TEFAS’tan alınır. Yeni alım, satış ve bakiye düzeltmeleri aşağıdaki hareket ekranından manuel girilir.</div>
       {error&&<p className="asset-editor-error" role="alert">{error}</p>}
-      <div className="asset-editor-actions"><button type="button" className="asset-edit-btn secondary" onClick={reset} disabled={saving}>Hesabı sıfırla</button><button type="button" className="asset-edit-btn secondary" onClick={onClose} disabled={saving}>Vazgeç</button><button className="asset-edit-btn primary" disabled={saving}>{saving?'Kaydediliyor…':'Kaydet ve hesapla'}</button></div>
+      <div className="asset-editor-actions"><button type="button" className="asset-edit-btn secondary" onClick={onOpenTransactions} disabled={saving}>Hareket ekle / düzenle</button><button type="button" className="asset-edit-btn secondary" onClick={reset} disabled={saving}>Hesabı sıfırla</button><button type="button" className="asset-edit-btn secondary" onClick={onClose} disabled={saving}>Vazgeç</button><button className="asset-edit-btn primary" disabled={saving}>{saving?'Kaydediliyor…':'Kaydet ve hesapla'}</button></div>
     </form>
   </div>;
 }
