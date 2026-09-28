@@ -1,7 +1,7 @@
 import { errorResponse, getDb, json, requireSession } from '../_lib.js';
 
 const DEFAULT_DEPOSIT={bank:'AKBANK',principal:2000000,annualRate:40.25,startDate:'2026-08-24',days:32,withholdingRate:17.5};
-const DEFAULT_FUND={fundCode:'ALE',baseUnits:69442,baseAveragePrice:13.04,transactions:[]};
+const DEFAULT_FUND={fundCode:'ALE',baseUnits:69442,baseAveragePrice:13.04,manualUnits:null,manualAveragePrice:null,lastManualPrice:0,transactions:[]};
 const KEY_DEPOSIT='asset_deposit';
 const KEY_FUND='asset_fund';
 
@@ -32,10 +32,16 @@ function validateFund(input){
   fundCode:'ALE',
   baseUnits:Number(input?.baseUnits),
   baseAveragePrice:Number(input?.baseAveragePrice),
+  manualUnits:input?.manualUnits===''||input?.manualUnits==null?null:Number(input.manualUnits),
+  manualAveragePrice:input?.manualAveragePrice===''||input?.manualAveragePrice==null?null:Number(input.manualAveragePrice),
+  lastManualPrice:input?.lastManualPrice===''||input?.lastManualPrice==null?0:Number(input.lastManualPrice),
   transactions:Array.isArray(input?.transactions)?input.transactions:[],
  };
  if(!finite(fund.baseUnits)||fund.baseUnits<0)throw Object.assign(new Error('Başlangıç fon adedi geçersiz.'),{status:400});
  if(!finite(fund.baseAveragePrice)||fund.baseAveragePrice<0)throw Object.assign(new Error('Başlangıç maliyeti geçersiz.'),{status:400});
+ if(fund.manualUnits!==null&&(!finite(fund.manualUnits)||fund.manualUnits<0))throw Object.assign(new Error('Manuel fon adedi geçersiz.'),{status:400});
+ if(fund.manualAveragePrice!==null&&(!finite(fund.manualAveragePrice)||fund.manualAveragePrice<0))throw Object.assign(new Error('Manuel ortalama maliyet geçersiz.'),{status:400});
+ if(!finite(fund.lastManualPrice)||fund.lastManualPrice<0)throw Object.assign(new Error('Manuel işlem fiyatı geçersiz.'),{status:400});
  if(fund.transactions.length>250)throw Object.assign(new Error('En fazla 250 fon hareketi saklanabilir.'),{status:400});
  fund.transactions=fund.transactions.map((row,index)=>{
   const type=['buy','sell','set'].includes(row?.type)?row.type:null;
