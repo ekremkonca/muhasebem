@@ -53,7 +53,9 @@ const loadPageAssets = () => {
   const path = location.pathname.replace(/\/+$/, '');
   if (path === '/varliklar') {
     ['/assets-readable-large.css','/assets-editor-premium.css','/assets-controls-modern.css'].forEach(loadStyle);
-    ['/assets-deposit-live.js','/assets-controls-modern.js'].forEach(loadScript);
+    // The old controls script rewrote the ALE editor after React rendered it,
+    // replacing the single manual form with a separate TEFAS transaction flow.
+    ['/assets-deposit-live.js'].forEach(loadScript);
   }
   if (path === '/takvim') {
     ['/takvim-luxe.css','/takvim-luxe-enhance.css','/takvim-luxe-grid.css','/takvim-theme-sync.css','/takvim-luxe-dark-readable.css'].forEach(loadStyle);
