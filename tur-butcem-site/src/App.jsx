@@ -63,6 +63,7 @@ const REALIZED_FX_EXCHANGES = [
   { code: "GBP", amount: 320, rate: 62.34 },
   { code: "EUR", amount: 545, rate: 53.07 },
 ];
+const TIP_COMMISSION_NET_START_DATE = "2026-07-10";
 // 10 Temmuz'da bankada bozdurulan dövizlerin gerçekleşmiş TL toplamı.
 // Bu tutar sabittir; EV KASA bakiyeleriyle karıştırılmaz ve güncel kurla yeniden çevrilmez.
 const REALIZED_FX_TRY = 60946;
@@ -998,7 +999,7 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
         <div className="command-net-copy">
           <span>SEZON NET KAZANÇ</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
-          <p>Ödenmiş tur gelirleri, sabit döviz bozumları ve EV KASA karşılığı.</p>
+          <p>Ödenmiş tur gelirleri, sabit döviz bozumları ve 10 Temmuz sonrası ödenmiş bahşiş/komisyon.</p>
         </div>
         <div className="command-orbit" aria-hidden="true">
           <i /><i /><b>{tourCount}</b><small>TUR</small>
@@ -1189,6 +1190,12 @@ function Dashboard({ onSignedOut }) {
     tourIncome = paid
       .filter((r) => normalizeType(r.type) === "Tur Geliri")
       .reduce((s, r) => s + accountingValue(r), 0),
+    postJulyTipCommissionIncome = paid
+      .filter((r) =>
+        r.date >= TIP_COMMISSION_NET_START_DATE &&
+        ["Bahşiş", "Komisyon"].includes(normalizeType(r.type))
+      )
+      .reduce((s, r) => s + accountingValue(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
@@ -1210,7 +1217,7 @@ function Dashboard({ onSignedOut }) {
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
     realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    income = tourIncome + realizedFxValue + cashFxValue,
+    income = tourIncome + realizedFxValue + postJulyTipCommissionIncome,
     net = income - expense;
   const topTour = useMemo(() => {
     const m = {};
