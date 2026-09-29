@@ -218,7 +218,7 @@ body {
 #root .accounting-currency-panel:first-child { background:linear-gradient(135deg,color-mix(in srgb,#7c4dff 10%,var(--paper)),var(--budget-surface))!important; border-top:4px solid #8b5cf6!important; }
 #root .accounting-currency-panel:last-child { background:linear-gradient(135deg,color-mix(in srgb,#fb7185 10%,var(--paper)),var(--budget-surface))!important; border-top:4px solid #fb7185!important; }
 #root .accounting-currency-panel>span { position:relative; z-index:1; display:flex!important; align-items:center; gap:8px; font-size:15px!important; font-weight:900!important; letter-spacing:-.02em; }
-#root .accounting-currency-panel>span::after { content:"Detay"; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.5); color:var(--muted); font-size:8px; letter-spacing:.06em; text-transform:uppercase; }
+#root .accounting-currency-panel>span::after { content:none; display:none; }
 #root .accounting-currency-panel .currency-donuts { position:relative; z-index:1; margin-top:17px!important; }
 #root .accounting-currency-panel .currency-donut-item b { font-size:clamp(14px,1.2vw,18px)!important; font-weight:900!important; }
 
