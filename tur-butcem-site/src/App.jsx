@@ -1019,7 +1019,7 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
         <header className="command-pulse-head"><div><span>FİNANS PULSU</span><h3>Gelir dağılımı</h3></div><small><i/> Canlı</small></header>
         <div className="command-flow-list" role="img" aria-label="Gelir, kasa, bekleyen ve masraf dağılımı">
           {values.map((item) => <div key={item.label} className={`command-flow-row flow-${item.tone}`}>
-            <div className="command-flow-label"><span><i/>{item.label}</span><b>{money(item.value, currency)}</b></div>
+            <div className="command-flow-label"><span><i/>{item.label}</span><div><em>%{Math.round((Math.abs(item.value) / max) * 100)}</em><b>{money(item.value, currency)}</b></div></div>
             <div className="command-flow-track"><i style={{ width: `${Math.max(item.value ? 4 : 0, (Math.abs(item.value) / max) * 100)}%` }} /></div>
           </div>)}
         </div>
@@ -1202,6 +1202,9 @@ function Dashboard({ onSignedOut }) {
       )
       .reduce((s, r) => s + accountingValue(r), 0),
     expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
+    activeExpense = accountingRows
+      .filter((r) => isExpense(r) && r.status !== "İade edildi")
+      .reduce((s, r) => s + accountingValue(r), 0),
     pending = accountingRows
       .filter((r) => r.status === "Ödenmedi")
       .reduce((s, r) => s + accountingOutstanding(r), 0),
@@ -1740,7 +1743,7 @@ function Dashboard({ onSignedOut }) {
           pending={loading ? 0 : pending}
           cashValue={loading ? 0 : cashFxTryValue}
           tourIncome={loading ? 0 : tourIncome}
-          expense={loading ? 0 : expense}
+          expense={loading ? 0 : activeExpense}
           tourCount={tourCount}
           currency={currency}
           rows={accountingRows}

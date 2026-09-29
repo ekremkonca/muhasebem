@@ -144,3 +144,72 @@ html body #root .global-category-nav-host{top:50%!important;bottom:auto!importan
 
 /* Final placement: keep navigation visible and on the same header row as the report and tools. */
 html body #root .global-category-nav-host{display:block!important;visibility:visible!important;top:50%!important;bottom:auto!important;left:50%!important;transform:translate(-50%,-50%)!important}
+
+/* Finance pulse: layered dashboard card with clear, status-coloured cash-flow lanes. */
+#root .command-chart{
+  position:relative!important;
+  overflow:hidden!important;
+  gap:12px!important;
+  padding:17px 18px!important;
+  background:
+    radial-gradient(circle at 92% 5%,rgba(42,129,234,.13),transparent 34%),
+    linear-gradient(155deg,#fff 0%,#f7faff 100%)!important;
+  border:1px solid #dce7f5!important;
+  box-shadow:0 14px 34px rgba(38,76,132,.11)!important;
+}
+#root .command-chart::after{
+  content:"";
+  position:absolute;
+  top:-50px;
+  right:-42px;
+  width:132px;
+  height:132px;
+  border:18px solid rgba(42,129,234,.055);
+  border-radius:50%;
+  pointer-events:none;
+}
+#root .command-chart .command-pulse-head{
+  position:relative!important;
+  z-index:1!important;
+  padding-bottom:10px!important;
+  border-bottom:1px solid #e6edf7!important;
+}
+#root .command-pulse-head h3{font-size:19px!important}
+#root .command-pulse-head>small{box-shadow:0 5px 13px rgba(47,191,136,.13)!important}
+#root .command-flow-list{position:relative!important;z-index:1!important;gap:7px!important}
+#root .command-flow-row{
+  gap:6px!important;
+  padding:8px 10px 9px!important;
+  border:1px solid #e6edf7!important;
+  border-radius:10px!important;
+  background:rgba(255,255,255,.82)!important;
+  box-shadow:inset 3px 0 0 #3b82f6,0 3px 10px rgba(43,72,116,.035)!important;
+  transition:transform .18s ease,box-shadow .18s ease!important;
+}
+#root .command-flow-row:hover{transform:translateY(-1px)!important;box-shadow:inset 3px 0 0 #3b82f6,0 7px 16px rgba(43,72,116,.08)!important}
+#root .command-flow-label>span{font-size:10px!important;color:#536783!important}
+#root .command-flow-label>span>i{width:8px!important;height:8px!important;box-shadow:0 0 0 4px rgba(59,130,246,.1)!important}
+#root .command-flow-label>div{display:flex!important;align-items:center!important;gap:7px!important}
+#root .command-flow-label>div>em{padding:2px 5px!important;border-radius:5px!important;background:#edf4ff!important;color:#4b75ac!important;font-size:8px!important;font-style:normal!important;font-weight:850!important}
+#root .command-flow-label>div>b{color:#273a57!important;font-size:11px!important;font-variant-numeric:tabular-nums!important}
+#root .command-flow-track{height:5px!important;background:#eaf0f8!important}
+#root .command-flow-track>i{position:relative!important;background:linear-gradient(90deg,#2563eb,#60a5fa)!important;box-shadow:0 3px 8px rgba(37,99,235,.24)!important}
+#root .command-flow-row.flow-cash{box-shadow:inset 3px 0 0 #14b8a6,0 3px 10px rgba(43,72,116,.035)!important}
+#root .command-flow-row.flow-cash:hover{box-shadow:inset 3px 0 0 #14b8a6,0 7px 16px rgba(20,184,166,.1)!important}
+#root .command-flow-row.flow-cash .command-flow-track>i{background:linear-gradient(90deg,#0f9f8f,#45d6bf)!important}
+#root .command-flow-row.flow-pending{box-shadow:inset 3px 0 0 #f59e0b,0 3px 10px rgba(43,72,116,.035)!important}
+#root .command-flow-row.flow-pending:hover{box-shadow:inset 3px 0 0 #f59e0b,0 7px 16px rgba(245,158,11,.1)!important}
+#root .command-flow-row.flow-pending .command-flow-label>span>i{background:#f59e0b!important}
+#root .command-flow-row.flow-pending .command-flow-track>i{background:linear-gradient(90deg,#f59e0b,#fbbf24)!important}
+#root .command-flow-row.flow-expense{box-shadow:inset 3px 0 0 #f43f5e,0 3px 10px rgba(43,72,116,.035)!important}
+#root .command-flow-row.flow-expense:hover{box-shadow:inset 3px 0 0 #f43f5e,0 7px 16px rgba(244,63,94,.1)!important}
+#root .command-flow-row.flow-expense .command-flow-label>span>i{background:#f43f5e!important}
+#root .command-flow-row.flow-expense .command-flow-track>i{background:linear-gradient(90deg,#e11d48,#fb7185)!important;box-shadow:0 3px 8px rgba(225,29,72,.22)!important}
+:root[data-mode="dark"] #root .command-chart{background:radial-gradient(circle at 92% 5%,rgba(56,139,253,.16),transparent 34%),linear-gradient(155deg,#172338,#121c2e)!important;border-color:#2b3c57!important;box-shadow:0 16px 35px rgba(0,0,0,.22)!important}
+:root[data-mode="dark"] #root .command-chart .command-pulse-head{border-color:#293a54!important}
+:root[data-mode="dark"] #root .command-flow-row{background:rgba(25,39,61,.9)!important;border-color:#2a3b55!important}
+:root[data-mode="dark"] #root .command-flow-label>span{color:#aebbd0!important}
+:root[data-mode="dark"] #root .command-flow-label>div>b{color:#f3f7ff!important}
+:root[data-mode="dark"] #root .command-flow-label>div>em{background:#243750!important;color:#91bdeb!important}
+:root[data-mode="dark"] #root .command-flow-track{background:#273850!important}
+@media(max-width:640px){#root .command-chart{padding:15px!important}#root .command-flow-row{padding:8px 9px!important}}
