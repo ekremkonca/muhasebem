@@ -160,6 +160,13 @@ export async function deleteRecords(ids) {
 export const loadSettings = () => request("/api/settings");
 export const loadHomeCash = () => request('/api/home-cash');
 export const saveHomeCash = (balances) => request('/api/home-cash',{method:'PUT',body:JSON.stringify({balances})});
+export const loadCashMovements = () => request('/api/cash-movements').then(data=>data.movements||[]);
+export const createCashMovement = (movement) => request('/api/cash-movements',{method:'POST',body:JSON.stringify(movement)}).then(data=>data.movement);
+export const updateCashMovement = (movement) => request('/api/cash-movements',{method:'PATCH',body:JSON.stringify(movement)}).then(data=>data.movement);
+export const deleteCashMovement = (id) => request(`/api/cash-movements?id=${encodeURIComponent(id)}`,{method:'DELETE'});
+export const loadMonthClosings = () => request('/api/month-closings').then(data=>data.closings||[]);
+export const saveMonthClosing = (closing) => request('/api/month-closings',{method:'POST',body:JSON.stringify(closing)}).then(data=>data.closing);
+export const deleteMonthClosing = (id) => request(`/api/month-closings?id=${encodeURIComponent(id)}`,{method:'DELETE'});
 export const saveRates = (rates) =>
   request("/api/settings", { method: "PUT", body: JSON.stringify({ rates }) });
 export const refreshRates = () =>

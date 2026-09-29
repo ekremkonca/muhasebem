@@ -182,6 +182,42 @@ export async function ensureSchema(db) {
 
   await db
     .prepare(
+      `CREATE TABLE IF NOT EXISTS cash_movements (
+        id TEXT PRIMARY KEY,
+        date TEXT NOT NULL,
+        kind TEXT NOT NULL,
+        amount REAL NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'TRY',
+        rate REAL NOT NULL DEFAULT 1,
+        try_amount REAL NOT NULL DEFAULT 0,
+        account TEXT NOT NULL DEFAULT '',
+        note TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    )
+    .run();
+
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS month_closings (
+        id TEXT PRIMARY KEY,
+        month TEXT NOT NULL UNIQUE,
+        income REAL NOT NULL DEFAULT 0,
+        expense REAL NOT NULL DEFAULT 0,
+        cash_value REAL NOT NULL DEFAULT 0,
+        receivable REAL NOT NULL DEFAULT 0,
+        net REAL NOT NULL DEFAULT 0,
+        snapshot TEXT NOT NULL DEFAULT '{}',
+        note TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    )
+    .run();
+
+  await db
+    .prepare(
       "CREATE INDEX IF NOT EXISTS idx_records_date ON records(date DESC)",
     )
     .run();
@@ -210,6 +246,19 @@ export async function ensureSchema(db) {
       "CREATE INDEX IF NOT EXISTS idx_calendar_events_date ON calendar_events(date, time)",
     )
     .run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_cash_movements_date ON cash_movements(date DESC, created_at DESC)").run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_month_closings_month ON month_closings(month DESC)").run();
+
+  const movementSeeded=await db.prepare("SELECT value FROM settings WHERE key='cash_movements_seeded_v1'").first();
+  if(!movementSeeded){
+    const realizedFxSeed = [
+      ["fx-2026-07-10-usd", "2026-07-10", "Döviz Bozum", 610, "USD", 46.44, 28328.4, "Banka", "10 Temmuz gerçekleşmiş döviz bozumu"],
+      ["fx-2026-07-10-gbp", "2026-07-10", "Döviz Bozum", 320, "GBP", 62.34, 19948.8, "Banka", "10 Temmuz gerçekleşmiş döviz bozumu"],
+      ["fx-2026-07-10-eur", "2026-07-10", "Döviz Bozum", 545, "EUR", 53.07, 28923.15, "Banka", "10 Temmuz gerçekleşmiş döviz bozumu"],
+    ];
+    for (const movement of realizedFxSeed) await db.prepare(`INSERT OR IGNORE INTO cash_movements (id,date,kind,amount,currency,rate,try_amount,account,note) VALUES (?,?,?,?,?,?,?,?,?)`).bind(...movement).run();
+    await db.prepare("INSERT INTO settings(key,value,updated_at) VALUES('cash_movements_seeded_v1','1',CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value='1',updated_at=CURRENT_TIMESTAMP").run();
+  }
 
   const defaults = { TRY: 1, USD: 46.3, EUR: 53.0, GBP: 62.3 };
   for (const [key, value] of Object.entries(defaults)) {
@@ -467,11 +516,15 @@ export async function snapshotRecords(
       `SELECT id,date,time,company,title,note,status,category,amount,currency,recurrence,linked_record_id,created_at,updated_at FROM calendar_events ORDER BY date, time, created_at`,
     )
     .all();
+  const movementResult = await db.prepare(`SELECT id,date,kind,amount,currency,rate,try_amount,account,note,created_at,updated_at FROM cash_movements ORDER BY date DESC,created_at DESC`).all();
+  const closingResult = await db.prepare(`SELECT id,month,income,expense,cash_value,receivable,net,snapshot,note,created_at,updated_at FROM month_closings ORDER BY month DESC`).all();
   const id = crypto.randomUUID();
   const payload = {
-    version: 2,
+    version: 3,
     records: result.results || [],
     events: eventResult.results || [],
+    movements: movementResult.results || [],
+    closings: closingResult.results || [],
   };
   await db
     .prepare("INSERT INTO backups (id, title, data, kind) VALUES (?, ?, ?, ?)")

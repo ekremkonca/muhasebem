@@ -7,7 +7,7 @@ export default function HomeCashEditor({balances,onSave}) {
  async function save(e){e.preventDefault();setBusy(true);setError('');try{const result=await saveHomeCash(draft.map(x=>({...x,amount:Number(x.amount)})));onSave(result.balances);setDraft(null);}catch(e){setError(e.message);}finally{setBusy(false);}}
  return <><button type="button" aria-label="EV KASA düzenle" title="EV KASA düzenle" style={{position:'absolute',right:8,top:6,border:0,background:'transparent',color:'inherit',cursor:'pointer',padding:4}} onClick={()=>{setDraft(balances.map(x=>({...x})));setError('');}}>✎</button>
  {draft&&createPortal(<div role="dialog" aria-modal="true" aria-label="EV KASA düzenle" style={{position:'fixed',inset:0,zIndex:10000,background:'#0009',display:'grid',placeItems:'center'}}><form onSubmit={save} style={{background:'var(--paper)',color:'var(--ink)',border:'1px solid var(--line)',borderRadius:16,padding:20,width:'min(520px,92vw)',maxHeight:'85vh',overflow:'auto'}}>
- <h2>EV KASA düzenle</h2><p>Kaydedilen bakiyeler güncel kurla Net Gelire yansır.</p>
+ <h2>EV KASA düzenle</h2><p>Kaydedilen bakiyeler güncel kurla Finans Pulsu ve kasa özetine yansır.</p>
  {draft.map((x,i)=><div key={i} style={{display:'grid',gridTemplateColumns:'1fr 75px 100px 40px',gap:6,marginBottom:10}}>
  <input aria-label={`Etiket ${i+1}`} placeholder="Etiket" maxLength={24} value={x.label||''} disabled={busy} onChange={e=>change(i,'label',e.target.value)} style={{minWidth:0}}/>
  <select aria-label={`Para birimi ${i+1}`} value={x.code} disabled={busy} onChange={e=>change(i,'code',e.target.value)}>{['TRY','USD','EUR','GBP'].map(c=><option key={c}>{c}</option>)}</select>

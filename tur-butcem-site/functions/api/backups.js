@@ -46,7 +46,7 @@ const eventFields = [
 
 function readBackupPayload(raw) {
   const payload = JSON.parse(raw);
-  if (Array.isArray(payload)) return { records: payload, events: null };
+  if (Array.isArray(payload)) return { records: payload, events: null, movements: null, closings: null };
   if (
     !payload ||
     !Array.isArray(payload.records) ||
@@ -54,7 +54,7 @@ function readBackupPayload(raw) {
   ) {
     throw Object.assign(new Error("Yedek verisi bozuk."), { status: 400 });
   }
-  return { records: payload.records, events: payload.events || [] };
+  return { records: payload.records, events: payload.events || [], movements: Array.isArray(payload.movements)?payload.movements:null, closings:Array.isArray(payload.closings)?payload.closings:null };
 }
 
 export async function onRequestGet(context) {
@@ -99,11 +99,13 @@ export async function onRequestPost(context) {
         `Geri yükleme öncesi — ${backup.title}`,
         "pre-restore",
       );
-      const { records: rows, events } = readBackupPayload(backup.data);
+      const { records: rows, events, movements, closings } = readBackupPayload(backup.data);
 
       await db.prepare("DELETE FROM records").run();
       if (events !== null)
         await db.prepare("DELETE FROM calendar_events").run();
+      if (movements !== null) await db.prepare("DELETE FROM cash_movements").run();
+      if (closings !== null) await db.prepare("DELETE FROM month_closings").run();
       const statements = rows.map((row) =>
         db
           .prepare(
@@ -136,6 +138,16 @@ export async function onRequestPost(context) {
         for (let i = 0; i < eventStatements.length; i += 40)
           await db.batch(eventStatements.slice(i, i + 40));
       }
+      if (movements !== null) {
+        const movementFields=['id','date','kind','amount','currency','rate','try_amount','account','note','created_at','updated_at'];
+        const statements=movements.map(row=>db.prepare(`INSERT INTO cash_movements (${movementFields.join(',')}) VALUES (${movementFields.map(()=>'?').join(',')})`).bind(...movementFields.map(key=>row[key]??(key==='account'||key==='note'?'':null))));
+        for(let i=0;i<statements.length;i+=40) await db.batch(statements.slice(i,i+40));
+      }
+      if (closings !== null) {
+        const closingFields=['id','month','income','expense','cash_value','receivable','net','snapshot','note','created_at','updated_at'];
+        const statements=closings.map(row=>db.prepare(`INSERT INTO month_closings (${closingFields.join(',')}) VALUES (${closingFields.map(()=>'?').join(',')})`).bind(...closingFields.map(key=>row[key]??(key==='snapshot'?'{}':key==='note'?'':null))));
+        for(let i=0;i<statements.length;i+=40) await db.batch(statements.slice(i,i+40));
+      }
       await audit(db, null, "backup_restore", {
         backupId: id,
         title: backup.title,
@@ -146,6 +158,8 @@ export async function onRequestPost(context) {
         ok: true,
         restored: rows.length,
         restoredEvents: events?.length ?? null,
+        restoredMovements: movements?.length ?? null,
+        restoredClosings: closings?.length ?? null,
       });
     }
 
@@ -164,6 +178,8 @@ export async function onRequestPost(context) {
           created_at: backup.created_at,
           records: payload.records,
           events: payload.events || [],
+          movements: payload.movements || [],
+          closings: payload.closings || [],
         },
       });
     }

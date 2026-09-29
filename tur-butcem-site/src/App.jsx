@@ -1,5 +1,6 @@
 import HeaderSettings from './HeaderSettings.jsx';
 import HomeCashEditor from './HomeCashEditor.jsx';
+import FinanceOperations from './FinanceOperations.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -985,16 +986,17 @@ function DailyGreeting({rows,currency,convert}){
  return <article className="daily-hello summary-greeting"><div><span className="eyebrow">GÜNÜN ÖZETİ</span><h2>{greeting}, Ekrem</h2><p>Bugün <b>{todayTours} tur</b> ve <b>{money(todayIncome,currency)}</b> kayıtlı kazanç var.</p></div><div className="daily-orbit"><i/><strong>{now.getDate()}</strong><small>{now.toLocaleDateString('tr-TR',{month:'short'}).toUpperCase()}</small></div></article>;
 }
 
-function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, tourCount, currency, rows, convert }) {
+function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, currency, rows, convert }) {
+  const [detail,setDetail]=useState(null);
   const todayKey = today();
   const todayIncome = rows
     .filter((row) => row.date === todayKey && row.status === "Ödendi" && isIncome(row))
     .reduce((sum, row) => sum + convert(row), 0);
   const values = [
-    { label: "Tur gelirleri", value: tourIncome, tone: "income" },
-    { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash" },
-    { label: "Bekleyen", value: pending, tone: "pending" },
-    { label: "Masraflar", value: expense, tone: "expense" },
+    { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',meta:`${fmtDate(r.date)} · ${r.status}`,value:convert(r)})) },
+    { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash", items:(cashBreakdown||[]).map(r=>({title:r.label||r.code,meta:`${r.amount.toLocaleString('tr-TR')} ${r.code} · Kur ${r.rate.toLocaleString('tr-TR')}`,value:r.tryValue})) },
+    { label: "Bekleyen", value: pending, tone: "pending", items:rows.filter(r=>r.status==='Ödenmedi').map(r=>({title:r.tour||r.agency||r.type,meta:`${fmtDate(r.date)} · ${r.type}`,value:convert({...r,amount:Math.max(0,r.amount-r.paid_amount)} )})) },
+    { label: "Masraflar", value: expense, tone: "expense", items:rows.filter(r=>isExpense(r)&&r.status!=='İade edildi').map(r=>({title:r.tour||r.agency||'Tur masrafı',meta:`${fmtDate(r.date)} · ${r.status}`,value:convert(r)})) },
   ];
   const max = Math.max(1, ...values.map((item) => Math.abs(item.value)));
   return (
@@ -1018,12 +1020,13 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
       <article className="command-chart">
         <header className="command-pulse-head"><div><span>FİNANS PULSU</span><h3>Gelir dağılımı</h3></div><small><i/> Canlı</small></header>
         <div className="command-flow-list" role="img" aria-label="Gelir, kasa, bekleyen ve masraf dağılımı">
-          {values.map((item) => <div key={item.label} className={`command-flow-row flow-${item.tone}`}>
+          {values.map((item) => <button type="button" onClick={()=>setDetail(item)} key={item.label} className={`command-flow-row flow-${item.tone}`}>
             <div className="command-flow-label"><span><i/>{item.label}</span><div><em>%{Math.round((Math.abs(item.value) / max) * 100)}</em><b>{money(item.value, currency)}</b></div></div>
             <div className="command-flow-track"><i style={{ width: `${Math.max(item.value ? 4 : 0, (Math.abs(item.value) / max) * 100)}%` }} /></div>
-          </div>)}
+          </button>)}
         </div>
       </article>
+      {detail&&<div className="pulse-detail-backdrop" role="dialog" aria-modal="true" onMouseDown={e=>e.target===e.currentTarget&&setDetail(null)}><section className="pulse-detail"><header><div><span>FİNANS PULSU</span><h3>{detail.label}</h3><b>{money(detail.value,currency)}</b></div><button onClick={()=>setDetail(null)}>×</button></header><div>{detail.items.map((item,index)=><article key={`${item.title}-${index}`}><span><b>{item.title}</b><small>{item.meta}</small></span><strong>{money(item.value,currency)}</strong></article>)}{!detail.items.length&&<p>Kayıt bulunamadı.</p>}</div></section></div>}
     </section>
   );
 }
@@ -1742,6 +1745,7 @@ function Dashboard({ onSignedOut }) {
           net={loading ? 0 : net}
           pending={loading ? 0 : pending}
           cashValue={loading ? 0 : cashFxTryValue}
+          cashBreakdown={loading ? [] : cashFxTryBreakdown}
           tourIncome={loading ? 0 : tourIncome}
           expense={loading ? 0 : activeExpense}
           tourCount={tourCount}
@@ -1759,6 +1763,10 @@ function Dashboard({ onSignedOut }) {
             <CurrencyDonuts totals={tipTotals} money={money} fast />
           </article>
         </div>
+        <FinanceOperations
+          rates={rates}
+          summary={{income,expense,cash_value:cashFxTryValue,receivable:pending,net}}
+        />
         <div className="v7-insights">
           <article>
             <span>En çok kazandıran tur</span>
