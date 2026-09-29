@@ -63,7 +63,7 @@ const REALIZED_FX_EXCHANGES = [
   { code: "GBP", amount: 320, rate: 62.34 },
   { code: "EUR", amount: 545, rate: 53.07 },
 ];
-const TIP_COMMISSION_NET_START_DATE = "2026-07-10";
+const TIP_COMMISSION_NET_START_DATE = "2026-04-16";
 // 10 Temmuz'da bankada bozdurulan dövizlerin gerçekleşmiş TL toplamı.
 // Bu tutar sabittir; EV KASA bakiyeleriyle karıştırılmaz ve güncel kurla yeniden çevrilmez.
 const REALIZED_FX_TRY = REALIZED_FX_EXCHANGES.reduce(
@@ -1002,7 +1002,7 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
         <div className="command-net-copy">
           <span>SEZON NET KAZANÇ</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
-          <p>Ödenmiş tur gelirleri, 10 Temmuz döviz bozumları ve 10 Temmuz sonrası ödenmiş TL bahşiş/komisyon.</p>
+          <p>Ödenmiş tur gelirleri, 10 Temmuz döviz bozumları ve 16 Nisan sonrası ödenmiş TL bahşiş/komisyon.</p>
         </div>
         <div className="command-orbit" aria-hidden="true">
           <i /><i /><b>{tourCount}</b><small>TUR</small>
