@@ -64,6 +64,7 @@ const REALIZED_FX_EXCHANGES = [
   { code: "EUR", amount: 545, rate: 53.07 },
 ];
 const TIP_COMMISSION_NET_START_DATE = "2026-04-16";
+const SPENT_RODOS_EUR = 134;
 // 10 Temmuz'da bankada bozdurulan dövizlerin gerçekleşmiş TL toplamı.
 // Bu tutar sabittir; EV KASA bakiyeleriyle karıştırılmaz ve güncel kurla yeniden çevrilmez.
 const REALIZED_FX_TRY = REALIZED_FX_EXCHANGES.reduce(
@@ -1002,7 +1003,7 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
         <div className="command-net-copy">
           <span>SEZON NET KAZANÇ</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
-          <p>Ödenmiş tur gelirleri, 10 Temmuz döviz bozumları ve 16 Nisan sonrası ödenmiş TL bahşiş/komisyon.</p>
+          <p>Ödenmiş tur gelirleri, 10 Temmuz döviz bozumları, TL bahşiş/komisyon ve harcanan 134 EUR.</p>
         </div>
         <div className="command-orbit" aria-hidden="true">
           <i /><i /><b>{tourCount}</b><small>TUR</small>
@@ -1221,7 +1222,8 @@ function Dashboard({ onSignedOut }) {
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
     realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    income = tourIncome + realizedFxValue + postJulyTipCommissionIncome,
+    spentRodosValue = convertAmount(SPENT_RODOS_EUR, "EUR", currency),
+    income = tourIncome + realizedFxValue + postJulyTipCommissionIncome + spentRodosValue,
     net = income - expense;
   const topTour = useMemo(() => {
     const m = {};
