@@ -59,14 +59,17 @@ const TYPES = ["Tur Geliri", "Tur Masrafı", "Bahşiş", "Komisyon"],
 const INCOME_TYPES = new Set(["Tur Geliri", "Bahşiş", "Komisyon"]);
 const EXPENSE_TYPES = new Set(["Tur Masrafı"]);
 const REALIZED_FX_EXCHANGES = [
-  { code: "USD", amount: 260, rate: 46.44 },
+  { code: "USD", amount: 610, rate: 46.44 },
   { code: "GBP", amount: 320, rate: 62.34 },
   { code: "EUR", amount: 545, rate: 53.07 },
 ];
 const TIP_COMMISSION_NET_START_DATE = "2026-07-10";
 // 10 Temmuz'da bankada bozdurulan dövizlerin gerçekleşmiş TL toplamı.
 // Bu tutar sabittir; EV KASA bakiyeleriyle karıştırılmaz ve güncel kurla yeniden çevrilmez.
-const REALIZED_FX_TRY = 60946;
+const REALIZED_FX_TRY = REALIZED_FX_EXCHANGES.reduce(
+  (sum, item) => sum + item.amount * item.rate,
+  0,
+);
 const CASH_FX_BALANCES = [
   { code: "USD", amount: 189 },
   { code: "TRY", amount: 9300 },
@@ -988,7 +991,7 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
     .reduce((sum, row) => sum + convert(row), 0);
   const values = [
     { label: "Tur gelirleri", value: tourIncome, tone: "income" },
-    { label: "EV KASA", value: cashValue, tone: "cash" },
+    { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash" },
     { label: "Bekleyen", value: pending, tone: "pending" },
     { label: "Masraflar", value: expense, tone: "expense" },
   ];
@@ -999,7 +1002,7 @@ function DashboardCommandCenter({ net, pending, cashValue, tourIncome, expense, 
         <div className="command-net-copy">
           <span>SEZON NET KAZANÇ</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
-          <p>Ödenmiş tur gelirleri, sabit döviz bozumları ve 10 Temmuz sonrası ödenmiş bahşiş/komisyon.</p>
+          <p>Ödenmiş tur gelirleri, 10 Temmuz döviz bozumları ve 10 Temmuz sonrası ödenmiş TL bahşiş/komisyon.</p>
         </div>
         <div className="command-orbit" aria-hidden="true">
           <i /><i /><b>{tourCount}</b><small>TUR</small>
@@ -1193,6 +1196,7 @@ function Dashboard({ onSignedOut }) {
     postJulyTipCommissionIncome = paid
       .filter((r) =>
         r.date >= TIP_COMMISSION_NET_START_DATE &&
+        (r.currency || "TRY") === "TRY" &&
         ["Bahşiş", "Komisyon"].includes(normalizeType(r.type))
       )
       .reduce((s, r) => s + accountingValue(r), 0),
