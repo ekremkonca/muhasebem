@@ -334,3 +334,14 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
 #root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{margin:0!important;color:var(--ink)!important;font-size:13px!important;line-height:1!important;letter-spacing:-.02em!important;white-space:nowrap!important}
 #root .combined-currency-row:hover>span{color:var(--accent,var(--green))}
 @media(max-width:700px){#root .combined-currency-panel{height:184px!important;min-height:184px!important;padding:7px 10px!important}#root .combined-currency-row{grid-template-columns:62px minmax(0,1fr);gap:5px}#root .combined-currency-row>span{font-size:10px}#root .combined-currency-row .currency-donut-item{grid-template-columns:1fr!important;justify-items:center!important;gap:2px!important;text-align:center!important}#root .combined-currency-row .currency-donut-ring{width:28px!important;height:28px!important}#root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{font-size:10px!important}}
+
+/* Larger, readable rings while keeping four currencies on each row. */
+#root .combined-currency-panel{height:190px!important;min-height:190px!important;padding:7px 14px!important}
+#root .combined-currency-row{grid-template-columns:78px minmax(0,1fr)!important;gap:8px!important}
+#root .combined-currency-row .currency-donuts{height:100%!important;align-items:center!important;gap:8px!important}
+#root .combined-currency-row .currency-donut-item{display:grid!important;grid-template-columns:1fr!important;justify-items:center!important;align-content:center!important;gap:3px!important;text-align:center!important}
+#root .combined-currency-row .currency-donut-ring{width:48px!important;height:48px!important;margin:0 auto!important}
+#root .combined-currency-row .currency-donut-ring circle{stroke-width:6!important}
+#root .combined-currency-row .currency-donut-ring span{font-size:9px!important}
+#root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{font-size:13px!important;line-height:1.05!important}
+@media(max-width:700px){#root .combined-currency-panel{height:184px!important;min-height:184px!important;padding:6px 8px!important}#root .combined-currency-row{grid-template-columns:52px minmax(0,1fr)!important;gap:3px!important}#root .combined-currency-row .currency-donuts{gap:3px!important}#root .combined-currency-row .currency-donut-ring{width:40px!important;height:40px!important}#root .combined-currency-row .currency-donut-ring span{font-size:7px!important}#root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{font-size:10px!important}}
