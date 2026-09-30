@@ -1018,7 +1018,7 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
         <div className="command-pulse-actions">
           <article className="pulse-cash-card home-cash-kasa-card">
             <header><span>EV KASA</span><HomeCashEditor balances={homeCash} onSave={onSaveHomeCash}/></header>
-            <CurrencyDonuts totals={homeCash} money={money} fast />
+            <div className="pulse-cash-values">{homeCash.map((item,index)=><span key={`${item.code}-${index}`}><i>{item.code}</i><b>{money(item.amount,item.code)}</b></span>)}</div>
           </article>
           <FinanceOperations rates={rates}/>
         </div>

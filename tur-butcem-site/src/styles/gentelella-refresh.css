@@ -288,3 +288,34 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
 #root .workspace-records{margin-top:0!important}
 
 @media(max-width:700px){#root .command-pulse-actions{grid-template-columns:1fr!important}#root .command-dashboard .command-pulse-actions>article,#root .command-dashboard .command-pulse-actions>.finance-tools,#root .command-pulse-actions>.finance-tools>button{height:auto!important;min-height:112px!important}}
+
+/* Final 2 x 3 pulse matrix beside an equally sized season card. */
+#root .command-dashboard{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch!important;gap:10px!important}
+#root .command-net,#root .command-chart{box-sizing:border-box!important;height:310px!important;min-height:310px!important}
+#root .command-net{padding:20px 24px!important}
+#root .command-chart{display:flex!important;padding:13px 15px!important;gap:8px!important}
+#root .command-chart .command-pulse-head{flex:0 0 auto!important;padding-bottom:5px!important}
+#root .command-flow-list,#root .command-pulse-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+#root .command-flow-list{flex:0 0 auto!important}
+#root .command-flow-row{height:67px!important;min-height:67px!important}
+#root .command-pulse-actions{margin:0!important;padding:0!important;border:0!important}
+#root .command-dashboard .command-pulse-actions>article,
+#root .command-dashboard .command-pulse-actions>.finance-tools,
+#root .command-pulse-actions>.finance-tools>button{height:67px!important;min-height:67px!important}
+#root .command-dashboard .pulse-cash-card{padding:8px 10px!important;border-radius:11px!important}
+#root .pulse-cash-card>header>span{font-size:9px!important}
+#root .pulse-cash-card>header>button{right:5px!important;top:3px!important}
+#root .pulse-cash-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 6px;margin-top:5px}
+#root .pulse-cash-values>span{display:flex;align-items:center;gap:4px;min-width:0}
+#root .pulse-cash-values i{color:var(--accent,var(--green));font-size:7px;font-style:normal;font-weight:900}
+#root .pulse-cash-values b{overflow:hidden;color:var(--ink);font-size:9px;font-weight:900;text-overflow:ellipsis;white-space:nowrap}
+#root .command-pulse-actions>.finance-tools>button{gap:8px!important;padding:8px 10px!important;border-radius:11px!important}
+#root .command-pulse-actions>.finance-tools>button>i{width:34px!important;height:34px!important;flex-basis:34px!important;border-radius:10px!important;font-size:16px!important}
+#root .command-pulse-actions>.finance-tools>button b{font-size:10px!important}
+#root .command-pulse-actions>.finance-tools>button small{font-size:8px!important}
+#root .exchange-symbols{display:flex!important;align-items:center!important;gap:3px!important;margin-left:auto!important}
+#root .exchange-symbols>i{display:grid;place-items:center;width:17px;height:17px;border:1px solid color-mix(in srgb,var(--accent,var(--green)) 32%,var(--line));border-radius:50%;background:color-mix(in srgb,var(--accent,var(--green)) 8%,var(--surface));color:var(--accent,var(--green));font-size:8px;font-style:normal;font-weight:900}
+#root .command-pulse-actions>.finance-tools>button>em{margin-left:2px!important}
+
+@media(max-width:900px){#root .command-dashboard{grid-template-columns:1fr!important}#root .command-net{height:126px!important;min-height:126px!important}#root .command-chart{height:auto!important;min-height:310px!important}}
+@media(max-width:520px){#root .exchange-symbols{display:none!important}#root .command-pulse-actions>.finance-tools>button small{max-width:125px}}
