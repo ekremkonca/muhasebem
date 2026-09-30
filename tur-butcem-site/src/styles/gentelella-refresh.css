@@ -345,3 +345,115 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
 #root .combined-currency-row .currency-donut-ring span{font-size:9px!important}
 #root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{font-size:13px!important;line-height:1.05!important}
 @media(max-width:700px){#root .combined-currency-panel{height:184px!important;min-height:184px!important;padding:6px 8px!important}#root .combined-currency-row{grid-template-columns:52px minmax(0,1fr)!important;gap:3px!important}#root .combined-currency-row .currency-donuts{gap:3px!important}#root .combined-currency-row .currency-donut-ring{width:40px!important;height:40px!important}#root .combined-currency-row .currency-donut-ring span{font-size:7px!important}#root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{font-size:10px!important}}
+
+/* A single visual language for the income distribution header and all six tiles. */
+#root .command-chart .command-pulse-head{
+  min-height:34px!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  padding:1px 2px 8px!important;
+  border-bottom:1px solid var(--line)!important;
+}
+#root .command-pulse-head h3{
+  margin:0!important;
+  color:var(--ink)!important;
+  font-size:18px!important;
+  font-weight:900!important;
+  line-height:1.1!important;
+  letter-spacing:-.025em!important;
+}
+#root .command-dashboard .pulse-cash-card,
+#root .command-pulse-actions>.finance-tools>button{
+  --pulse-color:#16b8a6;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:48px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:9px!important;
+  height:67px!important;
+  min-height:67px!important;
+  padding:6px 9px!important;
+  overflow:hidden!important;
+  border:1px solid var(--line)!important;
+  border-left:3px solid var(--pulse-color)!important;
+  border-radius:11px!important;
+  background:color-mix(in srgb,var(--paper) 96%,var(--pulse-color))!important;
+  color:var(--ink)!important;
+  box-shadow:none!important;
+}
+#root .command-pulse-actions>.finance-tools>button{
+  --pulse-color:#3b82f6;
+  grid-template-columns:48px minmax(0,1fr) auto auto!important;
+  width:100%!important;
+  text-align:left!important;
+}
+#root .pulse-action-ring,
+#root .command-pulse-actions>.finance-tools>button>.exchange-action-ring{
+  box-sizing:border-box!important;
+  display:grid!important;
+  place-items:center!important;
+  width:48px!important;
+  height:48px!important;
+  min-width:48px!important;
+  margin:0!important;
+  border:6px solid color-mix(in srgb,var(--pulse-color) 82%,transparent)!important;
+  border-radius:50%!important;
+  background:color-mix(in srgb,var(--pulse-color) 10%,var(--paper))!important;
+  color:var(--pulse-color)!important;
+  font-size:14px!important;
+  font-style:normal!important;
+  font-weight:950!important;
+  line-height:1!important;
+}
+#root .pulse-action-copy,
+#root .command-pulse-actions>.finance-tools>button>span:not(.exchange-symbols){
+  display:grid!important;
+  gap:4px!important;
+  min-width:0!important;
+}
+#root .pulse-action-copy small,
+#root .command-pulse-actions>.finance-tools>button b{
+  color:var(--muted)!important;
+  font-size:9px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  letter-spacing:.015em!important;
+}
+#root .pulse-action-copy b{
+  overflow:hidden!important;
+  color:var(--ink)!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  line-height:1.15!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+#root .command-pulse-actions>.finance-tools>button small{
+  overflow:hidden!important;
+  color:var(--ink)!important;
+  font-size:9px!important;
+  font-weight:850!important;
+  line-height:1.15!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+#root .pulse-cash-card>button{z-index:3!important;right:5px!important;top:4px!important}
+#root .exchange-symbols{gap:2px!important;margin-left:0!important}
+#root .exchange-symbols>i{width:16px!important;height:16px!important;font-size:7px!important}
+#root .command-pulse-actions>.finance-tools>button>em{color:var(--muted)!important;font-size:13px!important}
+:root[data-mode="dark"] #root .command-dashboard .pulse-cash-card,
+:root[data-mode="dark"] #root .command-pulse-actions>.finance-tools>button{
+  border-color:#2a3a53!important;
+  border-left-color:var(--pulse-color)!important;
+  background:color-mix(in srgb,#162033 94%,var(--pulse-color))!important;
+}
+:root[data-mode="dark"] #root .pulse-action-ring,
+:root[data-mode="dark"] #root .command-pulse-actions>.finance-tools>button>.exchange-action-ring{background:#17253a!important}
+@media(max-width:1120px){#root .exchange-symbols{display:none!important}}
+@media(max-width:520px){
+  #root .command-dashboard .pulse-cash-card,
+  #root .command-pulse-actions>.finance-tools>button{grid-template-columns:42px minmax(0,1fr)!important;padding:6px!important}
+  #root .pulse-action-ring,
+  #root .command-pulse-actions>.finance-tools>button>.exchange-action-ring{width:40px!important;height:40px!important;min-width:40px!important;border-width:5px!important}
+  #root .command-pulse-actions>.finance-tools>button>em{display:none!important}
+}

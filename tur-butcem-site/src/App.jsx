@@ -1008,7 +1008,7 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
         </div>
       </article>
       <article className="command-chart">
-        <header className="command-pulse-head"><div><span>FİNANS PULSU</span><h3>Gelir dağılımı</h3></div><small><i/> Canlı</small></header>
+        <header className="command-pulse-head"><h3>Gelir dağılımı</h3></header>
         <div className="command-flow-list" role="img" aria-label="Gelir, kasa, bekleyen ve masraf dağılımı">
           {values.map((item) => <button type="button" onClick={()=>setDetail(item)} key={item.label} className={`command-flow-row flow-${item.tone}`}>
             <span className="command-flow-ring" style={{ "--pulse-value": `${Math.max(item.value ? 5 : 0, (Math.abs(item.value) / max) * 100)}%` }}><i>{Math.round((Math.abs(item.value) / max) * 100)}%</i></span>
@@ -1017,8 +1017,9 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
         </div>
         <div className="command-pulse-actions">
           <article className="pulse-cash-card home-cash-kasa-card">
-            <header><span>EV KASA</span><HomeCashEditor balances={homeCash} onSave={onSaveHomeCash}/></header>
-            <div className="pulse-cash-values">{homeCash.map((item,index)=><span key={`${item.code}-${index}`}><i>{item.code}</i><b>{money(item.amount,item.code)}</b></span>)}</div>
+            <span className="pulse-action-ring" aria-hidden="true">₺</span>
+            <span className="pulse-action-copy"><small>EV KASA</small><b>{homeCash.map((item)=>money(item.amount,item.code)).join(' · ')}</b></span>
+            <HomeCashEditor balances={homeCash} onSave={onSaveHomeCash}/>
           </article>
           <FinanceOperations rates={rates}/>
         </div>
