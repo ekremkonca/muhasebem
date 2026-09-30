@@ -460,7 +460,7 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
 
 /* Match the lower action tiles to the inset colour edge used by the four metrics. */
 #root .command-pulse-actions{
-  transform:translateY(-4px)!important;
+  transform:translateY(-8px)!important;
 }
 #root .command-dashboard .pulse-cash-card,
 #root .command-pulse-actions>.finance-tools>button{
@@ -471,4 +471,12 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
 :root[data-mode="dark"] #root .command-pulse-actions>.finance-tools>button{
   border-left-color:#2a3a53!important;
   box-shadow:inset 3px 0 0 var(--pulse-color)!important;
+}
+
+/* The main income tile uses the same palette edge as cash, pending and expenses. */
+#root .command-flow-row{
+  box-shadow:inset 3px 0 0 var(--pulse-color)!important;
+}
+#root .command-flow-row:hover{
+  box-shadow:inset 3px 0 0 var(--pulse-color),0 8px 18px color-mix(in srgb,var(--pulse-color) 12%,transparent)!important;
 }
