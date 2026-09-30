@@ -986,19 +986,20 @@ function DailyGreeting({rows,currency,convert}){
  return <article className="daily-hello summary-greeting"><div><span className="eyebrow">GÜNÜN ÖZETİ</span><h2>{greeting}, Ekrem</h2><p>Bugün <b>{todayTours} tur</b> ve <b>{money(todayIncome,currency)}</b> kayıtlı kazanç var.</p></div><div className="daily-orbit"><i/><strong>{now.getDate()}</strong><small>{now.toLocaleDateString('tr-TR',{month:'short'}).toUpperCase()}</small></div></article>;
 }
 
-function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, currency, rows, convert }) {
+function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, currency, rows, convert, homeCash, onSaveHomeCash, rates }) {
   const [detail,setDetail]=useState(null);
   const values = [
-    { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',meta:`${fmtDate(r.date)} · ${r.status}`,value:convert(r)})) },
-    { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash", items:(cashBreakdown||[]).map(r=>({title:r.label||r.code,meta:`${r.amount.toLocaleString('tr-TR')} ${r.code} · Kur ${r.rate.toLocaleString('tr-TR')}`,value:r.tryValue})) },
-    { label: "Bekleyen", value: pending, tone: "pending", items:rows.filter(r=>r.status==='Ödenmedi').map(r=>({title:r.tour||r.agency||r.type,meta:`${fmtDate(r.date)} · ${r.type}`,value:convert({...r,amount:Math.max(0,r.amount-r.paid_amount)} )})) },
-    { label: "Masraflar", value: expense, tone: "expense", items:rows.filter(r=>isExpense(r)&&r.status!=='İade edildi').map(r=>({title:r.tour||r.agency||'Tur masrafı',meta:`${fmtDate(r.date)} · ${r.status}`,value:convert(r)})) },
+    { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',date:r.date,meta:r.status,value:convert(r)})) },
+    { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash", items:(cashBreakdown||[]).map(r=>({title:r.label||r.code,date:'Güncel',meta:`${r.amount.toLocaleString('tr-TR')} ${r.code} · Kur ${r.rate.toLocaleString('tr-TR')}`,value:r.tryValue})) },
+    { label: "Bekleyen", value: pending, tone: "pending", items:rows.filter(r=>r.status==='Ödenmedi').map(r=>({title:r.tour||r.agency||r.type,date:r.date,meta:r.type,value:convert({...r,amount:Math.max(0,r.amount-r.paid_amount)} )})) },
+    { label: "Masraflar", value: expense, tone: "expense", items:rows.filter(r=>isExpense(r)&&r.status!=='İade edildi').map(r=>({title:r.tour||r.agency||'Tur masrafı',date:r.date,meta:r.status,value:convert(r)})) },
   ];
   const max = Math.max(1, ...values.map((item) => Math.abs(item.value)));
   return (
     <section className="command-dashboard" aria-label="Sezon özeti">
       <article className="command-net">
         <div className="command-net-copy">
+          <span>SEZON NET GELİR</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
         </div>
         <div className="command-orbit command-orbit-burst" aria-label={`${tourCount} tur`}>
@@ -1014,8 +1015,15 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
             <span className="command-flow-copy"><small>{item.label}</small><b>{money(item.value, currency)}</b></span>
           </button>)}
         </div>
+        <div className="command-pulse-actions">
+          <article className="pulse-cash-card home-cash-kasa-card">
+            <header><span>EV KASA</span><HomeCashEditor balances={homeCash} onSave={onSaveHomeCash}/></header>
+            <CurrencyDonuts totals={homeCash} money={money} fast />
+          </article>
+          <FinanceOperations rates={rates}/>
+        </div>
       </article>
-      {detail&&<div className="pulse-detail-backdrop" role="dialog" aria-modal="true" onMouseDown={e=>e.target===e.currentTarget&&setDetail(null)}><section className="pulse-detail"><header><div><span>FİNANS PULSU</span><h3>{detail.label}</h3><b>{money(detail.value,currency)}</b></div><button onClick={()=>setDetail(null)}>×</button></header><div>{detail.items.map((item,index)=><article key={`${item.title}-${index}`}><span><b>{item.title}</b><small>{item.meta}</small></span><strong>{money(item.value,currency)}</strong></article>)}{!detail.items.length&&<p>Kayıt bulunamadı.</p>}</div></section></div>}
+      {detail&&<div className="pulse-detail-backdrop" role="dialog" aria-modal="true" onMouseDown={e=>e.target===e.currentTarget&&setDetail(null)}><section className="pulse-detail"><header><div><span>FİNANS PULSU</span><h3>{detail.label}</h3><b>{money(detail.value,currency)}</b></div><button onClick={()=>setDetail(null)}>×</button></header><div className="pulse-detail-list">{[...detail.items].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).map((item,index)=><article key={`${item.title}-${index}`}><time>{item.date==='Güncel'?'Güncel':fmtDate(item.date)}</time><span><b>{item.title}</b><small>{item.meta}</small></span><strong>{money(item.value,currency)}</strong></article>)}{!detail.items.length&&<p>Kayıt bulunamadı.</p>}</div></section></div>}
     </section>
   );
 }
@@ -1738,6 +1746,9 @@ function Dashboard({ onSignedOut }) {
           currency={currency}
           rows={accountingRows}
           convert={accountingValue}
+          homeCash={homeCash}
+          onSaveHomeCash={setHomeCash}
+          rates={rates}
         />
         <div className="accounting-currency-pair">
           <article className="accounting-currency-panel" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
@@ -1747,17 +1758,6 @@ function Dashboard({ onSignedOut }) {
           <article className="accounting-currency-panel" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
             <span>Bahşiş</span>
             <CurrencyDonuts totals={tipTotals} money={money} fast />
-          </article>
-        </div>
-        <FinanceOperations
-          rates={rates}
-          summary={{income,expense,cash_value:cashFxTryValue,receivable:pending,net}}
-        />
-        <div className="v7-insights v7-insights-cash-only">
-          <article className="rates-insight home-cash-kasa-card">
-            <span>EV KASA</span>
-            <HomeCashEditor balances={homeCash} onSave={setHomeCash}/>
-            <CurrencyDonuts totals={homeCash} money={money} fast />
           </article>
         </div>
           </div>

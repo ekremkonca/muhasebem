@@ -20,11 +20,11 @@ export default function FinanceOperations({rates}){
  const remove=async(row)=>{if(!window.confirm('Bu kasa hareketi silinsin mi?'))return;setBusy(true);try{await deleteCashMovement(row.id);setMovements(xs=>xs.filter(x=>x.id!==row.id))}catch(err){setError(err.message)}finally{setBusy(false)}};
  return <>
   <section className="finance-tools" aria-label="Finans yönetimi">
-   <button onClick={open}><i>⇄</i><span><b>Döviz bozum geçmişi</b><small>Kur, tutar ve gerçekleşen TL</small></span><em>→</em></button>
+   <button onClick={open}><i>⇄</i><span><b>Döviz İşlemleri</b><small>Bozum geçmişi ve gerçekleşen TL</small></span><em>→</em></button>
   </section>
   {panel&&createPortal(<div className="finance-ops-backdrop" role="dialog" aria-modal="true" onMouseDown={e=>e.target===e.currentTarget&&setPanel('')}>
    <section className="finance-ops-modal">
-    <header><div><span>FİNANS MERKEZİ</span><h2>Döviz bozum geçmişi</h2></div><button onClick={()=>setPanel('')} aria-label="Kapat">×</button></header>
+    <header><div><span>FİNANS MERKEZİ</span><h2>Döviz İşlemleri</h2></div><button onClick={()=>setPanel('')} aria-label="Kapat">×</button></header>
     {error&&<p className="finance-ops-error">{error}</p>}
     <>
      <form className="movement-form" onSubmit={saveMovement}>
