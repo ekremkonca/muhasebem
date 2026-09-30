@@ -18,7 +18,7 @@
 .breakdown-list i{width:13px;height:13px;border-radius:3px;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 10%,transparent)}
 .breakdown-list span{font-size:14px;color:var(--ink);font-weight:760;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .breakdown-list b{font-size:15px;color:var(--ink);font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
-:root[data-mode="dark"] .dashboard-breakdown-card{background:#151515!important;border-color:#2b2f36!important;box-shadow:0 18px 44px rgba(0,0,0,.32)!important}
+:root[data-mode="dark"] .dashboard-breakdown-card{background:var(--paper)!important;border-color:var(--line)!important;box-shadow:0 18px 44px rgba(0,0,0,.22)!important}
 :root[data-mode="dark"] .breakdown-head span,:root[data-mode="dark"] .breakdown-head button,:root[data-mode="dark"] .breakdown-list span,:root[data-mode="dark"] .breakdown-list b,:root[data-mode="dark"] .category-donut>span strong{color:#f8fafc}
 @media(max-width:900px){.breakdown-body{grid-template-columns:136px minmax(0,1fr);gap:15px}.category-donut{width:136px;height:136px}.category-donut>span strong{font-size:20px;max-width:104px}.breakdown-list b{font-size:13px}.breakdown-list span{font-size:13px}}
 @media(max-width:560px){.dashboard-breakdown-card{padding:14px!important}.breakdown-body{grid-template-columns:1fr;justify-items:center}.breakdown-list{width:100%}.category-donut{width:148px;height:148px}}

@@ -988,10 +988,6 @@ function DailyGreeting({rows,currency,convert}){
 
 function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, currency, rows, convert }) {
   const [detail,setDetail]=useState(null);
-  const todayKey = today();
-  const todayIncome = rows
-    .filter((row) => row.date === todayKey && row.status === "Ödendi" && isIncome(row))
-    .reduce((sum, row) => sum + convert(row), 0);
   const values = [
     { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',meta:`${fmtDate(r.date)} · ${r.status}`,value:convert(r)})) },
     { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash", items:(cashBreakdown||[]).map(r=>({title:r.label||r.code,meta:`${r.amount.toLocaleString('tr-TR')} ${r.code} · Kur ${r.rate.toLocaleString('tr-TR')}`,value:r.tryValue})) },
@@ -1003,26 +999,19 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
     <section className="command-dashboard" aria-label="Sezon özeti">
       <article className="command-net">
         <div className="command-net-copy">
-          <span>SEZON NET KAZANÇ</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
-          <p>Ödenmiş tur gelirleri, 10 Temmuz döviz bozumları, TL bahşiş/komisyon ve harcanan 134 EUR.</p>
         </div>
-        <div className="command-orbit" aria-hidden="true">
+        <div className="command-orbit command-orbit-burst" aria-label={`${tourCount} tur`}>
+          <span className="tour-spark spark-one"/><span className="tour-spark spark-two"/><span className="tour-spark spark-three"/><span className="tour-spark spark-four"/><span className="tour-spark spark-five"/><span className="tour-spark spark-six"/>
           <i /><i /><b>{tourCount}</b><small>TUR</small>
         </div>
-      </article>
-      <article className="command-today">
-        <span>BUGÜNÜN AKIŞI</span>
-        <strong>{money(todayIncome, currency)}</strong>
-        <small>Bugün kaydedilen ödenmiş gelir</small>
-        <div><b>{tourCount}</b><span>kayıtlı tur günü</span></div>
       </article>
       <article className="command-chart">
         <header className="command-pulse-head"><div><span>FİNANS PULSU</span><h3>Gelir dağılımı</h3></div><small><i/> Canlı</small></header>
         <div className="command-flow-list" role="img" aria-label="Gelir, kasa, bekleyen ve masraf dağılımı">
           {values.map((item) => <button type="button" onClick={()=>setDetail(item)} key={item.label} className={`command-flow-row flow-${item.tone}`}>
-            <div className="command-flow-label"><span><i/>{item.label}</span><div><em>%{Math.round((Math.abs(item.value) / max) * 100)}</em><b>{money(item.value, currency)}</b></div></div>
-            <div className="command-flow-track"><i style={{ width: `${Math.max(item.value ? 4 : 0, (Math.abs(item.value) / max) * 100)}%` }} /></div>
+            <span className="command-flow-ring" style={{ "--pulse-value": `${Math.max(item.value ? 5 : 0, (Math.abs(item.value) / max) * 100)}%` }}><i>{Math.round((Math.abs(item.value) / max) * 100)}%</i></span>
+            <span className="command-flow-copy"><small>{item.label}</small><b>{money(item.value, currency)}</b></span>
           </button>)}
         </div>
       </article>
@@ -1032,12 +1021,9 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
 }
 
 function VisualExperience({rows,income,expense,pending,tourCount,currency,convert}){
-  const now=new Date(),hour=now.getHours(),greeting=hour<12?'Günaydın':hour<18?'İyi günler':'İyi akşamlar',todayKey=localISO(now),todayRows=rows.filter(r=>r.date===todayKey&&r.status==='Ödendi');
-  const todayIncome=todayRows.filter(isIncome).reduce((s,r)=>s+convert(r),0),todayTours=todayRows.filter(r=>normalizeType(r.type)==='Tur Geliri').length;
   const agencies={};rows.filter(r=>r.status==='Ödendi').forEach(r=>{const key=r.agency||r.tour||'Diğer';agencies[key]=(agencies[key]||0)+(isExpense(r)?-convert(r):convert(r))});
-  const top=Object.entries(agencies).sort((a,b)=>b[1]-a[1]).slice(0,4),net=income-expense,ratio=income?Math.max(0,Math.min(100,net/income*100)):0;
-  const badges=[tourCount>=50&&['🏆','50+ tur'],net>=100000&&['✦','₺100 bin+'],pending===0&&['✓','Alacaksız'],expense===0&&['◆','Masrafsız dönem']].filter(Boolean);
-  return <section className="visual-experience"><article className="success-story"><span>AYLIK BAŞARI HİKÂYESİ</span><h3>Gelirin %{Math.round(ratio)}’ı sende kaldı</h3><div className="story-track"><i style={{width:`${ratio}%`}}/></div><p>Net durum: <b>{money(net,currency)}</b> · Bekleyen: <b>{money(pending,currency)}</b></p></article><article className="money-flow"><span>CANLI FİNANS HARİTASI</span><div><i className="flow-income">Gelir<strong>{money(income,currency)}</strong></i><b className="flow-core">NET<em>{money(net,currency)}</em></b><i className="flow-expense">Masraf<strong>{money(expense,currency)}</strong></i></div></article><article className="agency-showcase"><span>ACENTA PROFİLLERİ</span><div>{top.map(([name,value],index)=><div key={name}><i>{String(name).split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()}</i><span><b>{name}</b><small>{money(value,currency)}</small></span><em>#{index+1}</em></div>)}</div></article>{badges.length>0&&<article className="achievement-strip"><span>BAŞARILAR</span><div>{badges.map(([icon,label])=><b key={label}><i>{icon}</i>{label}</b>)}</div></article>}</section>
+  const top=Object.entries(agencies).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  return <section className="visual-experience visual-experience-compact"><article className="agency-showcase"><span>ACENTA PROFİLLERİ</span><div>{top.map(([name,value],index)=><div key={name}><i>{String(name).split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()}</i><span><b>{name}</b><small>{money(value,currency)}</small></span><em>#{index+1}</em></div>)}</div></article></section>
 }
 
 function CompactReceivables({rows,currency,convertOutstanding,keepNativeCurrency,onPaid}){
@@ -1767,25 +1753,7 @@ function Dashboard({ onSignedOut }) {
           rates={rates}
           summary={{income,expense,cash_value:cashFxTryValue,receivable:pending,net}}
         />
-        <div className="v7-insights">
-          <article>
-            <span>En çok kazandıran tur</span>
-            <strong>{topTour[0]}</strong>
-            <small>{money(topTour[1], currency)}</small>
-          </article>
-          <article>
-            <span>En yüksek komisyon kaynağı</span>
-            <strong>{topCommission[0]}</strong>
-            <small>{money(topCommission[1], currency)}</small>
-          </article>
-          <article>
-            <span>Geçen aya göre net</span>
-            <strong>
-              {monthDelta >= 0 ? "+" : ""}
-              {monthDelta.toFixed(1)}%
-            </strong>
-            <small>Mevcut ay karşılaştırması</small>
-          </article>
+        <div className="v7-insights v7-insights-cash-only">
           <article className="rates-insight home-cash-kasa-card">
             <span>EV KASA</span>
             <HomeCashEditor balances={homeCash} onSave={setHomeCash}/>
