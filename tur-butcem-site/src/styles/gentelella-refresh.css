@@ -319,3 +319,18 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
 
 @media(max-width:900px){#root .command-dashboard{grid-template-columns:1fr!important}#root .command-net{height:126px!important;min-height:126px!important}#root .command-chart{height:auto!important;min-height:310px!important}}
 @media(max-width:520px){#root .exchange-symbols{display:none!important}#root .command-pulse-actions>.finance-tools>button small{max-width:125px}}
+
+/* One compact currency card: commission above, tips below. */
+#root .accounting-currency-pair{grid-template-columns:1fr!important;gap:0!important;margin:9px 0!important}
+#root .combined-currency-panel{display:grid!important;grid-template-rows:1fr 1fr!important;width:100%!important;height:168px!important;min-height:168px!important;padding:8px 14px!important;border-top:4px solid #5c70df!important;background:linear-gradient(135deg,color-mix(in srgb,#5c70df 8%,var(--paper)),var(--budget-surface))!important;overflow:hidden!important}
+#root .combined-currency-panel:after{width:210px!important;height:210px!important;right:-96px!important;top:-135px!important}
+#root .combined-currency-row{position:relative;z-index:1;display:grid;grid-template-columns:82px minmax(0,1fr);align-items:center;gap:8px;min-width:0;cursor:pointer}
+#root .combined-currency-row+ .combined-currency-row{border-top:1px solid var(--line)}
+#root .combined-currency-row>span{color:var(--ink);font-size:12px;font-weight:900}
+#root .combined-currency-row .currency-donuts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;margin:0!important}
+#root .combined-currency-row .currency-donut-item{display:grid!important;grid-template-columns:30px minmax(0,1fr)!important;align-items:center!important;gap:5px!important;text-align:left!important}
+#root .combined-currency-row .currency-donut-ring{width:30px!important;height:30px!important;margin:0!important}
+#root .combined-currency-row .currency-donut-ring span{font-size:7px!important}
+#root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{margin:0!important;color:var(--ink)!important;font-size:13px!important;line-height:1!important;letter-spacing:-.02em!important;white-space:nowrap!important}
+#root .combined-currency-row:hover>span{color:var(--accent,var(--green))}
+@media(max-width:700px){#root .combined-currency-panel{height:184px!important;min-height:184px!important;padding:7px 10px!important}#root .combined-currency-row{grid-template-columns:62px minmax(0,1fr);gap:5px}#root .combined-currency-row>span{font-size:10px}#root .combined-currency-row .currency-donut-item{grid-template-columns:1fr!important;justify-items:center!important;gap:2px!important;text-align:center!important}#root .combined-currency-row .currency-donut-ring{width:28px!important;height:28px!important}#root .combined-currency-row .currency-donut-item>b,#root .combined-currency-row .currency-donut-item>b .fast-count{font-size:10px!important}}

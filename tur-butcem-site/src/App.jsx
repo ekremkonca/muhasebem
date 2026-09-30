@@ -1751,13 +1751,15 @@ function Dashboard({ onSignedOut }) {
           rates={rates}
         />
         <div className="accounting-currency-pair">
-          <article className="accounting-currency-panel" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
-            <span>Komisyon</span>
-            <CurrencyDonuts totals={commissionTotals} money={money} fast />
-          </article>
-          <article className="accounting-currency-panel" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
-            <span>Bahşiş</span>
-            <CurrencyDonuts totals={tipTotals} money={money} fast />
+          <article className="accounting-currency-panel combined-currency-panel">
+            <section className="combined-currency-row" onClick={() => { setTypeFilter("Komisyon"); setStatusFilter("Tümü"); }}>
+              <span>Komisyon</span>
+              <CurrencyDonuts totals={commissionTotals} money={money} fast />
+            </section>
+            <section className="combined-currency-row" onClick={() => { setTypeFilter("Bahşiş"); setStatusFilter("Tümü"); }}>
+              <span>Bahşiş</span>
+              <CurrencyDonuts totals={tipTotals} money={money} fast />
+            </section>
           </article>
         </div>
           </div>
