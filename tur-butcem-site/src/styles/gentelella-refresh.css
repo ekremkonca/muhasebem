@@ -652,3 +652,74 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
     radial-gradient(circle at 96% 0,color-mix(in srgb,var(--accent,var(--green)) 16%,transparent),transparent 36%),
     color-mix(in srgb,#121c2e 96%,var(--accent,var(--green)))!important;
 }
+
+/* Settings: keep the complete theme picker visible inside the popover. */
+html body #root .v7-header .header-actions .unified-settings-panel{
+  overflow:visible!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-panel{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:174px!important;
+  max-height:310px!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-content:start!important;
+  gap:6px!important;
+  padding:8px!important;
+  border-radius:11px!important;
+  box-shadow:0 12px 28px rgba(18,33,64,.13)!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-panel button{
+  min-width:0!important;
+  min-height:46px!important;
+  padding:7px 8px!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-panel button.active{
+  border-color:color-mix(in srgb,var(--accent,var(--green)) 34%,var(--line))!important;
+  background:color-mix(in srgb,var(--accent,var(--green)) 10%,var(--paper))!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-panel button span{min-width:0!important;font-weight:850!important}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-panel button small{display:block!important;margin-top:2px!important;font-size:8px!important;font-weight:650!important}
+@media(max-width:620px){
+  html body #root .v7-header .header-actions .unified-settings-panel{overflow:auto!important}
+  html body #root .v7-header .header-actions .unified-settings-panel .theme-panel{min-height:166px!important;max-height:48vh!important}
+}
+
+/* Security center: two clear, theme-aware action cards. */
+#root .security-panel{display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr)!important;gap:14px!important;align-items:stretch!important}
+#root .security-form,#root .security-danger{
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:14px!important;
+  min-width:0!important;
+  padding:18px!important;
+  border:1px solid color-mix(in srgb,var(--accent,var(--green)) 20%,var(--line))!important;
+  border-radius:16px!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--accent,var(--green)) 7%,var(--paper)),var(--paper))!important;
+  box-shadow:0 10px 28px rgba(16,35,62,.06)!important;
+}
+#root .security-danger{border-color:color-mix(in srgb,#f05263 22%,var(--line))!important;background:linear-gradient(145deg,color-mix(in srgb,#f05263 6%,var(--paper)),var(--paper))!important}
+#root .security-card-head{display:flex!important;align-items:flex-start!important;gap:11px!important}
+#root .security-card-head>i{display:grid!important;place-items:center!important;width:38px!important;height:38px!important;flex:0 0 38px!important;border-radius:11px!important;background:color-mix(in srgb,var(--accent,var(--green)) 13%,var(--paper))!important;color:var(--accent,var(--green))!important;font-size:17px!important;font-style:normal!important;font-weight:950!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,var(--green)) 22%,transparent)!important}
+#root .security-danger .security-card-head>i{background:color-mix(in srgb,#f05263 10%,var(--paper))!important;color:#e23d50!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,#f05263 22%,transparent)!important}
+#root .security-card-head>div{display:grid!important;gap:4px!important;min-width:0!important}
+#root .security-card-head strong{color:var(--ink)!important;font-size:14px!important}
+#root .security-card-head p{margin:0!important;color:var(--muted)!important;font-size:10px!important;line-height:1.45!important}
+#root .security-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+#root .security-fields label{display:grid!important;gap:6px!important;color:var(--muted)!important;font-size:9px!important;font-weight:850!important}
+#root .security-fields input{box-sizing:border-box!important;width:100%!important;height:44px!important;padding:0 12px!important;border:1px solid var(--line)!important;border-radius:11px!important;background:var(--surface,var(--paper))!important;color:var(--ink)!important;font:inherit!important;font-size:15px!important;letter-spacing:.18em!important;outline:none!important;transition:border-color .18s ease,box-shadow .18s ease!important}
+#root .security-fields input:focus{border-color:color-mix(in srgb,var(--accent,var(--green)) 58%,var(--line))!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,var(--green)) 12%,transparent)!important}
+#root .security-form>.btn,#root .security-danger>.btn{align-self:flex-start!important;min-height:40px!important;padding:0 15px!important;border-radius:10px!important;font-size:10px!important;font-weight:900!important}
+#root .security-danger>.btn{margin-top:auto!important;background:color-mix(in srgb,#f05263 10%,var(--paper))!important;border-color:color-mix(in srgb,#f05263 30%,var(--line))!important;color:#d93649!important}
+#root .security-form .system-message{margin:0!important;padding:8px 10px!important;border-radius:9px!important;background:color-mix(in srgb,var(--accent,var(--green)) 8%,var(--paper))!important;color:var(--ink)!important;font-size:10px!important}
+@media(max-width:780px){
+  #root .security-panel{grid-template-columns:1fr!important}
+  #root .security-fields{grid-template-columns:1fr!important}
+  #root .security-form,#root .security-danger{padding:15px!important}
+}

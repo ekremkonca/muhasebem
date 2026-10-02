@@ -708,15 +708,16 @@ function SecurityPanel({ onChangePin, onLogoutAll }) {
   };
   return <div className="security-panel">
     <form onSubmit={submit} className="security-form">
-      <p>Yeni PIN 4-8 rakamdan oluşmalıdır.</p>
-      <label>Yeni PIN<input type="password" inputMode="numeric" maxLength="8" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} /></label>
-      <label>Yeni PIN tekrar<input type="password" inputMode="numeric" maxLength="8" value={confirm} onChange={(e) => setConfirm(e.target.value.replace(/\D/g, ""))} /></label>
+      <div className="security-card-head"><i aria-hidden="true">✦</i><div><strong>PIN güvenliği</strong><p>Hesabın için 4–8 rakamdan oluşan yeni bir PIN belirle.</p></div></div>
+      <div className="security-fields">
+        <label><span>Yeni PIN</span><input type="password" inputMode="numeric" maxLength="8" placeholder="••••" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} /></label>
+        <label><span>Yeni PIN tekrar</span><input type="password" inputMode="numeric" maxLength="8" placeholder="••••" value={confirm} onChange={(e) => setConfirm(e.target.value.replace(/\D/g, ""))} /></label>
+      </div>
       {message && <p className="system-message">{message}</p>}
       <button className="btn primary" disabled={busy}>{busy ? "Kaydediliyor..." : "PIN’i değiştir"}</button>
     </form>
     <div className="security-danger">
-      <strong>Tüm cihazlardan çıkış</strong>
-      <p>Açık olan tüm oturumlar kapatılır ve her cihazda yeniden PIN istenir.</p>
+      <div className="security-card-head"><i aria-hidden="true">↗</i><div><strong>Tüm cihazlardan çıkış</strong><p>Açık oturumları kapatır ve bütün cihazlarda yeniden PIN ister.</p></div></div>
       <button className="btn danger" onClick={onLogoutAll}>Tüm cihazlardan çıkış yap</button>
     </div>
   </div>;
