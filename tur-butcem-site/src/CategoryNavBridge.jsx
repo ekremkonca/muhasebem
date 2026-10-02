@@ -17,6 +17,7 @@ const pageKey=()=>{
 export default function CategoryNavBridge(){
   const[active,setActive]=useState(pageKey);
   const[header,setHeader]=useState(null);
+  const[mobile,setMobile]=useState(()=>window.matchMedia('(max-width:760px)').matches);
   useEffect(()=>{
     const sync=()=>setActive(pageKey());
     window.addEventListener('popstate',sync);
@@ -30,9 +31,17 @@ export default function CategoryNavBridge(){
     observer.observe(document.getElementById('root'),{childList:true,subtree:true});
     return()=>observer.disconnect();
   },[]);
+  useEffect(()=>{
+    const query=window.matchMedia('(max-width:760px)');
+    const sync=()=>setMobile(query.matches);
+    sync();
+    query.addEventListener('change',sync);
+    return()=>query.removeEventListener('change',sync);
+  },[]);
   const go=(event,href)=>{
     if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
     event.preventDefault();navigateTo(href);
   };
-  return header?createPortal(<div className="global-category-nav-host"><nav className="global-category-nav" aria-label="Ana sayfalar">{LINKS.map(([href,label])=><a key={label} href={href} className={active===label?'active':''} aria-current={active===label?'page':undefined} onClick={event=>go(event,href)}>{label}</a>)}</nav></div>,header):null;
+  const target=mobile?document.body:header;
+  return target?createPortal(<div className="global-category-nav-host"><nav className="global-category-nav" aria-label="Ana sayfalar">{LINKS.map(([href,label])=><a key={label} href={href} className={active===label?'active':''} aria-current={active===label?'page':undefined} onClick={event=>go(event,href)}>{label}</a>)}</nav></div>,target):null;
 }
