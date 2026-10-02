@@ -986,7 +986,7 @@ function DailyGreeting({rows,currency,convert}){
  return <article className="daily-hello summary-greeting"><div><span className="eyebrow">GÜNÜN ÖZETİ</span><h2>{greeting}, Ekrem</h2><p>Bugün <b>{todayTours} tur</b> ve <b>{money(todayIncome,currency)}</b> kayıtlı kazanç var.</p></div><div className="daily-orbit"><i/><strong>{now.getDate()}</strong><small>{now.toLocaleDateString('tr-TR',{month:'short'}).toUpperCase()}</small></div></article>;
 }
 
-function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, currency, rows, convert, homeCash, onSaveHomeCash, rates }) {
+function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, realizedFxValue, tlExtrasValue, currency, rows, convert, homeCash, onSaveHomeCash, rates }) {
   const [detail,setDetail]=useState(null);
   const values = [
     { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',date:r.date,meta:r.status,value:convert(r)})) },
@@ -995,12 +995,33 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
     { label: "Masraflar", value: expense, tone: "expense", items:rows.filter(r=>isExpense(r)&&r.status!=='İade edildi').map(r=>({title:r.tour||r.agency||'Tur masrafı',date:r.date,meta:r.status,value:convert(r)})) },
   ];
   const max = Math.max(1, ...values.map((item) => Math.abs(item.value)));
+  const paidTourCount=rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').length;
+  let trendTotal=0;
+  const trendValues=rows
+    .filter(r=>r.status==='Ödendi'&&(normalizeType(r.type)==='Tur Geliri'||isExpense(r)||(r.date>=TIP_COMMISSION_NET_START_DATE&&(r.currency||'TRY')==='TRY'&&['Bahşiş','Komisyon'].includes(normalizeType(r.type)))))
+    .sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')))
+    .map(r=>{trendTotal+=isExpense(r)?-convert(r):convert(r);return trendTotal});
+  const trendMin=Math.min(0,...trendValues),trendMax=Math.max(1,...trendValues),trendRange=Math.max(1,trendMax-trendMin);
+  const trendPoints=(trendValues.length?trendValues:[0]).map((value,index)=>`${trendValues.length>1?(index/(trendValues.length-1))*100:0},${38-((value-trendMin)/trendRange)*34}`).join(' ');
   return (
     <section className="command-dashboard" aria-label="Sezon özeti">
       <article className="command-net">
         <div className="command-net-copy">
           <span>SEZON NET GELİR</span>
           <strong><AnimatedMoney value={net} currency={currency} /></strong>
+        </div>
+        <div className="command-net-trend" aria-label="Girdiler bazlı sezon kazanç eğrisi">
+          <div><span>KAZANÇ EĞRİSİ</span><small>Girdiler bazlı</small></div>
+          <svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="seasonTrendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#fff" stopOpacity=".38"/><stop offset="1" stopColor="#fff" stopOpacity="0"/></linearGradient></defs>
+            <polygon points={`0,40 ${trendPoints} 100,40`} fill="url(#seasonTrendFill)"/>
+            <polyline points={trendPoints} fill="none" stroke="currentColor" strokeWidth="1.8" vectorEffect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div className="command-net-breakdown">
+          <span><small>ÖDENMİŞ TUR</small><b>{paidTourCount} kayıt</b></span>
+          <span><small>DÖVİZ BOZUMU</small><b>{money(realizedFxValue,currency)}</b></span>
+          <span><small>TL BAHŞİŞ + KOM.</small><b>{money(tlExtrasValue,currency)}</b></span>
         </div>
         <div className="command-orbit command-orbit-burst" aria-label={`${tourCount} tur`}>
           <span className="tour-spark spark-one"/><span className="tour-spark spark-two"/><span className="tour-spark spark-three"/><span className="tour-spark spark-four"/><span className="tour-spark spark-five"/><span className="tour-spark spark-six"/>
@@ -1744,6 +1765,8 @@ function Dashboard({ onSignedOut }) {
           tourIncome={loading ? 0 : tourIncome}
           expense={loading ? 0 : activeExpense}
           tourCount={tourCount}
+          realizedFxValue={loading ? 0 : realizedFxValue}
+          tlExtrasValue={loading ? 0 : postJulyTipCommissionIncome}
           currency={currency}
           rows={accountingRows}
           convert={accountingValue}

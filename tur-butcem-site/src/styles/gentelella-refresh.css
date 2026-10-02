@@ -480,3 +480,56 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
 #root .command-flow-row:hover{
   box-shadow:inset 3px 0 0 var(--pulse-color),0 8px 18px color-mix(in srgb,var(--pulse-color) 12%,transparent)!important;
 }
+
+/* Season hero: use the empty space for a real entries-based trend and source totals. */
+#root .command-dashboard{
+  grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr)!important;
+}
+#root .command-net{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 82px!important;
+  grid-template-rows:auto minmax(78px,1fr) auto!important;
+  align-items:center!important;
+  gap:10px 16px!important;
+}
+#root .command-net-copy{grid-column:1;grid-row:1}
+#root .command-net .command-orbit{grid-column:2;grid-row:1;justify-self:end!important}
+#root .command-net-trend{
+  position:relative;
+  z-index:1;
+  grid-column:1/-1;
+  grid-row:2;
+  align-self:stretch;
+  min-height:78px;
+  overflow:hidden;
+  border-top:1px solid rgba(255,255,255,.18);
+  border-bottom:1px solid rgba(255,255,255,.18);
+}
+#root .command-net-trend>div{position:absolute;z-index:2;top:8px;left:0;display:flex;align-items:center;gap:8px}
+#root .command-net-trend span{font-size:8px;font-weight:950;letter-spacing:.12em}
+#root .command-net-trend small{color:rgba(255,255,255,.68);font-size:8px;font-weight:750}
+#root .command-net-trend svg{position:absolute;inset:25px 0 4px;width:100%;height:calc(100% - 29px);color:rgba(255,255,255,.92);filter:drop-shadow(0 3px 5px rgba(31,40,125,.2))}
+#root .command-net-breakdown{
+  position:relative;
+  z-index:1;
+  grid-column:1/-1;
+  grid-row:3;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+#root .command-net-breakdown>span{display:grid;gap:3px;min-width:0;padding:7px 8px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(17,31,89,.12)}
+#root .command-net-breakdown small{overflow:hidden;color:rgba(255,255,255,.66);font-size:7px;font-weight:900;letter-spacing:.055em;text-overflow:ellipsis;white-space:nowrap}
+#root .command-net-breakdown b{overflow:hidden;color:#fff;font-size:10px;font-weight:950;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:900px){
+  #root .command-dashboard{grid-template-columns:1fr!important}
+  #root .command-net{height:270px!important;min-height:270px!important}
+}
+@media(max-width:520px){
+  #root .command-net{grid-template-columns:minmax(0,1fr) 66px!important;height:260px!important;min-height:260px!important;padding:16px!important;gap:8px 10px!important}
+  #root .command-net .command-orbit{width:62px!important;height:62px!important;flex-basis:62px!important}
+  #root .command-net-breakdown{gap:4px}
+  #root .command-net-breakdown>span{padding:6px 5px}
+  #root .command-net-breakdown small{font-size:6px}
+  #root .command-net-breakdown b{font-size:8px}
+}
