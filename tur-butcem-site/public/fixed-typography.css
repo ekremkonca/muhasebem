@@ -253,12 +253,21 @@ html body #root .v7-header .global-category-nav-host{position:absolute!important
     transition:transform .18s ease,background .18s ease!important;
   }
   html body #root .mobile-record-expanded .mobile-record-toggle{transform:rotate(180deg)!important;background:color-mix(in srgb,var(--accent,var(--green)) 17%,var(--paper))!important}
-  html body #root .mobile-record-collapsed .record-source span,
-  html body #root .mobile-record-collapsed .record-source small,
-  html body #root .mobile-record-collapsed .record-amount small,
-  html body #root .mobile-record-collapsed .row-actions{display:none!important}
-  html body #root .mobile-record-collapsed .record-source{padding:4px 0!important}
-  html body #root .mobile-record-collapsed .record-amount{grid-column:1 / -1!important;padding-top:6px!important}
-  html body #root .mobile-record-collapsed .record-amount strong{text-align:left!important}
+  html body #root .records-table tbody tr.mobile-record-collapsed{
+    display:block!important;
+    min-height:50px!important;
+    padding:9px 10px!important;
+  }
+  html body #root .mobile-record-collapsed>td:not(.record-date){display:none!important}
+  html body #root .mobile-record-collapsed .record-date{
+    display:block!important;
+    width:100%!important;
+    min-height:32px!important;
+    padding:0 42px 0 0!important;
+    font-size:13px!important;
+    line-height:1.25!important;
+  }
+  html body #root .mobile-record-collapsed .record-date::before{margin-bottom:2px!important}
+  html body #root .mobile-record-collapsed .mobile-record-toggle{top:10px!important;right:10px!important}
   html body #root .mobile-record-expanded{box-shadow:0 12px 28px color-mix(in srgb,var(--accent,var(--green)) 12%,rgba(7,18,34,.12))!important}
 }
