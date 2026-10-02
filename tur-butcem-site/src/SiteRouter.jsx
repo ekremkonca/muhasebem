@@ -3,6 +3,7 @@ import App from "./App.jsx";
 import AssetsNav from "./AssetsNav.jsx";
 import AssetsHeaderBridge from "./AssetsHeaderBridge.jsx";
 import CalendarView from "./CalendarView.jsx";
+import { withTourPlans } from "./tourCalendar.js";
 import HomePage from "./HomePage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
 import ScrollTopButton from "./ScrollTopButton.jsx";
@@ -216,7 +217,7 @@ function TakvimPage() {
           {error && <p className="system-error">{error}</p>}
           <CalendarView
             rows={[]}
-            events={events}
+            events={withTourPlans(events, rows)}
             onCreateEvent={persistEvent}
             onUpdateEvent={persistEvent}
             onDeleteEvent={removeEvent}

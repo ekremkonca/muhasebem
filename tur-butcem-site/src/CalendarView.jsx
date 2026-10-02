@@ -491,6 +491,7 @@ export default function CalendarView({
                 title={`${summary}. Çift tıklayarak etkinlik ekleyebilirsin.`}
               >
                 <span className="day-number">{day.date.getDate()}</span>
+                {dayEvents.some(event => event.fromTourRecord) && <span className="calendar-dots" aria-label="Tur planı var"><i className="series-income" /></span>}
                 <span className="calendar-event-pills">
                   {dayEvents.slice(0, 2).map((event) => (
                     <i
@@ -547,7 +548,7 @@ export default function CalendarView({
                 type="button"
                 className="calendar-event-card"
                 key={event.id}
-                onClick={() => setModal({ mode: "edit", event })}
+                onClick={() => !event.fromTourRecord && setModal({ mode: "edit", event })}
                 disabled={!onUpdateEvent}
               >
                 <span className={`event-card-accent ${meta.className}`} />
@@ -563,7 +564,7 @@ export default function CalendarView({
                 <span className={`event-status ${meta.className}`}>
                   {meta.label}
                 </span>
-                <span className="event-edit-label">Düzenle</span>
+                <span className="event-edit-label">{event.fromTourRecord ? "Girdilerden" : "Düzenle"}</span>
               </button>
             );
           })}
