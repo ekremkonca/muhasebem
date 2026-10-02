@@ -164,3 +164,72 @@ html body #root .v7-header .global-category-nav-host{position:absolute!important
     background:color-mix(in srgb,var(--accent,var(--green)) 14%,var(--paper))!important;
   }
 }
+
+/* Phone ledger density and a clean 2x2 filter grid. */
+@media screen and (max-width:600px){
+  html body #root .records-head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    gap:10px!important;
+    padding:12px!important;
+  }
+  html body #root .records-head>div:first-child{min-width:0!important}
+  html body #root .records-head h2{font-size:17px!important;line-height:1.15!important}
+  html body #root .records-tools{
+    grid-column:1 / -1!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  html body #root .records-tools .entry-date-filter,
+  html body #root .records-tools .filter{
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:40px!important;
+    min-height:40px!important;
+    margin:0!important;
+    padding:0 8px!important;
+    overflow:hidden!important;
+  }
+  html body #root .records-tools .entry-date-filter input,
+  html body #root .records-tools .filter select{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:38px!important;
+    padding:0 2px!important;
+    font-size:11px!important;
+  }
+  html body #root .records-tools .records-sort{grid-column:auto!important}
+  html body #root .records-tools>.btn:not([hidden]){grid-column:1 / -1!important;width:100%!important;min-height:40px!important}
+  html body #root .records-table tbody{gap:8px!important;padding:8px!important}
+  html body #root .records-table tbody tr{
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:6px 10px!important;
+    padding:10px!important;
+    border-radius:14px!important;
+  }
+  html body #root .records-table tbody tr>td{padding:0!important;min-height:0!important}
+  html body #root .records-table td[data-label]::before{margin:0 0 2px!important;font-size:8px!important;line-height:1.15!important}
+  html body #root .records-table .record-select{top:8px!important;right:8px!important;width:26px!important;height:26px!important}
+  html body #root .records-table .record-select input{width:17px!important;height:17px!important}
+  html body #root .records-table .record-date{padding-right:32px!important;font-size:11px!important;line-height:1.25!important}
+  html body #root .records-table .record-source{padding:6px 0!important}
+  html body #root .records-table .record-source strong{font-size:14px!important;line-height:1.15!important}
+  html body #root .records-table .record-source span,
+  html body #root .records-table .record-source small{margin-top:2px!important;font-size:10px!important;line-height:1.25!important}
+  html body #root .records-table .record-type,
+  html body #root .records-table .record-status{padding:2px 0!important}
+  html body #root .records-table .type{padding:4px 7px!important;font-size:9px!important}
+  html body #root .records-table .status{min-height:29px!important;padding:4px 8px!important;font-size:9px!important}
+  html body #root .records-table .record-amount{padding-top:7px!important}
+  html body #root .records-table .record-amount strong{font-size:17px!important}
+  html body #root .records-table .record-amount small{margin-top:2px!important;font-size:9px!important}
+  html body #root .records-table .row-actions{padding-top:7px!important;padding-bottom:0!important}
+  html body #root .records-table .row-actions button{width:32px!important;height:32px!important}
+}
