@@ -94,6 +94,100 @@ html body #root .v7-header .global-category-nav-host{position:absolute!important
   html body #root .v7-header .global-category-nav a{min-width:0!important;height:44px!important;padding:0 6px!important;font-size:13px!important}
 }
 
+/* Unified settings palette: eight equal, theme-aware controls in a 4 x 2 grid. */
+html body #root .v7-header .header-actions .unified-settings-panel{
+  width:360px!important;
+  padding:14px!important;
+  background:var(--paper)!important;
+  color:var(--ink)!important;
+  border-color:var(--line)!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel>strong{
+  display:block!important;
+  margin:0 0 11px!important;
+  color:var(--ink)!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .header-tool-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .v8-theme-menu,
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcuts{
+  display:contents!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-icon-trigger,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-privacy-trigger,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-mode-trigger,
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card{
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  width:100%!important;
+  min-width:0!important;
+  height:64px!important;
+  min-height:64px!important;
+  max-height:64px!important;
+  margin:0!important;
+  padding:7px 4px!important;
+  border:1px solid color-mix(in srgb,var(--accent,var(--green)) 18%,var(--line))!important;
+  border-radius:10px!important;
+  background:color-mix(in srgb,var(--accent,var(--green)) 7%,var(--paper))!important;
+  color:var(--ink)!important;
+  text-align:center!important;
+  box-shadow:none!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-icon-trigger:hover,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-privacy-trigger:hover,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-mode-trigger:hover,
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card:hover{
+  border-color:color-mix(in srgb,var(--accent,var(--green)) 52%,var(--line))!important;
+  background:color-mix(in srgb,var(--accent,var(--green)) 13%,var(--paper))!important;
+  color:var(--accent,var(--green))!important;
+  transform:none!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .v8-privacy-trigger.active,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-mode-trigger.active{
+  border-color:color-mix(in srgb,var(--accent,var(--green)) 58%,var(--line))!important;
+  background:color-mix(in srgb,var(--accent,var(--green)) 17%,var(--paper))!important;
+  color:var(--accent,var(--green))!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .theme-icon-trigger svg,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-privacy-trigger svg,
+html body #root .v7-header .header-actions .unified-settings-panel .v8-mode-trigger svg,
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card svg{
+  display:block!important;
+  width:18px!important;
+  height:18px!important;
+  margin:0!important;
+  color:currentColor!important;
+  stroke:currentColor!important;
+}
+html body #root .v7-header .header-actions .unified-settings-panel .system-shortcut-card span,
+html body #root .v7-header .header-actions .unified-settings-panel .mobile-tool-label{
+  display:block!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  color:currentColor!important;
+  font-size:8px!important;
+  font-weight:850!important;
+  line-height:1.1!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+@media(max-width:430px){
+  html body #root .v7-header .header-actions .unified-settings-panel{
+    right:10px!important;
+    width:calc(100vw - 20px)!important;
+    padding:12px!important;
+  }
+  html body #root .v7-header .header-actions .unified-settings-panel .header-tool-grid{gap:7px!important}
+}
+
 /* Keep the settings and sign-out controls anchored to the far-right edge. */
 html body #root .v7-header .header-actions{
   margin-left:auto!important;
