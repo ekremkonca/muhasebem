@@ -991,7 +991,17 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
   const [detail,setDetail]=useState(null);
   const [netReplay,setNetReplay]=useState(0);
   const [netProgress,setNetProgress]=useState(0);
+  const netAnimatedRef=useRef(false);
+  const lastNetReplayRef=useRef(0);
   useEffect(()=>{
+    const manualReplay=netReplay!==lastNetReplayRef.current;
+    lastNetReplayRef.current=netReplay;
+    if(!manualReplay&&netAnimatedRef.current){
+      setNetProgress(1);
+      return;
+    }
+    if(!manualReplay&&(!Number.isFinite(net)||Math.abs(net)<0.01)) return;
+    netAnimatedRef.current=true;
     let frame,start;
     setNetProgress(0);
     const tick=(now)=>{
