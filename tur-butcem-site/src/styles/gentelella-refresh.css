@@ -539,7 +539,7 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
   grid-template-columns:1fr!important;
   gap:10px!important;
 }
-#root .command-net{
+#root .command-dashboard .command-net{
   position:relative!important;
   display:flex!important;
   align-items:center!important;
