@@ -1101,6 +1101,7 @@ function Dashboard({ onSignedOut }) {
         return false;
       }
     });
+  const [expandedMobileRecord, setExpandedMobileRecord] = useState(null);
   const undoTimer = useRef(null);
 
   const refresh = async () => {
@@ -1888,7 +1889,7 @@ function Dashboard({ onSignedOut }) {
                   </thead>
                   <tbody>
                     {pageRows.map((r) => (
-                      <tr key={r.id} className={r.due_date && r.due_date < today() && r.status === "Ödenmedi" ? "record-overdue" : ""}>
+                      <tr key={r.id} className={`${r.due_date && r.due_date < today() && r.status === "Ödenmedi" ? "record-overdue " : ""}${expandedMobileRecord === r.id ? "mobile-record-expanded" : "mobile-record-collapsed"}`}>
                         <td className="record-select">
                           <input
                             type="checkbox"
@@ -1903,7 +1904,16 @@ function Dashboard({ onSignedOut }) {
                             }
                           />
                         </td>
-                        <td className="record-date" data-label="Tarih">{fmtDate(r.date)}</td>
+                        <td className="record-date" data-label="Tarih">
+                          {fmtDate(r.date)}
+                          <button
+                            type="button"
+                            className="mobile-record-toggle"
+                            aria-label={`${fmtDate(r.date)} kaydının detaylarını ${expandedMobileRecord === r.id ? "kapat" : "aç"}`}
+                            aria-expanded={expandedMobileRecord === r.id}
+                            onClick={() => setExpandedMobileRecord((value) => value === r.id ? null : r.id)}
+                          >⌄</button>
+                        </td>
                         <td className="record-source" data-label="Tur / Kaynak">
                           <strong>{r.agency || r.tour || r.guest || r.ship || "Kayıt"}</strong>
                           <span>

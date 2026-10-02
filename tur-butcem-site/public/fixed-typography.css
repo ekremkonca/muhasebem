@@ -165,6 +165,8 @@ html body #root .v7-header .global-category-nav-host{position:absolute!important
   }
 }
 
+.mobile-record-toggle{display:none}
+
 /* Phone ledger density and a clean 2x2 filter grid. */
 @media screen and (max-width:600px){
   html body #root .records-head{
@@ -232,4 +234,31 @@ html body #root .v7-header .global-category-nav-host{position:absolute!important
   html body #root .records-table .record-amount small{margin-top:2px!important;font-size:9px!important}
   html body #root .records-table .row-actions{padding-top:7px!important;padding-bottom:0!important}
   html body #root .records-table .row-actions button{width:32px!important;height:32px!important}
+  html body #root .mobile-record-toggle{
+    display:grid!important;
+    place-items:center!important;
+    position:absolute!important;
+    top:7px!important;
+    right:39px!important;
+    width:28px!important;
+    height:28px!important;
+    padding:0!important;
+    border:1px solid var(--line)!important;
+    border-radius:9px!important;
+    background:color-mix(in srgb,var(--accent,var(--green)) 9%,var(--paper))!important;
+    color:var(--accent,var(--green))!important;
+    font-size:17px!important;
+    font-weight:900!important;
+    line-height:1!important;
+    transition:transform .18s ease,background .18s ease!important;
+  }
+  html body #root .mobile-record-expanded .mobile-record-toggle{transform:rotate(180deg)!important;background:color-mix(in srgb,var(--accent,var(--green)) 17%,var(--paper))!important}
+  html body #root .mobile-record-collapsed .record-source span,
+  html body #root .mobile-record-collapsed .record-source small,
+  html body #root .mobile-record-collapsed .record-amount small,
+  html body #root .mobile-record-collapsed .row-actions{display:none!important}
+  html body #root .mobile-record-collapsed .record-source{padding:4px 0!important}
+  html body #root .mobile-record-collapsed .record-amount{grid-column:1 / -1!important;padding-top:6px!important}
+  html body #root .mobile-record-collapsed .record-amount strong{text-align:left!important}
+  html body #root .mobile-record-expanded{box-shadow:0 12px 28px color-mix(in srgb,var(--accent,var(--green)) 12%,rgba(7,18,34,.12))!important}
 }
