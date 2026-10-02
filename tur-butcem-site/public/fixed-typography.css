@@ -112,6 +112,9 @@ html body #root .v7-header .header-actions .unified-settings-panel .header-tool-
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
   grid-template-rows:repeat(2,64px)!important;
   grid-auto-rows:64px!important;
+  height:136px!important;
+  min-height:136px!important;
+  max-height:136px!important;
   gap:8px!important;
   width:100%!important;
 }
