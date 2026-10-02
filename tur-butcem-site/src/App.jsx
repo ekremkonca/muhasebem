@@ -988,6 +988,20 @@ function DailyGreeting({rows,currency,convert}){
 
 function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, currency, rows, convert, homeCash, onSaveHomeCash, rates }) {
   const [detail,setDetail]=useState(null);
+  const [netReplay,setNetReplay]=useState(0);
+  const [netProgress,setNetProgress]=useState(0);
+  useEffect(()=>{
+    let frame,start;
+    setNetProgress(0);
+    const tick=(now)=>{
+      start??=now;
+      const progress=Math.min(1,(now-start)/1800);
+      setNetProgress(1-Math.pow(1-progress,2));
+      if(progress<1) frame=requestAnimationFrame(tick);
+    };
+    frame=requestAnimationFrame(tick);
+    return()=>cancelAnimationFrame(frame);
+  },[net,netReplay]);
   const values = [
     { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',date:r.date,meta:r.status,value:convert(r)})) },
     { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash", items:(cashBreakdown||[]).map(r=>({title:r.label||r.code,date:'Güncel',meta:`${r.amount.toLocaleString('tr-TR')} ${r.code} · Kur ${r.rate.toLocaleString('tr-TR')}`,value:r.tryValue})) },
@@ -998,14 +1012,12 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
   return (
     <section className="command-dashboard" aria-label="Sezon özeti">
       <article className="command-net">
-        <div className="command-net-copy">
-          <span>SEZON NET GELİR</span>
-          <strong><AnimatedMoney value={net} currency={currency} /></strong>
-        </div>
-        <div className="command-orbit command-orbit-burst" aria-label={`${tourCount} tur`}>
-          <span className="tour-spark spark-one"/><span className="tour-spark spark-two"/><span className="tour-spark spark-three"/><span className="tour-spark spark-four"/><span className="tour-spark spark-five"/><span className="tour-spark spark-six"/>
-          <i /><i /><b>{tourCount}</b><small>TUR</small>
-        </div>
+        <header className="season-net-head"><span>SEZON NET GELİR</span><small>{tourCount} tur</small></header>
+        <button className="season-net-dial" onClick={()=>setNetReplay(value=>value+1)} aria-label={`${money(net,currency)} sezon net geliri. Animasyonu yeniden başlat`} title="Dolumu yeniden başlat">
+          <svg viewBox="0 0 120 120" aria-hidden="true"><circle className="season-net-track" cx="60" cy="60" r="50"/><circle className="season-net-fill" cx="60" cy="60" r="50" pathLength="100" strokeDasharray="100" strokeDashoffset={100-netProgress*100}/></svg>
+          <span aria-hidden="true"><strong>{money(net*netProgress,currency)}</strong><small>NET GELİR</small></span>
+        </button>
+        <p>Daireye dokunarak yeniden oynat</p>
       </article>
       <article className="command-chart">
         <header className="command-pulse-head"><h3>Gelir dağılımı</h3></header>
