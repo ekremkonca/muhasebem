@@ -735,3 +735,23 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
   #root .security-fields{grid-template-columns:1fr!important}
   #root .security-form,#root .security-danger{padding:15px!important}
 }
+
+/* Keep the theme palette cohesive when the global color mode is dark. */
+:root[data-mode="dark"] body #root .v7-header .header-actions .unified-settings-panel .theme-panel{
+  background:#111d2e!important;
+  color:#edf3ff!important;
+  border-color:#30425f!important;
+  box-shadow:0 16px 36px rgba(0,0,0,.34)!important;
+}
+:root[data-mode="dark"] body #root .v7-header .header-actions .unified-settings-panel .theme-panel button{
+  color:#dce8fb!important;
+  background:color-mix(in srgb,var(--theme-dot) 9%,#16243a)!important;
+  border-color:#2a3c59!important;
+}
+:root[data-mode="dark"] body #root .v7-header .header-actions .unified-settings-panel .theme-panel button small{color:#91a4c2!important}
+:root[data-mode="dark"] body #root .v7-header .header-actions .unified-settings-panel .theme-panel button.active{
+  color:#fff!important;
+  background:color-mix(in srgb,var(--theme-dot) 24%,#14233b)!important;
+  border-color:color-mix(in srgb,var(--theme-dot) 65%,#536784)!important;
+  box-shadow:0 7px 18px color-mix(in srgb,var(--theme-dot) 18%,transparent)!important;
+}
