@@ -659,11 +659,15 @@ html body #root .v7-header .header-actions .unified-settings-panel{
 }
 html body #root .v7-header .header-actions .unified-settings-panel .theme-panel{
   box-sizing:border-box!important;
+  position:absolute!important;
+  top:calc(100% + 8px)!important;
+  right:0!important;
+  left:auto!important;
   width:100%!important;
-  height:auto!important;
-  min-height:174px!important;
-  max-height:310px!important;
-  overflow-y:auto!important;
+  height:220px!important;
+  min-height:220px!important;
+  max-height:220px!important;
+  overflow:visible!important;
   overscroll-behavior:contain!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   align-content:start!important;
@@ -686,8 +690,16 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
 html body #root .v7-header .header-actions .unified-settings-panel .theme-panel button span{min-width:0!important;font-weight:850!important}
 html body #root .v7-header .header-actions .unified-settings-panel .theme-panel button small{display:block!important;margin-top:2px!important;font-size:8px!important;font-weight:650!important}
 @media(max-width:620px){
-  html body #root .v7-header .header-actions .unified-settings-panel{overflow:auto!important}
-  html body #root .v7-header .header-actions .unified-settings-panel .theme-panel{min-height:166px!important;max-height:48vh!important}
+  html body #root .v7-header .header-actions .unified-settings-panel{
+    position:fixed!important;
+    top:70px!important;
+    right:12px!important;
+    left:auto!important;
+    width:min(340px,calc(100vw - 24px))!important;
+    max-height:calc(100vh - 90px)!important;
+    overflow:visible!important;
+  }
+  html body #root .v7-header .header-actions .unified-settings-panel .theme-panel{height:220px!important;min-height:220px!important;max-height:220px!important;overflow:auto!important}
 }
 
 /* Security center: two clear, theme-aware action cards. */
