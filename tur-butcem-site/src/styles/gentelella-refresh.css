@@ -614,3 +614,41 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
   #root .season-net-dial{width:150px;height:150px;flex-basis:150px}
   #root .season-net-dial strong{font-size:18px}
 }
+
+/* Let the whole dashboard follow the selected theme without losing category meaning. */
+#root .command-dashboard .command-net{
+  background:
+    radial-gradient(circle at 82% -28%,color-mix(in srgb,var(--accent,var(--green)) 42%,#fff),transparent 42%),
+    linear-gradient(125deg,color-mix(in srgb,var(--accent,var(--green)) 68%,#10233f),color-mix(in srgb,var(--accent-2,var(--accent,var(--green))) 64%,#382c65))!important;
+  box-shadow:0 13px 28px color-mix(in srgb,var(--accent,var(--green)) 20%,transparent)!important;
+}
+#root .command-net:before{border-color:color-mix(in srgb,var(--accent,var(--green)) 25%,rgba(255,255,255,.1))!important}
+#root .season-net-track{stroke:color-mix(in srgb,var(--accent,var(--green)) 28%,rgba(255,255,255,.17))!important}
+#root .season-net-fill{
+  stroke:color-mix(in srgb,var(--accent,var(--green)) 56%,#dcecff)!important;
+  filter:drop-shadow(0 0 4px color-mix(in srgb,var(--accent,var(--green)) 32%,transparent))!important;
+}
+#root .season-net-dial>span{
+  border-color:color-mix(in srgb,var(--accent,var(--green)) 26%,rgba(255,255,255,.14))!important;
+  background:color-mix(in srgb,var(--accent,var(--green)) 13%,rgba(13,27,62,.22))!important;
+}
+#root .command-chart{
+  background:
+    radial-gradient(circle at 96% 0,color-mix(in srgb,var(--accent,var(--green)) 10%,transparent),transparent 34%),
+    var(--paper)!important;
+  border-color:color-mix(in srgb,var(--accent,var(--green)) 22%,var(--line))!important;
+}
+#root .command-flow-row{--pulse-color:var(--accent,var(--green))}
+#root .command-flow-row.flow-cash{--pulse-color:color-mix(in srgb,var(--accent,var(--green)) 58%,#16b8a6)}
+#root .command-dashboard .pulse-cash-card{--pulse-color:color-mix(in srgb,var(--accent,var(--green)) 58%,#16b8a6)}
+#root .command-pulse-actions>.finance-tools>button{--pulse-color:color-mix(in srgb,var(--accent,var(--green)) 62%,#3b82f6)}
+#root .command-flow-ring,
+#root .pulse-action-ring,
+#root .command-pulse-actions>.finance-tools>button>.exchange-action-ring{
+  box-shadow:0 5px 12px color-mix(in srgb,var(--pulse-color) 15%,transparent)!important;
+}
+:root[data-mode="dark"] #root .command-chart{
+  background:
+    radial-gradient(circle at 96% 0,color-mix(in srgb,var(--accent,var(--green)) 16%,transparent),transparent 36%),
+    color-mix(in srgb,#121c2e 96%,var(--accent,var(--green)))!important;
+}
