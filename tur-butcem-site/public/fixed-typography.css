@@ -140,6 +140,8 @@ html body #root .v7-header .header-actions .unified-settings-panel .system-short
   color:var(--ink)!important;
   text-align:center!important;
   box-shadow:none!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
 }
 html body #root .v7-header .header-actions .unified-settings-panel .theme-icon-trigger:hover,
 html body #root .v7-header .header-actions .unified-settings-panel .v8-privacy-trigger:hover,
