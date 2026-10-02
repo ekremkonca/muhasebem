@@ -755,3 +755,88 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
   border-color:color-mix(in srgb,var(--theme-dot) 65%,#536784)!important;
   box-shadow:0 7px 18px color-mix(in srgb,var(--theme-dot) 18%,transparent)!important;
 }
+
+/* Mobile application shell. Desktop placement remains unchanged. */
+@media screen and (max-width:760px){
+  html{scroll-padding-bottom:86px!important}
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important}
+  html body #root .global-category-nav-host{
+    position:fixed!important;
+    z-index:850!important;
+    inset:auto 0 0!important;
+    top:auto!important;
+    left:0!important;
+    width:100%!important;
+    max-width:none!important;
+    transform:none!important;
+    padding:7px max(10px,env(safe-area-inset-right,0px)) calc(7px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))!important;
+    border-top:1px solid color-mix(in srgb,var(--accent,var(--green)) 18%,var(--line))!important;
+    background:color-mix(in srgb,var(--paper) 94%,transparent)!important;
+    box-shadow:0 -10px 28px rgba(5,14,28,.18)!important;
+    backdrop-filter:blur(16px)!important;
+  }
+  html body #root .global-category-nav{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+    width:100%!important;
+    height:auto!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    overflow:visible!important;
+  }
+  html body #root .global-category-nav a{
+    min-width:0!important;
+    height:48px!important;
+    padding:0 5px!important;
+    border:1px solid transparent!important;
+    border-radius:13px!important;
+    font-size:12px!important;
+    letter-spacing:0!important;
+  }
+  html body #root .global-category-nav a.active{
+    border-color:color-mix(in srgb,var(--accent,var(--green)) 28%,var(--line))!important;
+    background:color-mix(in srgb,var(--accent,var(--green)) 14%,var(--paper))!important;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,var(--green)) 8%,transparent),0 6px 16px color-mix(in srgb,var(--accent,var(--green)) 12%,transparent)!important;
+  }
+  #root .scroll-top-button,#root .undo-toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+}
+
+/* Mobile ledger: compact cards instead of a desktop table squeezed into a phone. */
+@media screen and (max-width:600px){
+  #root .date-presets{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;overflow:visible!important}
+  #root .date-presets button{width:100%!important;min-width:0!important;padding:7px 4px!important;font-size:11px!important}
+  #root .records{border-radius:18px!important;overflow:hidden!important}
+  #root .records-head{padding:13px 12px!important;gap:10px!important}
+  #root .records-head h2{font-size:18px!important}
+  #root .records-tools{gap:6px!important}
+  #root .records-tools .filter,#root .records-tools .entry-date-filter{min-height:42px!important;height:42px!important}
+  #root .records-table tbody{gap:9px!important;padding:9px!important}
+  #root .records-table tbody tr{
+    position:relative!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:8px 12px!important;
+    padding:12px!important;
+    border-radius:15px!important;
+    background:linear-gradient(145deg,color-mix(in srgb,var(--accent,var(--green)) 5%,var(--paper)),var(--paper))!important;
+    box-shadow:0 8px 20px rgba(7,18,34,.07)!important;
+  }
+  #root .records-table td[data-label]::before{margin-bottom:3px!important;font-size:9px!important;font-weight:850!important;letter-spacing:.035em!important;text-transform:uppercase!important}
+  #root .records-table .record-select{position:absolute!important;top:9px!important;right:9px!important;width:30px!important;height:30px!important}
+  #root .records-table .record-select input{width:18px!important;height:18px!important;border-radius:6px!important}
+  #root .records-table .record-date{grid-column:1!important;padding-right:36px!important;font-size:12px!important;font-weight:800!important}
+  #root .records-table .record-source{grid-column:1 / -1!important;padding:8px 0!important;border-top:1px solid color-mix(in srgb,var(--line) 72%,transparent)!important}
+  #root .records-table .record-source strong{font-size:15px!important;line-height:1.2!important}
+  #root .records-table .record-source span,#root .records-table .record-source small{font-size:11px!important;line-height:1.35!important}
+  #root .records-table .record-type{grid-column:1!important}
+  #root .records-table .record-status{grid-column:2!important;justify-self:end!important}
+  #root .records-table .type{padding:5px 8px!important;font-size:10px!important}
+  #root .records-table .status{min-height:32px!important;padding:5px 9px!important;font-size:10px!important}
+  #root .records-table .record-amount{grid-column:1!important;padding:9px 0 0!important;border-top:1px solid var(--line)!important;border-bottom:0!important}
+  #root .records-table .record-amount strong{font-size:18px!important;line-height:1.1!important}
+  #root .records-table .record-amount small{font-size:10px!important}
+  #root .records-table .row-actions{grid-column:2!important;align-self:stretch!important;justify-content:flex-end!important;padding-top:9px!important;border-top:1px solid var(--line)!important}
+  #root .records-table .row-actions::before{display:none!important}
+  #root .records-table .row-actions button{width:36px!important;height:36px!important;border-radius:10px!important}
+}
