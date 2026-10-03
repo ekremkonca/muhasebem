@@ -274,6 +274,26 @@ html body #root .v7-header .header-actions{
 
 .mobile-record-toggle{display:none}
 
+/* Android WebView: keep scroll frames light; restore the full visual treatment
+   immediately after the gesture ends. */
+html.native-android-app.native-fast-scroll *,
+html.native-android-app.native-fast-scroll *::before,
+html.native-android-app.native-fast-scroll *::after{
+  animation-play-state:paused!important;
+  transition:none!important;
+}
+html.native-android-app.native-fast-scroll .v7-header,
+html.native-android-app.native-fast-scroll .market-ticker,
+html.native-android-app.native-fast-scroll .summary-card,
+html.native-android-app.native-fast-scroll .v8-card,
+html.native-android-app.native-fast-scroll .workspace-records,
+html.native-android-app.native-fast-scroll .command-dashboard article,
+html.native-android-app.native-fast-scroll .scroll-top-button{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+
 /* Phone ledger density and a clean 2x2 filter grid. */
 @media screen and (max-width:600px){
   html body #root .records-head{

@@ -240,6 +240,30 @@ export default function SiteRouter() {
   const [path, setPath] = useState(() => cleanPath(window.location.pathname));
 
   useEffect(() => {
+    if (!document.documentElement.classList.contains("native-android-app")) return;
+    let frame = 0;
+    let timer = 0;
+    const begin = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        document.documentElement.classList.add("native-fast-scroll");
+        clearTimeout(timer);
+        timer = window.setTimeout(() =>
+          document.documentElement.classList.remove("native-fast-scroll"), 140);
+      });
+    };
+    window.addEventListener("scroll", begin, { passive: true });
+    window.addEventListener("touchmove", begin, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+      document.documentElement.classList.remove("native-fast-scroll");
+      window.removeEventListener("scroll", begin);
+      window.removeEventListener("touchmove", begin);
+    };
+  }, []);
+
+  useEffect(() => {
     getAuthState().catch(() => {});
     const sync = () => setPath(cleanPath(window.location.pathname));
     window.addEventListener("popstate", sync);
