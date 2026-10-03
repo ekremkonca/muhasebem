@@ -5,6 +5,16 @@ export function withTourPlans(events = [], rows = []) {
   const occupiedDates = new Set(events.map(event => dayKey(event.date)).filter(Boolean));
   const linked = new Set(events.map(e => String(e.linked_record_id || '')).filter(Boolean));
   const toursByDate = new Map();
+  const agenciesByDate = new Map();
+
+  for (const row of rows) {
+    const date = dayKey(row.date);
+    const agency = String(row.agency || '').trim();
+    if (!date.startsWith(`${seasonYear}-`) || !agency) continue;
+    const agencies = agenciesByDate.get(date) || new Set();
+    agencies.add(agency);
+    agenciesByDate.set(date, agencies);
+  }
 
   for (const row of rows) {
     const date = dayKey(row.date);
@@ -12,9 +22,17 @@ export function withTourPlans(events = [], rows = []) {
     if (!date.startsWith(`${seasonYear}-`)) continue;
     if (linked.has(String(row.id)) || occupiedDates.has(date)) continue;
 
-    const company = String(row.agency || '').trim() || 'Acenta belirtilmemiş';
     const day = toursByDate.get(date) || { rowId: row.id, companies: new Set() };
-    day.companies.add(company);
+    const directAgency = String(row.agency || '').trim();
+    const sameDayAgencies = agenciesByDate.get(date);
+    if (directAgency) day.companies.add(directAgency);
+    else if (sameDayAgencies?.size) sameDayAgencies.forEach(agency => day.companies.add(agency));
+    else {
+      const legacyLabel = [row.ship, row.guest, row.tour]
+        .map(value => String(value || '').trim())
+        .find(Boolean);
+      day.companies.add(legacyLabel || 'Tur planı');
+    }
     toursByDate.set(date, day);
   }
 

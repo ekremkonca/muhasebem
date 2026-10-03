@@ -30,3 +30,16 @@ test('2026 yılının tamamını takvime yansıtır', () => {
   ];
   assert.deepEqual(withTourPlans([], rows).map(event => event.date), ['2026-01-01', '2026-10-22', '2026-12-31']);
 });
+
+test('eski tur kaydında boş acentayı aynı günün acentasıyla tamamlar', () => {
+  const rows = [
+    { id: 'tour', date: '2026-05-18', type: 'Tur Geliri', tour: 'Efes', agency: '' },
+    { id: 'tip', date: '2026-05-18', type: 'Bahşiş', agency: 'Ada Travel' },
+  ];
+  assert.equal(withTourPlans([], rows)[0].title, 'Ada Travel');
+});
+
+test('acenta hiçbir kayıtta yoksa eski kayıt alanlarından anlamlı başlık kullanır', () => {
+  const rows = [{ id: 'tour', date: '2026-05-19', type: 'Tur Geliri', tour: 'Priene Milet Didim', agency: '' }];
+  assert.equal(withTourPlans([], rows)[0].title, 'Priene Milet Didim');
+});
