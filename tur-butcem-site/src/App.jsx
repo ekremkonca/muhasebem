@@ -983,7 +983,7 @@ function DailyGreeting({rows,currency,convert}){
  return <article className="daily-hello summary-greeting"><div><span className="eyebrow">GÜNÜN ÖZETİ</span><h2>{greeting}, Ekrem</h2><p>Bugün <b>{todayTours} tur</b> ve <b>{money(todayIncome,currency)}</b> kayıtlı kazanç var.</p></div><div className="daily-orbit"><i/><strong>{now.getDate()}</strong><small>{now.toLocaleDateString('tr-TR',{month:'short'}).toUpperCase()}</small></div></article>;
 }
 
-function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, expense, tourCount, currency, rows, convert, homeCash, onSaveHomeCash, rates }) {
+function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, tourCount, currency, rows, convert, homeCash, onSaveHomeCash, rates }) {
   const [detail,setDetail]=useState(null);
   const [netReplay,setNetReplay]=useState(0);
   const [netProgress,setNetProgress]=useState(0);
@@ -1009,11 +1009,23 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
     frame=requestAnimationFrame(tick);
     return()=>cancelAnimationFrame(frame);
   },[net,netReplay]);
+  const unpaidExpenseItems = rows
+    .filter((r) => isExpense(r) && r.status === "Ödenmedi")
+    .map((r) => {
+      const remaining = Math.max(0, Number(r.amount || 0) - Number(r.paid_amount || 0));
+      return {
+        title: r.tour || r.agency || "Tur masrafı",
+        date: r.date,
+        meta: "Ödenmedi · İade alınacak",
+        value: convert({ ...r, amount: remaining }),
+      };
+    });
+  const unpaidExpenseValue = unpaidExpenseItems.reduce((sum, item) => sum + item.value, 0);
   const values = [
     { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',date:r.date,meta:r.status,value:convert(r)})) },
     { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash", items:(cashBreakdown||[]).map(r=>({title:r.label||r.code,date:'Güncel',meta:`${r.amount.toLocaleString('tr-TR')} ${r.code} · Kur ${r.rate.toLocaleString('tr-TR')}`,value:r.tryValue})) },
     { label: "Bekleyen", value: pending, tone: "pending", items:rows.filter(r=>r.status==='Ödenmedi'&&isIncome(r)).map(r=>({title:r.tour||r.agency||r.type,date:r.date,meta:r.type,value:convert({...r,amount:Math.max(0,r.amount-r.paid_amount)} )})) },
-    { label: "Masraflar", value: expense, tone: "expense", items:rows.filter(r=>isExpense(r)&&r.status==='Ödendi').map(r=>({title:r.tour||r.agency||'Tur masrafı',date:r.date,meta:r.status,value:convert(r)})) },
+    { label: "Masraflar", value: unpaidExpenseValue, tone: "expense", items: unpaidExpenseItems },
   ];
   const max = Math.max(1, ...values.map((item) => Math.abs(item.value)));
   return (
@@ -1770,7 +1782,6 @@ function Dashboard({ onSignedOut }) {
           cashValue={loading ? 0 : cashFxTryValue}
           cashBreakdown={loading ? [] : cashFxTryBreakdown}
           tourIncome={loading ? 0 : tourIncome}
-          expense={loading ? 0 : expense}
           tourCount={tourCount}
           currency={currency}
           rows={seasonRows}
