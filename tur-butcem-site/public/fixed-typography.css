@@ -439,3 +439,39 @@ html.native-android-app.native-fast-scroll .scroll-top-button{
     border-top:1px solid var(--line);
   }
 }
+/* Dashboard hierarchy: horizontal season title and stronger distribution labels. */
+#root .season-net-head {
+  flex-direction:row!important;
+  align-items:center!important;
+}
+#root .season-net-head>span {
+  display:block!important;
+  width:auto!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  transform:none!important;
+  white-space:nowrap!important;
+  word-break:normal!important;
+}
+#root .command-flow-copy>small,
+#root .pulse-action-copy>small,
+#root .command-pulse-actions>.finance-tools>button b {
+  font-size:13px!important;
+  line-height:1.15!important;
+  font-weight:950!important;
+  letter-spacing:.01em!important;
+}
+@media (min-width:721px) {
+  #root .command-pulse-actions>.finance-tools>button .exchange-symbols {
+    display:flex!important;
+    align-items:center!important;
+    gap:6px!important;
+    margin-left:auto!important;
+  }
+  #root .command-pulse-actions>.finance-tools>button .exchange-symbols>i {
+    width:25px!important;
+    height:25px!important;
+    font-size:11px!important;
+    border-width:1px!important;
+  }
+}

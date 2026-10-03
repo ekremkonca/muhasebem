@@ -20,7 +20,7 @@ export default function FinanceOperations({rates}){
  const remove=async(row)=>{if(!window.confirm('Bu kasa hareketi silinsin mi?'))return;setBusy(true);try{await deleteCashMovement(row.id);setMovements(xs=>xs.filter(x=>x.id!==row.id))}catch(err){setError(err.message)}finally{setBusy(false)}};
  return <>
   <section className="finance-tools" aria-label="Finans yönetimi">
-   <button onClick={open}><i className="exchange-action-ring">⇄</i><span><b>Döviz İşlemleri</b><small>Bozum geçmişi ve gerçekleşen TL</small></span><span className="exchange-symbols" aria-hidden="true"><i>$</i><i>€</i><i>£</i><i>₺</i></span><em>→</em></button>
+   <button onClick={open}><i className="exchange-action-ring">⇄</i><span><b>Döviz İşlemleri</b></span><span className="exchange-symbols" aria-hidden="true"><i>$</i><i>€</i><i>£</i><i>₺</i></span><em>→</em></button>
   </section>
   {panel&&createPortal(<div className="finance-ops-backdrop" role="dialog" aria-modal="true" onMouseDown={e=>e.target===e.currentTarget&&setPanel('')}>
    <section className="finance-ops-modal">
