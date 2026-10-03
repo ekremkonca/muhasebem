@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {categoryTotals, currencyTotals, goalProgress, seasonMetrics} from './accountingSummary.js';
+import {categoryTotals, currencyTotals, goalProgress, realizedFxMovementTotal, seasonMetrics} from './accountingSummary.js';
 test('category totals convert each denomination before summing', () => {
  const rows = [{type:'Komisyon',amount:100,currency:'EUR'},{type:'Komisyon',amount:200,currency:'TRY'},{type:'Tur Masrafı',amount:20,currency:'USD'}];
  const rates = {EUR:50,TRY:1,USD:40};
@@ -19,6 +19,14 @@ test('goal reflects edits, losses and target overflow without stale snapshots', 
  assert.deepEqual(goalProgress(800,1000),{current:800,percent:80});
  assert.deepEqual(goalProgress(-10,1000),{current:-10,percent:0});
  assert.equal(goalProgress(2000,1000).percent,100);
+});
+test('only new realized FX movements enter net income', () => {
+ const movements = [
+  {kind:'Döviz Bozum',try_amount:77200.35,include_in_net:0},
+  {kind:'Döviz Bozum',try_amount:7350,include_in_net:1},
+  {kind:'Kasa Giriş',try_amount:5000,include_in_net:1},
+ ];
+ assert.equal(realizedFxMovementTotal(movements),7350);
 });
 test('season metrics exclude expenses from receivables and drafts from tour count', () => {
  const rows = [

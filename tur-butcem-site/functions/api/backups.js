@@ -139,8 +139,8 @@ export async function onRequestPost(context) {
           await db.batch(eventStatements.slice(i, i + 40));
       }
       if (movements !== null) {
-        const movementFields=['id','date','kind','amount','currency','rate','try_amount','account','note','created_at','updated_at'];
-        const statements=movements.map(row=>db.prepare(`INSERT INTO cash_movements (${movementFields.join(',')}) VALUES (${movementFields.map(()=>'?').join(',')})`).bind(...movementFields.map(key=>row[key]??(key==='account'||key==='note'?'':null))));
+        const movementFields=['id','date','kind','amount','currency','rate','try_amount','account','note','include_in_net','created_at','updated_at'];
+        const statements=movements.map(row=>db.prepare(`INSERT INTO cash_movements (${movementFields.join(',')}) VALUES (${movementFields.map(()=>'?').join(',')})`).bind(...movementFields.map(key=>row[key]??(key==='account'||key==='note'?'':key==='include_in_net'?0:null))));
         for(let i=0;i<statements.length;i+=40) await db.batch(statements.slice(i,i+40));
       }
       if (closings !== null) {

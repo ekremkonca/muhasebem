@@ -1,6 +1,6 @@
-import React,{useEffect,useMemo,useState} from 'react';
+import React,{useMemo,useState} from 'react';
 import {createPortal} from 'react-dom';
-import {createCashMovement,deleteCashMovement,loadCashMovements,updateCashMovement} from './api';
+import {createCashMovement,deleteCashMovement,updateCashMovement} from './api';
 import './styles/finance-operations.css';
 
 const today=()=>new Date().toISOString().slice(0,10);
@@ -8,16 +8,14 @@ const emptyMovement=()=>({date:today(),kind:'Kasa Giriş',amount:'',currency:'TR
 const money=(value)=>new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY',maximumFractionDigits:2}).format(Number(value)||0);
 const nativeMoney=(value,currency)=>new Intl.NumberFormat('tr-TR',{style:'currency',currency,maximumFractionDigits:2}).format(Number(value)||0);
 
-export default function FinanceOperations({rates}){
- const [panel,setPanel]=useState(''),[movements,setMovements]=useState([]),[draft,setDraft]=useState(emptyMovement),[busy,setBusy]=useState(false),[error,setError]=useState('');
- const refresh=async()=>setMovements(await loadCashMovements());
- useEffect(()=>{refresh().catch(()=>{})},[]);
+export default function FinanceOperations({rates,movements,onMovementsChange}){
+ const [panel,setPanel]=useState(''),[draft,setDraft]=useState(emptyMovement),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const shown=useMemo(()=>movements.filter(x=>x.kind==='Döviz Bozum'),[movements]);
  const total=shown.reduce((sum,x)=>sum+Number(x.try_amount||0),0);
  const open=()=>{setPanel('exchange');setError('');setDraft({...emptyMovement(),kind:'Döviz Bozum'})};
- const saveMovement=async(e)=>{e.preventDefault();setBusy(true);setError('');try{const rate=draft.currency==='TRY'?1:Number(draft.rate||rates?.[draft.currency]||0);const payload={...draft,kind:'Döviz Bozum',amount:Number(draft.amount),rate};const saved=draft.id?await updateCashMovement(payload):await createCashMovement(payload);setMovements(xs=>[saved,...xs.filter(x=>x.id!==saved.id)]);setDraft({...emptyMovement(),kind:'Döviz Bozum'})}catch(err){setError(err.message)}finally{setBusy(false)}};
+ const saveMovement=async(e)=>{e.preventDefault();setBusy(true);setError('');try{const rate=draft.currency==='TRY'?1:Number(draft.rate||rates?.[draft.currency]||0);const payload={...draft,kind:'Döviz Bozum',amount:Number(draft.amount),rate};const saved=draft.id?await updateCashMovement(payload):await createCashMovement(payload);onMovementsChange(xs=>[saved,...xs.filter(x=>x.id!==saved.id)]);setDraft({...emptyMovement(),kind:'Döviz Bozum'})}catch(err){setError(err.message)}finally{setBusy(false)}};
  const edit=(row)=>setDraft({...row,amount:String(row.amount),rate:String(row.rate)});
- const remove=async(row)=>{if(!window.confirm('Bu kasa hareketi silinsin mi?'))return;setBusy(true);try{await deleteCashMovement(row.id);setMovements(xs=>xs.filter(x=>x.id!==row.id))}catch(err){setError(err.message)}finally{setBusy(false)}};
+ const remove=async(row)=>{if(!window.confirm('Bu kasa hareketi silinsin mi?'))return;setBusy(true);try{await deleteCashMovement(row.id);onMovementsChange(xs=>xs.filter(x=>x.id!==row.id))}catch(err){setError(err.message)}finally{setBusy(false)}};
  return <>
   <section className="finance-tools" aria-label="Finans yönetimi">
    <button onClick={open}><i className="exchange-action-ring">⇄</i><span><b>Döviz İşlemleri</b></span><span className="exchange-symbols" aria-hidden="true"><i>$</i><i>€</i><i>£</i><i>₺</i></span><em>→</em></button>

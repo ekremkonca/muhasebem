@@ -192,11 +192,13 @@ export async function ensureSchema(db) {
         try_amount REAL NOT NULL DEFAULT 0,
         account TEXT NOT NULL DEFAULT '',
         note TEXT NOT NULL DEFAULT '',
+        include_in_net INTEGER NOT NULL DEFAULT 0,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       )`,
     )
     .run();
+  await ensureColumn(db, "cash_movements", "include_in_net", "INTEGER NOT NULL DEFAULT 0");
 
   await db
     .prepare(
@@ -517,7 +519,7 @@ export async function snapshotRecords(
       `SELECT id,date,time,company,title,note,status,category,amount,currency,recurrence,linked_record_id,created_at,updated_at FROM calendar_events ORDER BY date, time, created_at`,
     )
     .all();
-  const movementResult = await db.prepare(`SELECT id,date,kind,amount,currency,rate,try_amount,account,note,created_at,updated_at FROM cash_movements ORDER BY date DESC,created_at DESC`).all();
+  const movementResult = await db.prepare(`SELECT id,date,kind,amount,currency,rate,try_amount,account,note,include_in_net,created_at,updated_at FROM cash_movements ORDER BY date DESC,created_at DESC`).all();
   const closingResult = await db.prepare(`SELECT id,month,income,expense,cash_value,receivable,net,snapshot,note,created_at,updated_at FROM month_closings ORDER BY month DESC`).all();
   const id = crypto.randomUUID();
   const payload = {

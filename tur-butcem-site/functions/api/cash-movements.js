@@ -1,6 +1,6 @@
 import { audit, errorResponse, getDb, json, requireSession } from '../_lib.js';
 
-const fields = 'id,date,kind,amount,currency,rate,try_amount,account,note,created_at,updated_at';
+const fields = 'id,date,kind,amount,currency,rate,try_amount,account,note,include_in_net,created_at,updated_at';
 const kinds = new Set(['Döviz Bozum','Kasa Giriş','Kasa Çıkış','Banka Transferi','Harcama','Diğer']);
 const currencies = new Set(['TRY','USD','EUR','GBP']);
 
@@ -35,7 +35,8 @@ export async function onRequestPost(context) {
   try {
     const db=await getDb(context); await requireSession(context,db);
     const m=cleanMovement(await context.request.json());
-    await db.prepare(`INSERT INTO cash_movements (id,date,kind,amount,currency,rate,try_amount,account,note) VALUES (?,?,?,?,?,?,?,?,?)`).bind(m.id,m.date,m.kind,m.amount,m.currency,m.rate,m.try_amount,m.account,m.note).run();
+    m.include_in_net = m.kind === 'Döviz Bozum' ? 1 : 0;
+    await db.prepare(`INSERT INTO cash_movements (id,date,kind,amount,currency,rate,try_amount,account,note,include_in_net) VALUES (?,?,?,?,?,?,?,?,?,?)`).bind(m.id,m.date,m.kind,m.amount,m.currency,m.rate,m.try_amount,m.account,m.note,m.include_in_net).run();
     await audit(db,m.id,'cash_movement_create',{after:m});
     return json({movement:m},201);
   } catch(error){return errorResponse(error,'Kasa hareketi eklenemedi.');}
@@ -47,6 +48,7 @@ export async function onRequestPatch(context) {
     const m=cleanMovement(await context.request.json());
     const before=await db.prepare(`SELECT ${fields} FROM cash_movements WHERE id=?`).bind(m.id).first();
     if(!before) return json({error:'Kasa hareketi bulunamadı.'},404);
+    m.include_in_net = Number(before.include_in_net) === 1 ? 1 : 0;
     await db.prepare(`UPDATE cash_movements SET date=?,kind=?,amount=?,currency=?,rate=?,try_amount=?,account=?,note=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(m.date,m.kind,m.amount,m.currency,m.rate,m.try_amount,m.account,m.note,m.id).run();
     await audit(db,m.id,'cash_movement_update',{before,after:m});
     return json({movement:m});

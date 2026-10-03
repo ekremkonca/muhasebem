@@ -30,3 +30,9 @@ export function seasonMetrics(rows, convert, convertOutstanding) {
   ).length;
   return { tourIncome: roundMoney(tourIncome), expense: roundMoney(expense), pending: roundMoney(pending), tourCount };
 }
+
+export function realizedFxMovementTotal(movements) {
+  return roundMoney((movements || [])
+    .filter(row => row.kind === 'Döviz Bozum' && number(row.include_in_net) === 1)
+    .reduce((sum, row) => sum + number(row.try_amount), 0));
+}

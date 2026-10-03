@@ -4,7 +4,7 @@ import FinanceOperations from './FinanceOperations.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { categoryTotals, currencyTotals, goalProgress, seasonMetrics } from './accountingSummary.js';
+import { categoryTotals, currencyTotals, goalProgress, realizedFxMovementTotal, seasonMetrics } from './accountingSummary.js';
 import './styles/accounting-refresh.css';
 import FinanceScore from './FinanceScore.jsx';
 import CategoryDonut from './CategoryDonut.jsx';
@@ -28,6 +28,7 @@ import {
   loadBackups,
   loadEvents,
   loadHistory,
+  loadCashMovements,
   loadRecords,
   loadSettings,
   loadHomeCash,
@@ -983,7 +984,7 @@ function DailyGreeting({rows,currency,convert}){
  return <article className="daily-hello summary-greeting"><div><span className="eyebrow">GÜNÜN ÖZETİ</span><h2>{greeting}, Ekrem</h2><p>Bugün <b>{todayTours} tur</b> ve <b>{money(todayIncome,currency)}</b> kayıtlı kazanç var.</p></div><div className="daily-orbit"><i/><strong>{now.getDate()}</strong><small>{now.toLocaleDateString('tr-TR',{month:'short'}).toUpperCase()}</small></div></article>;
 }
 
-function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, tourCount, currency, rows, convert, homeCash, onSaveHomeCash, rates }) {
+function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIncome, tourCount, currency, rows, convert, homeCash, onSaveHomeCash, rates, cashMovements, onCashMovementsChange }) {
   const [detail,setDetail]=useState(null);
   const [netReplay,setNetReplay]=useState(0);
   const [netProgress,setNetProgress]=useState(0);
@@ -1061,7 +1062,7 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
             <span className="pulse-action-copy"><small>EV KASA</small><b>{homeCash.map((item)=>money(item.amount,item.code)).join(' · ')}</b></span>
             <HomeCashEditor balances={homeCash} onSave={onSaveHomeCash}/>
           </article>
-          <FinanceOperations rates={rates}/>
+          <FinanceOperations rates={rates} movements={cashMovements} onMovementsChange={onCashMovementsChange}/>
         </div>
       </article>
       {detail&&<div className="pulse-detail-backdrop" role="dialog" aria-modal="true" onMouseDown={e=>e.target===e.currentTarget&&setDetail(null)}><section className="pulse-detail"><header><div><span>FİNANS PULSU</span><h3>{detail.label}</h3><b>{money(detail.value,currency)}</b></div><button onClick={()=>setDetail(null)}>×</button></header><div className="pulse-detail-list">{[...detail.items].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).map((item,index)=><article key={`${item.title}-${index}`}><time>{item.date==='Güncel'?'Güncel':fmtDate(item.date)}</time><span><b>{item.title}</b><small>{item.meta}</small></span><strong>{money(item.value,currency)}</strong></article>)}{!detail.items.length&&<p>Kayıt bulunamadı.</p>}</div></section></div>}
@@ -1087,6 +1088,7 @@ function Dashboard({ onSignedOut }) {
     [rates, setRates] = useState({ TRY: 1, USD: 46.3, EUR: 53, GBP: 62.3 }),
     [ratesUpdatedAt, setRatesUpdatedAt] = useState(null),
     [homeCash, setHomeCash] = useState(CASH_FX_BALANCES),
+    [cashMovements, setCashMovements] = useState([]),
     [entryDate, setEntryDate] = useState(""),
     [typeFilter, setTypeFilter] = useState("Tümü"),
     [statusFilter, setStatusFilter] = useState("Tümü"),
@@ -1125,18 +1127,20 @@ function Dashboard({ onSignedOut }) {
     setLoading(true);
     setError("");
     try {
-      const [r, s, b, h, e] = await Promise.all([
+      const [r, s, b, h, e, movements] = await Promise.all([
         loadRecords(),
         loadSettings(),
         loadBackups(),
         loadHistory(50),
         loadEvents(),
+        loadCashMovements(),
       ]);
       setRows(r.filter((x) => x.date >= MIN_DATE).map(normalizeRecord));
       setEvents(e);
       setRates(s.rates);
       setRatesUpdatedAt(s.updatedAt);
       setHomeCash((await loadHomeCash()).balances);
+      setCashMovements(movements);
       setBackups(b.backups || []);
       setHistory(h.history || []);
     } catch (e) {
@@ -1261,8 +1265,10 @@ function Dashboard({ onSignedOut }) {
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
     realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
+    newRealizedFxTry = realizedFxMovementTotal(cashMovements),
+    newRealizedFxValue = convertAmount(newRealizedFxTry, "TRY", currency),
     spentRodosValue = convertAmount(SPENT_RODOS_EUR, "EUR", currency),
-    income = tourIncome + realizedFxValue + postJulyTipCommissionIncome + spentRodosValue,
+    income = tourIncome + realizedFxValue + newRealizedFxValue + postJulyTipCommissionIncome + spentRodosValue,
     net = income - expense;
   const topTour = useMemo(() => {
     const m = {};
@@ -1789,6 +1795,8 @@ function Dashboard({ onSignedOut }) {
           homeCash={homeCash}
           onSaveHomeCash={setHomeCash}
           rates={rates}
+          cashMovements={cashMovements}
+          onCashMovementsChange={setCashMovements}
         />
         <div className="accounting-currency-pair">
           <article className="accounting-currency-panel combined-currency-panel">
