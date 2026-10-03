@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { withTourPlans } from './tourCalendar.js';
 
 test('manuel plan bulunan güne ikinci tur planı eklemez', () => {
-  const events = [{ id: 'manual', date: '2026-06-12', title: 'Efes turu', company: '' }];
-  const rows = [{ id: 'tour-1', date: '2026-06-12', type: 'Tur Geliri', agency: 'ABC Travel' }];
+  const events = [{ id: 'manual', date: '2026-10-22T00:00:00.000Z', title: 'Efes turu', company: '' }];
+  const rows = [{ id: 'tour-1', date: '2026-10-22', type: 'Tur Geliri', agency: 'ABC Travel' }];
   assert.deepEqual(withTourPlans(events, rows), events);
 });
 
@@ -20,12 +20,13 @@ test('aynı günün acentalarını tek otomatik planda birleştirir', () => {
   assert.equal(result[0].title, 'ABC Travel · XYZ Turizm');
 });
 
-test('yalnızca 2026 Nisan-Ekim sezonunu takvime yansıtır', () => {
+test('2026 yılının tamamını takvime yansıtır', () => {
   const rows = [
-    { id: 'march', date: '2026-03-31', type: 'Tur Geliri', agency: 'A' },
-    { id: 'april', date: '2026-04-01', type: 'Tur Geliri', agency: 'B' },
-    { id: 'october', date: '2026-10-31', type: 'Tur Geliri', agency: 'C' },
-    { id: 'november', date: '2026-11-01', type: 'Tur Geliri', agency: 'D' },
+    { id: 'previous', date: '2025-12-31', type: 'Tur Geliri', agency: 'A' },
+    { id: 'january', date: '2026-01-01', type: 'Tur Geliri', agency: 'B' },
+    { id: 'october', date: '2026-10-22', type: 'Tur Geliri', agency: 'C' },
+    { id: 'december', date: '2026-12-31', type: 'Tur Geliri', agency: 'D' },
+    { id: 'next', date: '2027-01-01', type: 'Tur Geliri', agency: 'E' },
   ];
-  assert.deepEqual(withTourPlans([], rows).map(event => event.date), ['2026-04-01', '2026-10-31']);
+  assert.deepEqual(withTourPlans([], rows).map(event => event.date), ['2026-01-01', '2026-10-22', '2026-12-31']);
 });
