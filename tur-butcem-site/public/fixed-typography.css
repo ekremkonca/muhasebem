@@ -441,8 +441,19 @@ html.native-android-app.native-fast-scroll .scroll-top-button{
 }
 /* Dashboard hierarchy: horizontal season title and stronger distribution labels. */
 #root .season-net-head {
+  position:relative!important;
+  top:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
   flex-direction:row!important;
   align-items:center!important;
+  justify-content:space-between!important;
 }
 #root .season-net-head>span {
   display:block!important;
