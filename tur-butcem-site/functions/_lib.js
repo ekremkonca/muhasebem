@@ -409,7 +409,8 @@ export function normalizeRecord(input) {
     !["Tur Geliri", "Tur Masrafı", "Bahşiş", "Komisyon"].includes(record.type)
   )
     throw Object.assign(new Error("Geçersiz işlem türü."), { status: 400 });
-  if (!Number.isFinite(record.amount) || record.amount <= 0)
+  const calendarDraft = Boolean(record.source_event_id) && record.amount === 0;
+  if (!Number.isFinite(record.amount) || record.amount < 0 || (record.amount === 0 && !calendarDraft))
     throw Object.assign(new Error("Tutar sıfırdan büyük olmalı."), {
       status: 400,
     });
@@ -422,7 +423,7 @@ export function normalizeRecord(input) {
   if (!Number.isFinite(record.paid_amount) || record.paid_amount < 0 || record.paid_amount > record.amount)
     throw Object.assign(new Error("Tahsil edilen tutar toplam tutarı aşamaz."), { status: 400 });
   if (record.status === "İade edildi") record.paid_amount = 0;
-  else record.status = record.paid_amount >= record.amount ? "Ödendi" : "Ödenmedi";
+  else record.status = record.amount > 0 && record.paid_amount >= record.amount ? "Ödendi" : "Ödenmedi";
   const limits = { tour: 200, guest: 200, agency: 200, ship: 200, tags: 300, source_event_id: 100, note: 2000 };
   for (const [field, limit] of Object.entries(limits)) {
     if (record[field].length > limit)

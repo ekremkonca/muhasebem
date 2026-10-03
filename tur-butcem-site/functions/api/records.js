@@ -2,6 +2,29 @@ import { audit, ensureDailyBackup, errorResponse, getDb, json, normalizeRecord, 
 
 const selectFields = 'id,date,tour,guest,agency,ship,type,amount,currency,status,due_date,paid_amount,tags,source_event_id,note,deleted_at,created_at,updated_at';
 
+async function syncCalendarFromRecord(db, record) {
+  if (record.type !== 'Tur Geliri' && !record.source_event_id) return;
+  let event = record.source_event_id
+    ? await db.prepare('SELECT id FROM calendar_events WHERE id=?').bind(record.source_event_id).first()
+    : await db.prepare('SELECT id FROM calendar_events WHERE linked_record_id=?').bind(record.id).first();
+  if (!event?.id && record.type === 'Tur Geliri') {
+    event = await db.prepare("SELECT id FROM calendar_events WHERE date=? AND linked_record_id='' ORDER BY created_at LIMIT 1").bind(record.date).first();
+  }
+  const eventId = event?.id || crypto.randomUUID();
+  const category = record.type === 'Tur Masrafı' ? 'Gider' : record.type === 'Komisyon' ? 'Tahsilat' : 'Gelir';
+  if (event?.id) {
+    await db.prepare(`UPDATE calendar_events SET date=?,company=?,title=?,note=?,status=?,category=?,amount=?,currency=?,linked_record_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`)
+      .bind(record.date,record.agency,record.tour,record.note,record.status === 'Ödendi' ? 'Tamamlandı' : 'Planlandı',category,record.amount,record.currency,record.id,eventId).run();
+  } else {
+    await db.prepare(`INSERT INTO calendar_events (id,date,time,company,title,note,status,category,amount,currency,recurrence,linked_record_id) VALUES (?,?,'',?,?,?,?,?,?,?,'Yok',?)`)
+      .bind(eventId,record.date,record.agency,record.tour,record.note,record.status === 'Ödendi' ? 'Tamamlandı' : 'Planlandı',category,record.amount,record.currency,record.id).run();
+  }
+  if (record.source_event_id !== eventId) {
+    await db.prepare('UPDATE records SET source_event_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=?').bind(eventId,record.id).run();
+    record.source_event_id = eventId;
+  }
+}
+
 export async function onRequestGet(context) {
   try {
     const db = await getDb(context);
@@ -36,7 +59,10 @@ export async function onRequestPost(context) {
         deleted_at=NULL,updated_at=CURRENT_TIMESTAMP
     `).bind(r.id,r.date,r.tour,r.guest,r.agency,r.ship,r.type,r.amount,r.currency,r.status,r.due_date,r.paid_amount,r.tags,r.source_event_id,r.note));
     if (statements.length) await db.batch(statements);
-    for (const r of records) await audit(db, r.id, 'create', { after: r });
+    for (const r of records) {
+      await syncCalendarFromRecord(db, r);
+      await audit(db, r.id, 'create', { after: r });
+    }
     return json({ records }, 201);
   } catch (error) {
     return errorResponse(error, 'Kayıt eklenemedi.');
@@ -57,6 +83,7 @@ export async function onRequestPatch(context) {
       if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı.' }, 404);
       await audit(db, id, 'restore', { before });
       const record = await db.prepare(`SELECT ${selectFields} FROM records WHERE id=?`).bind(id).first();
+      if (record) await syncCalendarFromRecord(db, record);
       return json({ record });
     }
 
@@ -66,6 +93,7 @@ export async function onRequestPatch(context) {
       const result = await db.prepare(`UPDATE records SET date=?,tour=?,guest=?,agency=?,ship=?,type=?,amount=?,currency=?,status=?,due_date=?,paid_amount=?,tags=?,source_event_id=?,note=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND deleted_at IS NULL`)
         .bind(r.date,r.tour,r.guest,r.agency,r.ship,r.type,r.amount,r.currency,r.status,r.due_date,r.paid_amount,r.tags,r.source_event_id,r.note,r.id).run();
       if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı.' }, 404);
+      await syncCalendarFromRecord(db, r);
       await audit(db, r.id, 'update', { before, after: r });
       return json({ record: r });
     }
@@ -77,6 +105,7 @@ export async function onRequestPatch(context) {
     const before = await db.prepare(`SELECT ${selectFields} FROM records WHERE id=?`).bind(id).first();
     const result = await db.prepare("UPDATE records SET status=?,paid_amount=CASE WHEN ?='Ödendi' THEN amount ELSE 0 END,updated_at=CURRENT_TIMESTAMP WHERE id=? AND deleted_at IS NULL").bind(status,status,id).run();
     if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı.' }, 404);
+    if (before) await syncCalendarFromRecord(db, { ...before, status, paid_amount: status === 'Ödendi' ? before.amount : 0 });
     await audit(db, id, 'status', { before: before?.status, after: status });
     return json({ id, status });
   } catch (error) {
@@ -106,7 +135,9 @@ export async function onRequestDelete(context) {
       return json({ id, permanent: true });
     }
 
-    const result = await db.prepare('UPDATE records SET deleted_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE id=? AND deleted_at IS NULL').bind(id).run();
+    const statements = [db.prepare('UPDATE records SET deleted_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE id=? AND deleted_at IS NULL').bind(id)];
+    statements.push(db.prepare('DELETE FROM calendar_events WHERE linked_record_id=? OR id=?').bind(id,before.source_event_id || ''));
+    const [result] = await db.batch(statements);
     if (!result.meta?.changes) return json({ error: 'Kayıt bulunamadı veya zaten silinmiş.' }, 404);
     await audit(db, id, 'delete', { before });
     return json({ id, deleted: true });
