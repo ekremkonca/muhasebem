@@ -1018,7 +1018,16 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
   return (
     <section className="command-dashboard" aria-label="Sezon özeti">
       <article className="command-net">
-        <header className="season-net-head"><span>SEZON NET GELİR</span><small>{tourCount} tur</small></header>
+        <header className="season-net-head">
+          <span>SEZON NET GELİR</span>
+          <span className="season-tour-counter" aria-label={`${tourCount} tur`}>
+            <svg viewBox="0 0 44 44" aria-hidden="true">
+              <circle className="season-tour-track" cx="22" cy="22" r="18" />
+              <circle className="season-tour-fill" cx="22" cy="22" r="18" pathLength="100" strokeDasharray="100" strokeDashoffset={100-netProgress*100} />
+            </svg>
+            <span><strong>{Math.round(tourCount*netProgress)}</strong><small>TUR</small></span>
+          </span>
+        </header>
         <button className="season-net-dial" onClick={()=>setNetReplay(value=>value+1)} aria-label={`${money(net,currency)} sezon net geliri. Animasyonu yeniden başlat`} title="Dolumu yeniden başlat">
           <svg viewBox="0 0 120 120" aria-hidden="true"><circle className="season-net-track" cx="60" cy="60" r="50"/><circle className="season-net-fill" cx="60" cy="60" r="50" pathLength="100" strokeDasharray="100" strokeDashoffset={100-netProgress*100}/></svg>
           <span aria-hidden="true"><strong>{money(net*netProgress,currency)}</strong><small>NET GELİR</small></span>

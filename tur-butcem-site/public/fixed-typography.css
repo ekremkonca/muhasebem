@@ -464,6 +464,62 @@ html.native-android-app.native-fast-scroll .scroll-top-button{
   white-space:nowrap!important;
   word-break:normal!important;
 }
+#root .season-net-head>span:first-child {
+  color:#fff!important;
+  font-size:15px!important;
+  line-height:1.15!important;
+  font-weight:950!important;
+  letter-spacing:.11em!important;
+}
+#root .season-tour-counter {
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  width:58px!important;
+  height:58px!important;
+  flex:0 0 58px!important;
+}
+#root .season-tour-counter>svg {
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:visible!important;
+  transform:rotate(-90deg)!important;
+}
+#root .season-tour-counter circle {
+  fill:none!important;
+  stroke-width:3.5!important;
+}
+#root .season-tour-track {stroke:rgba(255,255,255,.18)!important}
+#root .season-tour-fill {
+  stroke:#fff!important;
+  stroke-linecap:round!important;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.45))!important;
+}
+#root .season-tour-counter>span {
+  position:relative!important;
+  z-index:1!important;
+  display:grid!important;
+  place-items:center!important;
+  gap:0!important;
+  color:#fff!important;
+  line-height:1!important;
+}
+#root .season-tour-counter strong {
+  color:#fff!important;
+  font-size:15px!important;
+  font-weight:950!important;
+  font-variant-numeric:tabular-nums!important;
+}
+#root .season-tour-counter small {
+  margin-top:3px!important;
+  color:rgba(255,255,255,.72)!important;
+  font-size:6px!important;
+  font-weight:950!important;
+  letter-spacing:.12em!important;
+}
 #root .command-flow-copy>small,
 #root .pulse-action-copy>small,
 #root .command-pulse-actions>.finance-tools>button b {
