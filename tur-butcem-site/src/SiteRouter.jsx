@@ -185,12 +185,14 @@ function TakvimPage() {
       const record = await createRecord({
         id: crypto.randomUUID(), date: event.date, due_date: event.date,
         tour: event.title, guest: "", agency: event.company || "", ship: "",
-        type: event.category === "Gider" ? "Tur Masrafı" : event.category === "Tahsilat" ? "Komisyon" : "Tur Geliri",
+        type: ["Tur Geliri", "Bahşiş", "Komisyon", "Tur Masrafı"].includes(event.category)
+          ? event.category
+          : event.category === "Gider" ? "Tur Masrafı" : event.category === "Tahsilat" ? "Komisyon" : "Tur Geliri",
         amount: Number(event.amount), currency: event.currency || "TRY", status: "Ödenmedi",
         paid_amount: 0, tags: `Takvim, ${event.category}`, source_event_id: event.id,
         note: event.note || "Takvimden oluşturuldu",
       });
-      const updated = await updateEvent({ ...event, status: "Tamamlandı", linked_record_id: record.id });
+      const updated = await updateEvent({ ...event, status: "Kesinleşti", linked_record_id: record.id });
       setRows((current) => [record, ...current]);
       setEvents((current) => current.map((item) => item.id === updated.id ? updated : item));
       return record;

@@ -40,7 +40,7 @@ export function withTourPlans(events = [], rows = []) {
   for (const [date, day] of toursByDate) {
     const title = [...day.companies].join(' · ');
     plans.push({id: `tour-record-${day.rowId}`, date, title,
-      company: '', time: '', status: 'Planlandı', category: 'Plan',
+      company: '', time: '', status: 'Kesinleşti', category: 'Tur Geliri',
       recurrence: 'Yok', fromTourRecord: true});
   }
   return [...events, ...plans];

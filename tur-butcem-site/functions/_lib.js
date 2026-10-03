@@ -445,8 +445,8 @@ export function normalizeCalendarEvent(input) {
     company: String(input.company || "").trim(),
     title: String(input.title || "").trim(),
     note: String(input.note || "").trim(),
-    status: String(input.status || "Planlandı").trim(),
-    category: String(input.category || "Plan").trim(),
+    status: String(input.status || "Kesinleşti").trim(),
+    category: String(input.category || "Tur Geliri").trim(),
     amount: Number(input.amount || 0),
     currency: String(input.currency || "TRY").trim(),
     recurrence: String(input.recurrence || "Yok").trim(),
@@ -469,7 +469,7 @@ export function normalizeCalendarEvent(input) {
     throw Object.assign(new Error("Geçersiz etkinlik durumu."), {
       status: 400,
     });
-  if (!["Plan", "Gelir", "Gider", "Tahsilat", "Yatırım", "Vergi"].includes(event.category))
+  if (!["Tur Geliri", "Bahşiş", "Komisyon", "Tur Masrafı", "Plan", "Gelir", "Gider", "Tahsilat", "Yatırım", "Vergi"].includes(event.category))
     throw Object.assign(new Error("Geçersiz etkinlik kategorisi."), { status: 400 });
   if (!Number.isFinite(event.amount) || event.amount < 0)
     throw Object.assign(new Error("Etkinlik tutarı geçersiz."), { status: 400 });

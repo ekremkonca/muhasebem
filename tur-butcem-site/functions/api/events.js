@@ -24,7 +24,9 @@ const eventFields = [
 ];
 
 const recordFields = ["id","date","tour","guest","agency","ship","type","amount","currency","status","due_date","paid_amount","tags","source_event_id","note"];
-const eventType = category => category === "Gider" ? "Tur Masrafı" : category === "Tahsilat" ? "Komisyon" : "Tur Geliri";
+const eventType = category => ["Tur Geliri","Bahşiş","Komisyon","Tur Masrafı"].includes(category)
+  ? category
+  : category === "Gider" ? "Tur Masrafı" : category === "Tahsilat" ? "Komisyon" : "Tur Geliri";
 const recordFromEvent = (event, recordId) => normalizeRecord({
   id: recordId,
   date: event.date,
@@ -36,7 +38,7 @@ const recordFromEvent = (event, recordId) => normalizeRecord({
   type: eventType(event.category),
   amount: Number(event.amount || 0),
   currency: event.currency || "TRY",
-  status: "Ödenmedi",
+  status: event.status === "İptal" ? "İade edildi" : "Ödenmedi",
   paid_amount: 0,
   tags: `Takvim, ${event.category}`,
   source_event_id: event.id,
@@ -132,8 +134,8 @@ export async function onRequestPatch(context) {
       .run();
     const linkedRecord = await db.prepare("SELECT id,status,paid_amount FROM records WHERE id=?").bind(recordId).first();
     if (linkedRecord?.id) {
-      const paidAmount = Math.min(Number(linkedRecord.paid_amount || 0), record.amount);
-      const status = paidAmount >= record.amount && record.amount > 0 ? "Ödendi" : "Ödenmedi";
+      const paidAmount = event.status === "İptal" ? 0 : Math.min(Number(linkedRecord.paid_amount || 0), record.amount);
+      const status = event.status === "İptal" ? "İade edildi" : paidAmount >= record.amount && record.amount > 0 ? "Ödendi" : "Ödenmedi";
       await db.prepare(`UPDATE records SET date=?,tour=?,agency=?,type=?,amount=?,currency=?,status=?,due_date=?,paid_amount=?,source_event_id=?,note=?,deleted_at=NULL,updated_at=CURRENT_TIMESTAMP WHERE id=?`)
         .bind(record.date,record.tour,record.agency,record.type,record.amount,record.currency,status,record.due_date,paidAmount,event.id,record.note,recordId).run();
     } else {

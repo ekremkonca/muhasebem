@@ -1380,13 +1380,15 @@ function Dashboard({ onSignedOut }) {
     const record = normalizeRecord({
       id: uid(), date: event.date, due_date: event.date,
       tour: event.title, guest: "", agency: event.company || "", ship: "",
-      type: event.category === "Gider" ? "Tur Masrafı" : event.category === "Tahsilat" ? "Komisyon" : "Tur Geliri",
+      type: ["Tur Geliri", "Bahşiş", "Komisyon", "Tur Masrafı"].includes(event.category)
+        ? event.category
+        : event.category === "Gider" ? "Tur Masrafı" : event.category === "Tahsilat" ? "Komisyon" : "Tur Geliri",
       amount: Number(event.amount), currency: event.currency || "TRY",
       status: "Ödenmedi", paid_amount: 0, tags: `Takvim, ${event.category}`,
       source_event_id: event.id, note: event.note || "Takvimden oluşturuldu",
     });
     const saved = await createRecord(record);
-    const updatedEvent = await updateEvent({ ...event, status: "Tamamlandı", linked_record_id: saved.id });
+    const updatedEvent = await updateEvent({ ...event, status: "Kesinleşti", linked_record_id: saved.id });
     setRows((current) => [normalizeRecord(saved), ...current]);
     setEvents((current) => current.map((item) => item.id === updatedEvent.id ? updatedEvent : item));
     return saved;

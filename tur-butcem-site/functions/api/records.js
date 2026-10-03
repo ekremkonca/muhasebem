@@ -11,14 +11,15 @@ async function syncCalendarFromRecord(db, record) {
     event = await db.prepare("SELECT id FROM calendar_events WHERE date=? AND linked_record_id='' ORDER BY created_at LIMIT 1").bind(record.date).first();
   }
   const eventId = event?.id || crypto.randomUUID();
-  const category = record.type === 'Tur Masrafı' ? 'Gider' : record.type === 'Komisyon' ? 'Tahsilat' : 'Gelir';
+  const category = record.type;
+  const calendarStatus = record.status === 'İade edildi' ? 'İptal' : 'Kesinleşti';
   const eventTitle = record.tour && record.tour !== 'Muhasebe kaydı' ? record.tour : record.agency || 'Tur planı';
   if (event?.id) {
     await db.prepare(`UPDATE calendar_events SET date=?,company=?,title=?,note=?,status=?,category=?,amount=?,currency=?,linked_record_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=?`)
-      .bind(record.date,record.agency,eventTitle,record.note,record.status === 'Ödendi' ? 'Tamamlandı' : 'Planlandı',category,record.amount,record.currency,record.id,eventId).run();
+      .bind(record.date,record.agency,eventTitle,record.note,calendarStatus,category,record.amount,record.currency,record.id,eventId).run();
   } else {
     await db.prepare(`INSERT INTO calendar_events (id,date,time,company,title,note,status,category,amount,currency,recurrence,linked_record_id) VALUES (?,?,'',?,?,?,?,?,?,?,'Yok',?)`)
-      .bind(eventId,record.date,record.agency,eventTitle,record.note,record.status === 'Ödendi' ? 'Tamamlandı' : 'Planlandı',category,record.amount,record.currency,record.id).run();
+      .bind(eventId,record.date,record.agency,eventTitle,record.note,calendarStatus,category,record.amount,record.currency,record.id).run();
   }
   if (record.source_event_id !== eventId) {
     await db.prepare('UPDATE records SET source_event_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=?').bind(eventId,record.id).run();

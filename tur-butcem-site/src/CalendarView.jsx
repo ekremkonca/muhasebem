@@ -59,8 +59,12 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
     company: initialEvent?.company || "",
     title: initialEvent?.title || "",
     note: initialEvent?.note || "",
-    status: initialEvent?.status || "Planlandı",
-    category: initialEvent?.category || "Plan",
+    status: initialEvent?.status === "İptal" ? "İptal" : "Kesinleşti",
+    category: ["Tur Geliri", "Bahşiş", "Komisyon", "Tur Masrafı"].includes(initialEvent?.category)
+      ? initialEvent.category
+      : initialEvent?.category === "Gider" ? "Tur Masrafı"
+      : initialEvent?.category === "Tahsilat" ? "Komisyon"
+      : "Tur Geliri",
     amount: initialEvent?.amount || "",
     currency: initialEvent?.currency || "TRY",
     recurrence: initialEvent?.recurrence || "Yok",
@@ -160,7 +164,7 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
               onChange={(e) => update("time", e.target.value)}
             />
           </label>
-          <label className="event-form-wide">
+          <label>
             Firma / acente
             <input
               value={form.company}
@@ -169,7 +173,7 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
               placeholder="Özrota Turizm"
             />
           </label>
-          <label className="event-form-wide">
+          <label>
             Etkinlik / iş
             <input
               value={form.title}
@@ -186,7 +190,7 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
               value={form.status}
               onChange={(e) => update("status", e.target.value)}
             >
-              {Object.keys(STATUS_META).map((status) => (
+              {["Kesinleşti", "İptal"].map((status) => (
                 <option key={status}>{status}</option>
               ))}
             </select>
@@ -194,7 +198,7 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
           <label>
             Kategori
             <select value={form.category} onChange={(e) => update("category", e.target.value)}>
-              {["Plan", "Gelir", "Gider", "Tahsilat", "Yatırım", "Vergi"].map((item) => <option key={item}>{item}</option>)}
+              {["Tur Geliri", "Bahşiş", "Komisyon", "Tur Masrafı"].map((item) => <option key={item}>{item}</option>)}
             </select>
           </label>
           <label>
@@ -205,12 +209,6 @@ function EventModal({ initialEvent, selectedDate, onClose, onSave, onDelete }) {
             Para birimi
             <select value={form.currency} onChange={(e) => update("currency", e.target.value)}>
               {["TRY", "USD", "EUR", "GBP"].map((item) => <option key={item}>{item}</option>)}
-            </select>
-          </label>
-          <label>
-            Tekrar
-            <select value={form.recurrence} onChange={(e) => update("recurrence", e.target.value)}>
-              {["Yok", "Haftalık", "Aylık", "Yıllık"].map((item) => <option key={item}>{item}</option>)}
             </select>
           </label>
           <label className="event-form-wide">
