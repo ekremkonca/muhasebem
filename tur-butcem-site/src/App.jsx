@@ -448,37 +448,29 @@ function EntryModal({ record, onClose, onSave, currency, quickDefaults, agencyOp
         {!editing && (
           <div className="quick-entry-panel" aria-label="Hızlı kayıt önerileri">
             {agencyOptions.length > 0 && (
-              <div>
+              <label className="quick-entry-select">
                 <span>Sık acentalar</span>
-                <div>
-                  {agencyOptions.map((agency) => (
-                    <button type="button" key={agency} onClick={() => applyQuick({ agency })}>
-                      {agency}
-                    </button>
-                  ))}
-                </div>
-              </div>
+                <select
+                  value={agencyOptions.includes(form.agency) ? form.agency : ""}
+                  onChange={(e) => e.target.value && applyQuick({ agency: e.target.value })}
+                >
+                  <option value="">Acenta seç</option>
+                  {agencyOptions.map((agency) => <option key={agency}>{agency}</option>)}
+                </select>
+              </label>
             )}
-            <div>
+            <label className="quick-entry-select">
               <span>İşlem</span>
-              <div>
-                {typeOptions.map((type) => (
-                  <button type="button" key={type} className={form.type === type ? "active" : ""} onClick={() => applyQuick({ type })}>
-                    {type}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
+              <select value={form.type} onChange={(e) => applyQuick({ type: e.target.value })}>
+                {typeOptions.map((type) => <option key={type}>{type}</option>)}
+              </select>
+            </label>
+            <label className="quick-entry-select">
               <span>Para birimi</span>
-              <div>
-                {currencyOptions.map((item) => (
-                  <button type="button" key={item} className={form.currency === item ? "active" : ""} onClick={() => applyQuick({ currency: item })}>
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
+              <select value={form.currency} onChange={(e) => applyQuick({ currency: e.target.value })}>
+                {currencyOptions.map((item) => <option key={item}>{item}</option>)}
+              </select>
+            </label>
           </div>
         )}
         <div className="form-grid">
