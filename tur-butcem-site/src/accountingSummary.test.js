@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {categoryTotals, currencyTotals, goalProgress} from './accountingSummary.js';
+import {categoryTotals, currencyTotals, goalProgress, seasonMetrics} from './accountingSummary.js';
 test('category totals convert each denomination before summing', () => {
  const rows = [{type:'Komisyon',amount:100,currency:'EUR'},{type:'Komisyon',amount:200,currency:'TRY'},{type:'Tur Masrafı',amount:20,currency:'USD'}];
  const rates = {EUR:50,TRY:1,USD:40};
@@ -19,4 +19,16 @@ test('goal reflects edits, losses and target overflow without stale snapshots', 
  assert.deepEqual(goalProgress(800,1000),{current:800,percent:80});
  assert.deepEqual(goalProgress(-10,1000),{current:-10,percent:0});
  assert.equal(goalProgress(2000,1000).percent,100);
+});
+test('season metrics exclude expenses from receivables and drafts from tour count', () => {
+ const rows = [
+  {date:'2026-05-01',type:'Tur Geliri',amount:1000,paid_amount:1000,status:'Ödendi'},
+  {date:'2026-05-02',type:'Tur Geliri',amount:500,paid_amount:0,status:'Ödenmedi'},
+  {date:'2026-05-03',type:'Tur Geliri',amount:0,paid_amount:0,status:'Ödenmedi'},
+  {date:'2026-05-04',type:'Tur Geliri',amount:700,paid_amount:0,status:'İade edildi'},
+  {date:'2026-05-05',type:'Tur Masrafı',amount:200,paid_amount:200,status:'Ödendi'},
+  {date:'2026-05-06',type:'Tur Masrafı',amount:300,paid_amount:0,status:'Ödenmedi'},
+ ];
+ const result=seasonMetrics(rows,row=>row.amount,row=>Math.max(0,row.amount-row.paid_amount));
+ assert.deepEqual(result,{tourIncome:1000,expense:200,pending:500,tourCount:2});
 });

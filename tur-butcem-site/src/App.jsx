@@ -4,7 +4,7 @@ import FinanceOperations from './FinanceOperations.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { categoryTotals, currencyTotals, goalProgress } from './accountingSummary.js';
+import { categoryTotals, currencyTotals, goalProgress, seasonMetrics } from './accountingSummary.js';
 import './styles/accounting-refresh.css';
 import FinanceScore from './FinanceScore.jsx';
 import CategoryDonut from './CategoryDonut.jsx';
@@ -935,7 +935,8 @@ function MonthlySummary({ rows, currency, convert }) {
   const paid = monthRows.filter((r) => r.status === "Ödendi");
   const incomeValue = paid.filter(isIncome).reduce((sum, row) => sum + convert(row), 0);
   const expenseValue = paid.filter(isExpense).reduce((sum, row) => sum + convert(row), 0);
-  const pendingValue = monthRows.filter((r) => r.status === "Ödenmedi").reduce((sum, row) => sum + convert(row), 0);
+  const pendingIncomeRows = monthRows.filter((r) => r.status === "Ödenmedi" && isIncome(r));
+  const pendingValue = pendingIncomeRows.reduce((sum, row) => sum + convert(row), 0);
   const byAgency = {};
   paid.forEach((row) => {
     const key = row.agency || row.tour || "Diğer";
@@ -960,7 +961,7 @@ function MonthlySummary({ rows, currency, convert }) {
         <article><span>Kazanç</span><strong>{money(incomeValue, currency)}</strong><small>{paid.filter(isIncome).length} gelir kaydı</small></article>
         <article><span>Masraf</span><strong>{money(expenseValue, currency)}</strong><small>{paid.filter(isExpense).length} masraf kaydı</small></article>
         <article><span>Net</span><strong>{money(incomeValue - expenseValue, currency)}</strong><small>{monthRows.length} toplam kayıt</small></article>
-        <article><span>Alacak</span><strong>{money(pendingValue, currency)}</strong><small>{monthRows.filter((r) => r.status === "Ödenmedi").length} bekleyen</small></article>
+        <article><span>Alacak</span><strong>{money(pendingValue, currency)}</strong><small>{pendingIncomeRows.length} bekleyen</small></article>
         <article className="wide"><span>En iyi kaynak</span><strong>{topAgency[0]}</strong><small>{money(topAgency[1], currency)}</small></article>
       </div>
       <div className="monthly-category-bars">
@@ -1011,8 +1012,8 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
   const values = [
     { label: "Tur gelirleri", value: tourIncome, tone: "income", items: rows.filter(r=>r.status==='Ödendi'&&normalizeType(r.type)==='Tur Geliri').map(r=>({title:r.tour||r.agency||'Tur geliri',date:r.date,meta:r.status,value:convert(r)})) },
     { label: "EV KASA (güncel kur)", value: cashValue, tone: "cash", items:(cashBreakdown||[]).map(r=>({title:r.label||r.code,date:'Güncel',meta:`${r.amount.toLocaleString('tr-TR')} ${r.code} · Kur ${r.rate.toLocaleString('tr-TR')}`,value:r.tryValue})) },
-    { label: "Bekleyen", value: pending, tone: "pending", items:rows.filter(r=>r.status==='Ödenmedi').map(r=>({title:r.tour||r.agency||r.type,date:r.date,meta:r.type,value:convert({...r,amount:Math.max(0,r.amount-r.paid_amount)} )})) },
-    { label: "Masraflar", value: expense, tone: "expense", items:rows.filter(r=>isExpense(r)&&r.status!=='İade edildi').map(r=>({title:r.tour||r.agency||'Tur masrafı',date:r.date,meta:r.status,value:convert(r)})) },
+    { label: "Bekleyen", value: pending, tone: "pending", items:rows.filter(r=>r.status==='Ödenmedi'&&isIncome(r)).map(r=>({title:r.tour||r.agency||r.type,date:r.date,meta:r.type,value:convert({...r,amount:Math.max(0,r.amount-r.paid_amount)} )})) },
+    { label: "Masraflar", value: expense, tone: "expense", items:rows.filter(r=>isExpense(r)&&r.status==='Ödendi').map(r=>({title:r.tour||r.agency||'Tur masrafı',date:r.date,meta:r.status,value:convert(r)})) },
   ];
   const max = Math.max(1, ...values.map((item) => Math.abs(item.value)));
   return (
@@ -1063,7 +1064,7 @@ function VisualExperience({rows,income,expense,pending,tourCount,currency,conver
 }
 
 function CompactReceivables({rows,currency,convertOutstanding,keepNativeCurrency,onPaid}){
-  const open=rows.filter(r=>r.status==='Ödenmedi').sort((a,b)=>convertOutstanding(b)-convertOutstanding(a)),total=open.reduce((s,r)=>s+convertOutstanding(r),0);
+ const open=rows.filter(r=>r.status==='Ödenmedi'&&isIncome(r)).sort((a,b)=>convertOutstanding(b)-convertOutstanding(a)),total=open.reduce((s,r)=>s+convertOutstanding(r),0);
   return <section className="compact-receivables"><div className="panel-title"><div><span className="eyebrow">ALACAKLAR</span><h2>{money(total,currency)}</h2></div><span>{open.length} kayıt</span></div><div className="compact-receivable-list">{open.slice(0,6).map(r=><article key={r.id}><div><strong>{[r.agency,r.note].filter(Boolean).join(' · ')||r.tour||'Kayıt'}</strong><small>{r.type} · {fmtDate(r.date)}</small></div><div><b>{keepNativeCurrency(r)?money(Math.max(0,r.amount-r.paid_amount),r.currency):money(convertOutstanding(r),currency)}</b><button onClick={()=>onPaid(r)}>Ödendi yap</button></div></article>)}{!open.length&&<p className="empty-mini">Bekleyen alacak yok.</p>}</div></section>
 }
 
@@ -1177,15 +1178,18 @@ function Dashboard({ onSignedOut }) {
       return [customFrom || MIN_DATE, customTo || to];
     return [MIN_DATE, "9999-12-31"];
   }, [datePreset, customFrom, customTo]);
+  const seasonRows = useMemo(
+    () => rows.filter((r) => r.date >= MIN_DATE),
+    [rows],
+  );
   const accountingRows = useMemo(
     () =>
-      rows.filter(
+      seasonRows.filter(
         (r) =>
-          r.date >= MIN_DATE &&
           r.date >= dateRange[0] &&
           r.date <= dateRange[1],
       ),
-    [rows, dateRange],
+    [seasonRows, dateRange],
   );
   const filteredRows = useMemo(() => {
     const q = tidy(search);
@@ -1216,10 +1220,9 @@ function Dashboard({ onSignedOut }) {
       );
   }, [accountingRows, entryDate, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, sortOrder, search, currency, rates]);
   useEffect(() => { setPage(1); }, [search, entryDate, typeFilter, statusFilter, currencyFilter, agencyFilter, amountMin, amountMax, datePreset, customFrom, customTo]);
-  const paid = accountingRows.filter((r) => r.status === "Ödendi"),
-    tourIncome = paid
-      .filter((r) => normalizeType(r.type) === "Tur Geliri")
-      .reduce((s, r) => s + accountingValue(r), 0),
+  const paid = seasonRows.filter((r) => r.status === "Ödendi"),
+    metrics = seasonMetrics(seasonRows, accountingValue, accountingOutstanding),
+    tourIncome = metrics.tourIncome,
     postJulyTipCommissionIncome = paid
       .filter((r) =>
         r.date >= TIP_COMMISSION_NET_START_DATE &&
@@ -1227,19 +1230,14 @@ function Dashboard({ onSignedOut }) {
         ["Bahşiş", "Komisyon"].includes(normalizeType(r.type))
       )
       .reduce((s, r) => s + accountingValue(r), 0),
-    expense = paid.filter(isExpense).reduce((s, r) => s + accountingValue(r), 0),
-    activeExpense = accountingRows
-      .filter((r) => isExpense(r) && r.status !== "İade edildi")
-      .reduce((s, r) => s + accountingValue(r), 0),
-    pending = accountingRows
-      .filter((r) => r.status === "Ödenmedi")
-      .reduce((s, r) => s + accountingOutstanding(r), 0),
+    expense = metrics.expense,
+    pending = metrics.pending,
     // Yalnızca girdi tur gelirleri eksi masraflar; döviz satışı burada yoktur.
     operatingNet = tourIncome - expense,
-    tourCount = new Set(accountingRows.filter((r) => r.type === "Tur Geliri").map((r) => r.date)).size,
+    tourCount = metrics.tourCount,
     average = tourCount ? operatingNet / tourCount : 0;
-  const tipTotals = currencyTotals(accountingRows, 'Bahşiş', true);
-  const commissionTotals = currencyTotals(accountingRows, 'Komisyon', true);
+  const tipTotals = currencyTotals(seasonRows, 'Bahşiş', true);
+  const commissionTotals = currencyTotals(seasonRows, 'Komisyon', true);
   const cashFxTotals = homeCash.map((item) => ({ ...item }));
   const cashFxTryBreakdown = homeCash.map((item) => {
     const rate = Number(rates?.[item.code]) || 0;
@@ -1291,10 +1289,10 @@ function Dashboard({ onSignedOut }) {
   }, [rows, currency, rates]);
   const receivables = useMemo(
     () =>
-      rows
-        .filter((r) => r.status === "Ödenmedi")
+      seasonRows
+        .filter((r) => r.status === "Ödenmedi" && isIncome(r))
         .sort((a, b) => convertedOutstanding(b) - convertedOutstanding(a)),
-    [rows, currency, rates],
+    [seasonRows, currency, rates],
   );
   const cashForecast = useMemo(() => {
     const end = new Date();
@@ -1772,10 +1770,10 @@ function Dashboard({ onSignedOut }) {
           cashValue={loading ? 0 : cashFxTryValue}
           cashBreakdown={loading ? [] : cashFxTryBreakdown}
           tourIncome={loading ? 0 : tourIncome}
-          expense={loading ? 0 : activeExpense}
+          expense={loading ? 0 : expense}
           tourCount={tourCount}
           currency={currency}
-          rows={accountingRows}
+          rows={seasonRows}
           convert={accountingValue}
           homeCash={homeCash}
           onSaveHomeCash={setHomeCash}
@@ -2019,7 +2017,7 @@ function Dashboard({ onSignedOut }) {
           </div>
           <aside className="v7-right">
             <div className="compact-finance-side entries-side-cards">
-              <CompactReceivables rows={rows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/>
+              <CompactReceivables rows={seasonRows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/>
               <UpcomingEvents events={events} onOpenCalendar={() => navigateTo("/takvim/")} />
             </div>
             <section className="receivables-panel legacy-receivables-panel">
@@ -2027,18 +2025,12 @@ function Dashboard({ onSignedOut }) {
                 <div>
                   <span className="eyebrow">ALACAKLAR</span>
                   <h2>
-                    {money(
-                      rows
-                        .filter((r) => r.status === "Ödenmedi")
-                        .reduce((s, r) => s + accountingOutstanding(r), 0),
-                      currency,
-                    )}
+                    {money(pending, currency)}
                   </h2>
                 </div>
                 <span>
                   {
-                    rows.filter((r) => r.status === "Ödenmedi")
-                      .length
+                    receivables.length
                   }{" "}
                   kayıt
                 </span>
@@ -2073,9 +2065,9 @@ function Dashboard({ onSignedOut }) {
         <details className="detailed-analysis">
           <summary><span><b>Detaylı Analiz</b><small>Aylık özet, V8 göstergeleri ve ayrıntılı finans görünümü</small></span><i>⌄</i></summary>
           <div className="detailed-analysis-content">
-            <MonthlySummary rows={accountingRows} currency={currency} convert={accountingValue} />
-            <V8Enhancements rows={accountingRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
-            <VisualExperience rows={accountingRows} income={income} expense={expense} pending={pending} tourCount={tourCount} currency={currency} convert={accountingValue}/>
+            <MonthlySummary rows={seasonRows} currency={currency} convert={accountingValue} />
+            <V8Enhancements rows={seasonRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
+            <VisualExperience rows={seasonRows} income={income} expense={expense} pending={pending} tourCount={tourCount} currency={currency} convert={accountingValue}/>
           </div>
         </details>
       </main>

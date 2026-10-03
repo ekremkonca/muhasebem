@@ -12,3 +12,21 @@ export function currencyTotals(rows, type, receivedOnly = false) {
 export function goalProgress(net, target) {
   return {current: number(net), percent: number(target) > 0 ? Math.max(0, Math.min(100, number(net) / number(target) * 100)) : 0};
 }
+
+const INCOME_TYPES = new Set(['Tur Geliri', 'Bahşiş', 'Komisyon']);
+export function seasonMetrics(rows, convert, convertOutstanding) {
+  const paid = rows.filter(row => row.status === 'Ödendi');
+  const tourIncome = paid
+    .filter(row => row.type === 'Tur Geliri')
+    .reduce((sum, row) => sum + convert(row), 0);
+  const expense = paid
+    .filter(row => row.type === 'Tur Masrafı')
+    .reduce((sum, row) => sum + convert(row), 0);
+  const pending = rows
+    .filter(row => row.status === 'Ödenmedi' && INCOME_TYPES.has(row.type))
+    .reduce((sum, row) => sum + convertOutstanding(row), 0);
+  const tourCount = new Set(rows
+    .filter(row => row.type === 'Tur Geliri' && row.status !== 'İade edildi' && number(row.amount) > 0)
+    .map(row => row.date)).size;
+  return { tourIncome: roundMoney(tourIncome), expense: roundMoney(expense), pending: roundMoney(pending), tourCount };
+}
