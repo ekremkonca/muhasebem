@@ -499,22 +499,36 @@ html.native-android-app.native-fast-scroll .scroll-top-button{
   filter:drop-shadow(0 0 4px rgba(255,255,255,.45))!important;
 }
 #root .season-tour-counter>span {
-  position:relative!important;
+  position:absolute!important;
+  inset:0!important;
   z-index:1!important;
-  display:grid!important;
-  place-items:center!important;
-  gap:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  gap:2px!important;
   color:#fff!important;
   line-height:1!important;
+  text-align:center!important;
+  transform:none!important;
 }
 #root .season-tour-counter strong {
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
   color:#fff!important;
   font-size:15px!important;
   font-weight:950!important;
   font-variant-numeric:tabular-nums!important;
 }
 #root .season-tour-counter small {
-  margin-top:3px!important;
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
   color:rgba(255,255,255,.72)!important;
   font-size:6px!important;
   font-weight:950!important;
