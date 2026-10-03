@@ -47,6 +47,14 @@ export async function onRequestGet(context) {
   try {
     const db = await getDb(context);
     await requireSession(context, db);
+    await db.prepare(`
+      UPDATE calendar_events
+      SET title=COALESCE(NULLIF((
+        SELECT CASE WHEN records.tour<>'Muhasebe kaydı' THEN records.tour ELSE records.agency END
+        FROM records WHERE records.id=calendar_events.linked_record_id
+      ),''),'Tur planı'), updated_at=CURRENT_TIMESTAMP
+      WHERE title='Muhasebe kaydı' AND linked_record_id<>''
+    `).run();
     const result = await db
       .prepare(
         `

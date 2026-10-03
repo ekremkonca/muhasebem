@@ -416,7 +416,10 @@ function EntryModal({ record, onClose, onSave, currency, quickDefaults, agencyOp
       await onSave(
         normalizeRecord({
           ...form,
-          tour: form.tour || "Muhasebe kaydı",
+          tour:
+            form.tour ||
+            form.agency ||
+            (form.type === "Tur Geliri" ? "Tur planı" : form.type),
           id: form.id || uid(),
           amount: Number(form.amount),
         }),

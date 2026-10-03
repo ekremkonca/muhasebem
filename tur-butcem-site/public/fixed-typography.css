@@ -398,3 +398,44 @@ html.native-android-app.native-fast-scroll .scroll-top-button{
   html body #root .mobile-record-collapsed .mobile-record-toggle{top:10px!important;right:10px!important}
   html body #root .mobile-record-expanded{box-shadow:0 12px 28px color-mix(in srgb,var(--accent,var(--green)) 12%,rgba(7,18,34,.12))!important}
 }
+/* New-entry dialog: keep the full form and its save action visible at 100% zoom. */
+@media (min-width: 721px) {
+  #root .modal.v7-entry {
+    width:min(760px,calc(100vw - 32px));
+    max-height:calc(100dvh - 24px);
+    overflow:auto;
+    padding:18px 20px 14px;
+  }
+  #root .v7-entry .quick-entry-panel {
+    grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.72fr);
+    gap:9px;
+    margin-top:10px;
+    padding:10px;
+    border-radius:13px;
+  }
+  #root .v7-entry .quick-entry-panel>div {gap:5px;min-width:0}
+  #root .v7-entry .quick-entry-panel>div>div {
+    flex-wrap:nowrap;
+    gap:5px;
+    overflow-x:auto;
+    scrollbar-width:thin;
+    padding-bottom:2px;
+  }
+  #root .v7-entry .quick-entry-panel button {
+    flex:0 0 auto;
+    padding:5px 8px;
+    font-size:11px;
+  }
+  #root .v7-entry .form-grid {gap:10px 12px;margin-top:12px}
+  #root .v7-entry .form-grid input,
+  #root .v7-entry .form-grid select {padding:9px 10px;margin-top:4px}
+  #root .v7-entry .modal-actions {
+    position:sticky;
+    bottom:-14px;
+    z-index:2;
+    margin:12px -4px 0;
+    padding:10px 4px 2px;
+    background:var(--paper);
+    border-top:1px solid var(--line);
+  }
+}
