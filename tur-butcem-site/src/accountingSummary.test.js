@@ -23,6 +23,7 @@ test('goal reflects edits, losses and target overflow without stale snapshots', 
 test('season metrics exclude expenses from receivables and drafts from tour count', () => {
  const rows = [
   {date:'2026-05-01',type:'Tur Geliri',amount:1000,paid_amount:1000,status:'Ödendi'},
+  {date:'2026-05-01',type:'Tur Geliri',amount:250,paid_amount:250,status:'Ödendi'},
   {date:'2026-05-02',type:'Tur Geliri',amount:500,paid_amount:0,status:'Ödenmedi'},
   {date:'2026-05-03',type:'Tur Geliri',amount:0,paid_amount:0,status:'Ödenmedi'},
   {date:'2026-05-04',type:'Tur Geliri',amount:700,paid_amount:0,status:'İade edildi'},
@@ -30,5 +31,5 @@ test('season metrics exclude expenses from receivables and drafts from tour coun
   {date:'2026-05-06',type:'Tur Masrafı',amount:300,paid_amount:0,status:'Ödenmedi'},
  ];
  const result=seasonMetrics(rows,row=>row.amount,row=>Math.max(0,row.amount-row.paid_amount));
- assert.deepEqual(result,{tourIncome:1000,expense:200,pending:500,tourCount:2});
+ assert.deepEqual(result,{tourIncome:1250,expense:200,pending:500,tourCount:3});
 });

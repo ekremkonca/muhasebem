@@ -25,8 +25,8 @@ export function seasonMetrics(rows, convert, convertOutstanding) {
   const pending = rows
     .filter(row => row.status === 'Ödenmedi' && INCOME_TYPES.has(row.type))
     .reduce((sum, row) => sum + convertOutstanding(row), 0);
-  const tourCount = new Set(rows
-    .filter(row => row.type === 'Tur Geliri' && row.status !== 'İade edildi' && number(row.amount) > 0)
-    .map(row => row.date)).size;
+  const tourCount = rows.filter(
+    row => row.type === 'Tur Geliri' && row.status !== 'İade edildi' && number(row.amount) > 0,
+  ).length;
   return { tourIncome: roundMoney(tourIncome), expense: roundMoney(expense), pending: roundMoney(pending), tourCount };
 }
