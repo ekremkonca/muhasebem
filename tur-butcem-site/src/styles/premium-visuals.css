@@ -128,6 +128,24 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 .entries-side-cards .compact-receivables{min-height:0}
 .entries-side-cards .compact-receivable-list{max-height:210px}
 .entries-side-cards>.upcoming-panel{max-height:300px}
+
+/* Kartların içeriği kaydırılabilir kalsın; görsel scrollbar raylarını gizle. */
+.compact-receivable-list,
+.compact-finance-side>.upcoming-panel,
+.entries-side-cards>.upcoming-panel,
+.summary-scroll{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.compact-receivable-list::-webkit-scrollbar,
+.compact-finance-side>.upcoming-panel::-webkit-scrollbar,
+.entries-side-cards>.upcoming-panel::-webkit-scrollbar,
+.summary-scroll::-webkit-scrollbar{
+  width:0;
+  height:0;
+  display:none;
+}
+.compact-receivable-list{padding-right:0}
 @media(min-width:1051px){.v7-layout{grid-template-columns:minmax(0,1fr) minmax(310px,390px)!important;align-items:start}}
 @media(max-width:1050px){.entries-side-cards{grid-template-columns:1fr 1fr;grid-template-rows:auto}}
 @media(max-width:650px){.entries-side-cards{grid-template-columns:1fr}}
