@@ -150,7 +150,7 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 /* Planlama merkezinin altındaki üç temel sezon göstergesi. */
 .planning-insights{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:minmax(0,1fr);
   gap:10px;
   margin-top:12px;
 }
@@ -179,14 +179,7 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
 .planning-goal-card .v8-goal-value small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
 .planning-goal-card>.v8-muted{margin:auto 0;color:var(--muted);font-size:11px}
 .detailed-analysis .v8-enhance-grid{grid-template-columns:1fr!important}
-@media(max-width:760px){
-  .planning-insights{grid-template-columns:1fr 1fr}
-  .planning-goal-card{grid-column:1/-1;min-height:130px!important}
-}
-@media(max-width:430px){
-  .planning-insights{grid-template-columns:1fr}
-  .planning-goal-card{grid-column:auto}
-}
+.planning-goal-card{min-height:130px!important}
 @media(min-width:1051px){.v7-layout{grid-template-columns:minmax(0,1fr) minmax(310px,390px)!important;align-items:start}}
 @media(max-width:1050px){.entries-side-cards{grid-template-columns:1fr 1fr;grid-template-rows:auto}}
 @media(max-width:650px){.entries-side-cards{grid-template-columns:1fr}}
