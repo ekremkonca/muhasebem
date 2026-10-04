@@ -146,6 +146,47 @@ html[data-mode="dark"] body{background:radial-gradient(circle at 8% 5%,color-mix
   display:none;
 }
 .compact-receivable-list{padding-right:0}
+
+/* Planlama merkezinin altındaki üç temel sezon göstergesi. */
+.planning-insights{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.planning-insights>article{
+  min-width:0;
+  min-height:190px;
+  padding:13px!important;
+  border:1px solid var(--premium-line,var(--line));
+  border-radius:18px;
+  background:var(--premium-glass,var(--surface));
+  box-shadow:var(--premium-shadow);
+  overflow:hidden;
+}
+.planning-insights .finance-score-dial,
+.planning-insights .tour-count-donut{
+  width:104px;
+  height:104px;
+  margin:8px auto 2px;
+}
+.planning-insights .finance-score-dial strong,
+.planning-insights .tour-count-donut strong{font-size:27px}
+.planning-insights .finance-score-card p,
+.planning-insights .tour-motivation{margin:5px 0 0;font-size:10px;line-height:1.3}
+.planning-goal-card{display:flex;flex-direction:column;justify-content:center;gap:12px}
+.planning-goal-card .v8-goal-value{display:block;font-size:18px;line-height:1.25;color:var(--ink)}
+.planning-goal-card .v8-goal-value small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+.planning-goal-card>.v8-muted{margin:auto 0;color:var(--muted);font-size:11px}
+.detailed-analysis .v8-enhance-grid{grid-template-columns:1fr!important}
+@media(max-width:760px){
+  .planning-insights{grid-template-columns:1fr 1fr}
+  .planning-goal-card{grid-column:1/-1;min-height:130px!important}
+}
+@media(max-width:430px){
+  .planning-insights{grid-template-columns:1fr}
+  .planning-goal-card{grid-column:auto}
+}
 @media(min-width:1051px){.v7-layout{grid-template-columns:minmax(0,1fr) minmax(310px,390px)!important;align-items:start}}
 @media(max-width:1050px){.entries-side-cards{grid-template-columns:1fr 1fr;grid-template-rows:auto}}
 @media(max-width:650px){.entries-side-cards{grid-template-columns:1fr}}

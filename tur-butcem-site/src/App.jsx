@@ -892,41 +892,53 @@ function SystemPanel({
   );
 }
 
+function PlanningInsights({ income, expense, pending, currency, tourCount, net }) {
+  const score = Math.max(0, Math.min(100, Math.round(70 + (income > 0 ? Math.min(20, (income - expense) / Math.max(income, 1) * 20) : 0) - (pending > income * .4 ? 15 : 0))));
+  const [goal, setGoal] = useState(() => { try { return JSON.parse(localStorage.getItem("v8-goal") || "null"); } catch { return null; } });
+  const [detail, setDetail] = useState(false);
+  const {current: goalCurrent, percent: goalPercent} = goalProgress(net, goal?.target);
+  const setTarget = () => {
+    const value = Number(prompt("Hedef tutarı", goal?.target || ""));
+    if (!Number.isFinite(value) || value <= 0) return;
+    const next = { target: value };
+    setGoal(next);
+    localStorage.setItem("v8-goal", JSON.stringify(next));
+  };
+  return <section className="planning-insights" aria-label="Planlama finans göstergeleri">
+    <FinanceScore score={score} onDetails={() => setDetail(true)} />
+    <TourCountDonut count={tourCount} />
+    <article className="planning-goal-card">
+      <div className="v8-card-title"><span>Birikim hedefi</span><button className="v8-link" onClick={setTarget}>Hedef belirle</button></div>
+      {goal ? <><strong className="v8-goal-value">{money(goalCurrent,currency)} <small>/ {money(goal.target,currency)}</small></strong><div className="v8-progress"><i style={{width:`${goalPercent}%`}}/></div><small>%{Math.round(goalPercent)} tamamlandı</small></> : <p className="v8-muted">Sezon için birikim hedefi ekle.</p>}
+    </article>
+    {detail && <div className="v8-modal-backdrop" onClick={()=>setDetail(false)}><div className="v8-score-detail" onClick={e=>e.stopPropagation()}><button onClick={()=>setDetail(false)}>×</button><h3>Finans skorun {score}/100</h3><p>Gelir-gider dengesi, bekleyen alacaklar ve kayıt düzenine göre hesaplanır.</p><ul><li>Net akış: {money(income-expense,currency)}</li><li>Bekleyen alacak: {money(pending,currency)}</li><li>Takip önerisi: {pending > income*.4 ? "Bekleyen ödemeleri azalt." : "Düzenli takibe devam et."}</li></ul></div></div>}
+  </section>;
+}
+
 function V8Enhancements({ rows, income, expense, pending, currency, tourCount, net, convert }) {
   const [customize, setCustomize] = useState(false);
   const [cardOrder, setCardOrder] = useState(() => { try { return JSON.parse(localStorage.getItem("v8-card-order") || '["score","chart","notice"]'); } catch { return ["score","chart","notice"]; } });
   const [dragCard, setDragCard] = useState(null);
   const [hidden, setHidden] = useState(() => { try { return JSON.parse(localStorage.getItem("v8-hidden-cards") || "[]"); } catch { return []; } });
-  const score = Math.max(0, Math.min(100, Math.round(70 + (income > 0 ? Math.min(20, (income - expense) / Math.max(income, 1) * 20) : 0) - (pending > income * .4 ? 15 : 0))));
   const toggle = (id) => setHidden((items) => { const next = items.includes(id) ? items.filter((x) => x !== id) : [...items, id]; try { localStorage.setItem("v8-hidden-cards", JSON.stringify(next)); } catch {} return next; });
   const moveCard = (id) => { if (!dragCard || dragCard === id) return; const next = [...cardOrder]; const from = next.indexOf(dragCard); const to = next.indexOf(id); next.splice(from, 1); next.splice(to, 0, dragCard); setCardOrder(next); localStorage.setItem("v8-card-order", JSON.stringify(next)); setDragCard(null); };
   const cats = categoryTotals(rows, convert);
-  const max = Math.max(...cats.map((x) => x.value), 1);
   const notices = rows.filter((r) => r.status === "Ödenmedi");
   const recentRows = [...rows].sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
-  const [goal, setGoal] = useState(() => { try { return JSON.parse(localStorage.getItem("v8-goal") || "null"); } catch { return null; } });
-  const {current: goalCurrent, percent: goalPercent} = goalProgress(net, goal?.target);
-  const [goalInput, setGoalInput] = useState("");
-  const [detail, setDetail] = useState(false);
   const [trendReplay, setTrendReplay] = useState(0);
-  const saveGoal = () => { const value = Number(goalInput); if (!value) return; const next = {target:value, current:Math.max(0,income-expense)}; setGoal(next); localStorage.setItem("v8-goal", JSON.stringify(next)); setGoalInput(""); };
   const monthBars = Array.from({length:6}, (_, i) => { const d = new Date(); d.setMonth(d.getMonth()-5+i); const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`; const value = rows.filter(r => String(r.date||"").startsWith(key)).reduce((s,r)=>s+(r.status === "Ödendi" ? (normalizeType(r.type) === "Tur Masrafı" ? -convert(r) : normalizeType(r.type) === "Tur Geliri" ? convert(r) : 0) : 0),0); return {label:d.toLocaleDateString("tr-TR",{month:"short"}),value}; });
   return <section className="v8-enhancements" aria-label="V8 finans araçları">
     <div className="v8-enhance-head"><div><span className="eyebrow">V8 ÖZET</span><h3>Finans görünümü</h3></div><button className="btn secondary" onClick={() => setCustomize((x) => !x)}>{customize ? "Tamam" : "Kartları düzenle"}</button></div>
-    {customize && <div className="v8-card-picker">{[["score","Finans skoru"],["chart","Kategori grafiği"]].map(([id,label]) => <label key={id}><input type="checkbox" checked={!hidden.includes(id)} onChange={() => toggle(id)}/>{label}</label>)}</div>}
+    {customize && <div className="v8-card-picker">{[["chart","Kategori grafiği"]].map(([id,label]) => <label key={id}><input type="checkbox" checked={!hidden.includes(id)} onChange={() => toggle(id)}/>{label}</label>)}</div>}
     <div className="v8-enhance-grid">
-      {!hidden.includes("score") && <FinanceScore score={score} onDetails={() => setDetail(true)} />}
       {!hidden.includes("chart") && <CategoryDonut cats={cats} currency={currency} money={money} />}
-      <TourCountDonut count={tourCount} />
     </div>
     <div className="v8-suite-grid">
       <article><div className="v8-card-title"><span>Gelir / gider trendi</span><button className="v8-link trend-replay" onClick={()=>setTrendReplay(n=>n+1)}>↻ Oynat</button></div><div className="v8-line-chart" key={trendReplay}>{monthBars.map((m,i)=><div key={i} title={`${m.label}: ${money(m.value,currency)}`}><i style={{height:`${Math.max(8,Math.min(100,m.value/(Math.max(...monthBars.map(x=>x.value),1))*100))}%`}}/><small>{m.label}</small></div>)}</div></article>
-      <article><div className="v8-card-title"><span>Birikim hedefi</span><button className="v8-link" onClick={()=>{const v=prompt("Hedef tutarı", goal?.target || ""); if(Number.isFinite(Number(v)) && Number(v)>0){setGoal({target:Number(v),current:Math.max(0,income-expense)});localStorage.setItem("v8-goal",JSON.stringify({target:Number(v),current:Math.max(0,income-expense)}));}}}>Hedef belirle</button></div>{goal ? <><strong className="v8-goal-value">{money(goalCurrent,currency)} / {money(goal.target,currency)}</strong><div className="v8-progress"><i style={{width:`${goalPercent}%`}}/></div><small>%{Math.round(goalPercent)} tamamlandı</small></> : <p className="v8-muted">Birikim hedefi ekle.</p>}</article>
       <article className="scroll-summary"><div className="v8-card-title"><span>Yaklaşan ödemeler</span><small>{notices.length}</small></div><div className="summary-scroll" tabIndex="0" aria-label="Yaklaşan ödemeler">{notices.map(r=><div className="v8-debt" key={r.id}><span>{[r.agency, r.note].filter(Boolean).join(" · ") || r.tour || "Ödeme"}</span><b>{money(Math.max(0,Number(r.amount)-Number(r.paid_amount||0)),normalizeCurrency(r.currency))}</b></div>)}{!notices.length&&<p className="v8-muted">Yaklaşan ödeme yok.</p>}</div></article>
       <article className="scroll-summary"><div className="v8-card-title"><span>Son işlemler</span><small>{recentRows.length}</small></div><div className="summary-scroll" tabIndex="0" aria-label="Son işlemler">{recentRows.map(r=><div className="v8-debt recent-debt" key={r.id}><span>{r.tour || 'Kayıt'}<small>{r.type} · {r.date}</small></span><b>{money(r.amount, normalizeCurrency(r.currency))}</b></div>)}{!recentRows.length&&<p className="v8-muted">Henüz işlem yok.</p>}</div></article>
     </div>
     <div className="v8-suite-actions"><button className="btn secondary" onClick={()=>document.documentElement.classList.toggle("v8-colorblind")}>Erişilebilir renkler</button></div>
-    {detail && <div className="v8-modal-backdrop" onClick={()=>setDetail(false)}><div className="v8-score-detail" onClick={e=>e.stopPropagation()}><button onClick={()=>setDetail(false)}>×</button><h3>Finans skorun {score}/100</h3><p>Gelir-gider dengesi, bekleyen alacaklar ve kayıt düzenine göre hesaplanır.</p><ul><li>Net akış: {money(income-expense,currency)}</li><li>Bekleyen alacak: {money(pending,currency)}</li><li>Takip önerisi: {pending > income*.4 ? "Bekleyen ödemeleri azalt." : "Düzenli takibe devam et."}</li></ul></div></div>}
   </section>;
 }
 
@@ -2078,6 +2090,14 @@ function Dashboard({ onSignedOut }) {
               onCreateEvent={persistEvent}
               onUpdateEvent={persistEvent}
               onDeleteEvent={removeEvent}
+            />
+            <PlanningInsights
+              income={income}
+              expense={expense}
+              pending={pending}
+              currency={currency}
+              tourCount={tourCount}
+              net={net}
             />
           </aside>
         </div>
