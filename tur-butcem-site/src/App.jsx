@@ -892,11 +892,19 @@ function SystemPanel({
   );
 }
 
-function PlanningInsights({ income, expense, pending, currency, tourCount, net }) {
+function PlanningInsights({ rows, convert, income, expense, pending, currency, tourCount, net }) {
   const score = Math.max(0, Math.min(100, Math.round(70 + (income > 0 ? Math.min(20, (income - expense) / Math.max(income, 1) * 20) : 0) - (pending > income * .4 ? 15 : 0))));
   const [goal, setGoal] = useState(() => { try { return JSON.parse(localStorage.getItem("v8-goal") || "null"); } catch { return null; } });
   const [detail, setDetail] = useState(false);
+  const [trendReplay, setTrendReplay] = useState(0);
   const {current: goalCurrent, percent: goalPercent} = goalProgress(net, goal?.target);
+  const monthBars = Array.from({length:6}, (_, i) => {
+    const d = new Date();
+    d.setMonth(d.getMonth()-5+i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+    const value = rows.filter(r => String(r.date||"").startsWith(key)).reduce((sum,row) => sum + (row.status === "Ödendi" ? (normalizeType(row.type) === "Tur Masrafı" ? -convert(row) : normalizeType(row.type) === "Tur Geliri" ? convert(row) : 0) : 0), 0);
+    return {label:d.toLocaleDateString("tr-TR",{month:"short"}),value};
+  });
   const setTarget = () => {
     const value = Number(prompt("Hedef tutarı", goal?.target || ""));
     if (!Number.isFinite(value) || value <= 0) return;
@@ -910,6 +918,10 @@ function PlanningInsights({ income, expense, pending, currency, tourCount, net }
     <article className="planning-goal-card">
       <div className="v8-card-title"><span>Birikim hedefi</span><button className="v8-link" onClick={setTarget}>Hedef belirle</button></div>
       {goal ? <><strong className="v8-goal-value">{money(goalCurrent,currency)} <small>/ {money(goal.target,currency)}</small></strong><div className="v8-progress"><i style={{width:`${goalPercent}%`}}/></div><small>%{Math.round(goalPercent)} tamamlandı</small></> : <p className="v8-muted">Sezon için birikim hedefi ekle.</p>}
+    </article>
+    <article className="planning-trend-card">
+      <div className="v8-card-title"><span>Gelir / gider trendi</span><button className="v8-link trend-replay" onClick={()=>setTrendReplay(value=>value+1)}>↻ Oynat</button></div>
+      <div className="v8-line-chart" key={trendReplay}>{monthBars.map((month,index)=><div key={index} title={`${month.label}: ${money(month.value,currency)}`}><i style={{height:`${Math.max(8,Math.min(100,month.value/(Math.max(...monthBars.map(item=>item.value),1))*100))}%`}}/><small>{month.label}</small></div>)}</div>
     </article>
     {detail && <div className="v8-modal-backdrop" onClick={()=>setDetail(false)}><div className="v8-score-detail" onClick={e=>e.stopPropagation()}><button onClick={()=>setDetail(false)}>×</button><h3>Finans skorun {score}/100</h3><p>Gelir-gider dengesi, bekleyen alacaklar ve kayıt düzenine göre hesaplanır.</p><ul><li>Net akış: {money(income-expense,currency)}</li><li>Bekleyen alacak: {money(pending,currency)}</li><li>Takip önerisi: {pending > income*.4 ? "Bekleyen ödemeleri azalt." : "Düzenli takibe devam et."}</li></ul></div></div>}
   </section>;
@@ -2092,6 +2104,8 @@ function Dashboard({ onSignedOut }) {
               onDeleteEvent={removeEvent}
             />
             <PlanningInsights
+              rows={seasonRows}
+              convert={accountingValue}
               income={income}
               expense={expense}
               pending={pending}
@@ -2101,14 +2115,6 @@ function Dashboard({ onSignedOut }) {
             />
           </aside>
         </div>
-        <details className="detailed-analysis">
-          <summary><span><b>Detaylı Analiz</b><small>Aylık özet, V8 göstergeleri ve ayrıntılı finans görünümü</small></span><i>⌄</i></summary>
-          <div className="detailed-analysis-content">
-            <MonthlySummary rows={seasonRows} currency={currency} convert={accountingValue} />
-            <V8Enhancements rows={seasonRows} income={income} expense={expense} pending={pending} currency={currency} tourCount={tourCount} net={net} convert={accountingValue} />
-            <VisualExperience rows={seasonRows} income={income} expense={expense} pending={pending} tourCount={tourCount} currency={currency} convert={accountingValue}/>
-          </div>
-        </details>
       </main>
       {modal && (
         <EntryModal
