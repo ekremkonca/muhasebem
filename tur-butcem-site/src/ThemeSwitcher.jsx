@@ -11,6 +11,7 @@ const THEMES=[
  ['fuchsia','Berry','#d44786'],
  ['coral','Terracotta','#e86f50'],
  ['sunset','Sıcak Kum','#d98b26'],
+ ['pearl','Kristal Beyaz','#f4f8ff'],
  ['neon','Midnight Neon','#00b8df']
 ];
 const THEME_KEY='muhasebe-theme';
