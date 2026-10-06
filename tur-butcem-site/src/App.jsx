@@ -1855,6 +1855,15 @@ function Dashboard({ onSignedOut }) {
                     >
                       <Icon name="chevron" size={18} />
                     </button>
+                    <button
+                      className="mobile-new-record"
+                      onClick={() => setModal({ currency })}
+                      aria-label="Yeni kayıt"
+                      title="Yeni kayıt"
+                    >
+                      <Icon name="plus" size={18} />
+                      <span>Yeni kayıt</span>
+                    </button>
                   </div>
                   {recordsCollapsed && <small className="records-collapsed-summary">{filteredRows.length} kayıt · Açmak için oka tıkla</small>}
                 </div>
