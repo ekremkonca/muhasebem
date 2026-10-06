@@ -48,6 +48,7 @@ import {
 } from "./api";
 import MarketTicker from "./MarketTicker";
 import CalendarView, { UpcomingEvents } from "./CalendarView";
+import { withTourPlans } from "./tourCalendar.js";
 import { navigateTo } from "./navigation";
 import ThemeSwitcher from "./ThemeSwitcher";
 import "./features.css";
@@ -1236,6 +1237,10 @@ function Dashboard({ onSignedOut }) {
     () => rows.filter((r) => r.date >= MIN_DATE),
     [rows],
   );
+  const calendarEvents = useMemo(
+    () => withTourPlans(events, seasonRows),
+    [events, seasonRows],
+  );
   const accountingRows = useMemo(
     () =>
       seasonRows.filter(
@@ -2049,7 +2054,7 @@ function Dashboard({ onSignedOut }) {
           <aside className="v7-right">
             <div className="compact-finance-side entries-side-cards">
               <CompactReceivables rows={seasonRows} currency={currency} convertOutstanding={accountingOutstanding} keepNativeCurrency={keepNativeCurrency} onPaid={r=>setRecordStatus(r,'Ödendi')}/>
-              <UpcomingEvents events={events} onOpenCalendar={() => navigateTo("/takvim/")} />
+              <UpcomingEvents events={calendarEvents} onOpenCalendar={() => navigateTo("/takvim/")} />
             </div>
             <section className="receivables-panel legacy-receivables-panel">
               <div className="panel-title">
@@ -2086,7 +2091,7 @@ function Dashboard({ onSignedOut }) {
             </section>
             <CalendarView
               rows={[]}
-              events={events}
+              events={calendarEvents}
               onCreateEvent={persistEvent}
               onUpdateEvent={persistEvent}
               onDeleteEvent={removeEvent}
