@@ -367,11 +367,9 @@ export default function CalendarView({
   const monthEventCount = events.filter((event) =>
     event.date.startsWith(monthPrefix),
   ).length;
-  const monthTourDayCount = new Set(
-    events
-      .filter((event) => event.date.startsWith(monthPrefix) && event.category === "Tur Geliri")
-      .map((event) => event.date),
-  ).size;
+  const monthTourCount = events
+    .filter((event) => event.date.startsWith(monthPrefix) && event.category === "Tur Geliri")
+    .reduce((sum, event) => sum + Math.max(0, Number(event.tourCount ?? 1)), 0);
   const monthLabel = new Intl.DateTimeFormat("tr-TR", {
     month: "long",
     year: "numeric",
@@ -457,8 +455,8 @@ export default function CalendarView({
           </button>
         </div>
         <div className="calendar-toolbar-meta">
-          <span className="monthly-tour-counter" aria-label={`${monthTourDayCount} tur günü`}>
-            <small>AYLIK TUR</small><b>{monthTourDayCount}</b>
+          <span className="monthly-tour-counter" aria-label={`${monthTourCount} tur`}>
+            <small>AYLIK TUR</small><b>{monthTourCount}</b>
           </span>
           <span>{monthEventCount} etkinlik</span>
           <button type="button" onClick={goToday}>
@@ -477,6 +475,10 @@ export default function CalendarView({
           {days.map((day) => {
             const records = byDate[day.key] || [];
             const dayEvents = eventsByDate[day.key] || [];
+            const dayEntryCount = dayEvents.reduce(
+              (sum, event) => sum + Math.max(0, Number(event.tourCount ?? 1)),
+              0,
+            );
             const visibleTypes = [
               ...new Set(records.map((row) => row.type)),
             ].slice(0, 4);
@@ -497,9 +499,9 @@ export default function CalendarView({
                 title={`${summary}. Çift tıklayarak etkinlik ekleyebilirsin.`}
               >
                 <span className="day-number">{day.date.getDate()}</span>
-                {!!dayEvents.length && (
-                  <span className="calendar-day-marker" aria-label={`${dayEvents.length} kayıt var`}>
-                    <b>{dayEvents.length}</b>
+                {!!dayEntryCount && (
+                  <span className="calendar-day-marker" aria-label={`${dayEntryCount} kayıt var`}>
+                    <b>{dayEntryCount}</b>
                   </span>
                 )}
                 <span className="calendar-event-pills">

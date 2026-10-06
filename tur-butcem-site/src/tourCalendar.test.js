@@ -5,7 +5,8 @@ import { withTourPlans } from './tourCalendar.js';
 test('manuel plan bulunan güne ikinci tur planı eklemez', () => {
   const events = [{ id: 'manual', date: '2026-10-22T00:00:00.000Z', title: 'Efes turu', company: '' }];
   const rows = [{ id: 'tour-1', date: '2026-10-22', type: 'Tur Geliri', agency: 'ABC Travel' }];
-  assert.deepEqual(withTourPlans(events, rows), events);
+  assert.equal(withTourPlans(events, rows).length, 1);
+  assert.equal(withTourPlans(events, rows)[0].tourCount, 1);
 });
 
 test('aynı günün acentalarını tek otomatik planda birleştirir', () => {
@@ -18,6 +19,7 @@ test('aynı günün acentalarını tek otomatik planda birleştirir', () => {
   assert.equal(result.length, 1);
   assert.equal(result[0].date, '2026-07-10');
   assert.equal(result[0].title, 'ABC Travel · XYZ Turizm');
+  assert.equal(result[0].tourCount, 3);
 });
 
 test('2026 yılının tamamını takvime yansıtır', () => {

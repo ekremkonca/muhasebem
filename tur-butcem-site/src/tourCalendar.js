@@ -6,6 +6,7 @@ export function withTourPlans(events = [], rows = []) {
   const linked = new Set(events.map(e => String(e.linked_record_id || '')).filter(Boolean));
   const toursByDate = new Map();
   const agenciesByDate = new Map();
+  const tourCountsByDate = new Map();
 
   for (const row of rows) {
     const date = dayKey(row.date);
@@ -20,9 +21,11 @@ export function withTourPlans(events = [], rows = []) {
     const date = dayKey(row.date);
     if (row.type !== 'Tur Geliri' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
     if (!date.startsWith(`${seasonYear}-`)) continue;
+    tourCountsByDate.set(date, (tourCountsByDate.get(date) || 0) + 1);
     if (linked.has(String(row.id)) || occupiedDates.has(date)) continue;
 
-    const day = toursByDate.get(date) || { rowId: row.id, companies: new Set() };
+    const day = toursByDate.get(date) || { rowId: row.id, companies: new Set(), tourCount: 0 };
+    day.tourCount += 1;
     const directAgency = String(row.agency || '').trim();
     const sameDayAgencies = agenciesByDate.get(date);
     if (directAgency) day.companies.add(directAgency);
@@ -41,7 +44,18 @@ export function withTourPlans(events = [], rows = []) {
     const title = [...day.companies].join(' · ');
     plans.push({id: `tour-record-${day.rowId}`, date, title,
       company: '', time: '', status: 'Kesinleşti', category: 'Tur Geliri',
-      recurrence: 'Yok', fromTourRecord: true});
+      recurrence: 'Yok', fromTourRecord: true, tourCount: day.tourCount});
   }
-  return [...events, ...plans];
+  const countedDates = new Set();
+  const enrichedEvents = events.map(event => {
+    const date = dayKey(event.date);
+    const count = tourCountsByDate.get(date);
+    if (!count) return event;
+    if (countedDates.has(date)) {
+      return event.category === 'Tur Geliri' ? {...event, tourCount: 0} : event;
+    }
+    countedDates.add(date);
+    return {...event, category: event.category || 'Tur Geliri', tourCount: count};
+  });
+  return [...enrichedEvents, ...plans];
 }
