@@ -478,6 +478,13 @@ html.native-android-app.native-fast-scroll .scroll-top-button{
   width:58px!important;
   height:58px!important;
   flex:0 0 58px!important;
+  margin-top:5px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  color:inherit!important;
+  cursor:pointer!important;
 }
 #root .season-tour-counter>svg {
   position:absolute!important;

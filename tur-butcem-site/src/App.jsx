@@ -1012,6 +1012,8 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
   const [detail,setDetail]=useState(null);
   const [netReplay,setNetReplay]=useState(0);
   const [netProgress,setNetProgress]=useState(0);
+  const [tourReplay,setTourReplay]=useState(0);
+  const [tourProgress,setTourProgress]=useState(0);
   const netAnimatedRef=useRef(false);
   const lastNetReplayRef=useRef(0);
   useEffect(()=>{
@@ -1034,6 +1036,18 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
     frame=requestAnimationFrame(tick);
     return()=>cancelAnimationFrame(frame);
   },[net,netReplay]);
+  useEffect(()=>{
+    let frame,start;
+    setTourProgress(0);
+    const tick=(now)=>{
+      start??=now;
+      const progress=Math.min(1,(now-start)/1400);
+      setTourProgress(1-Math.pow(1-progress,2));
+      if(progress<1) frame=requestAnimationFrame(tick);
+    };
+    frame=requestAnimationFrame(tick);
+    return()=>cancelAnimationFrame(frame);
+  },[tourCount,tourReplay]);
   const unpaidExpenseItems = rows
     .filter((r) => isExpense(r) && r.status === "Ödenmedi")
     .map((r) => {
@@ -1058,13 +1072,13 @@ function DashboardCommandCenter({ net, pending, cashValue, cashBreakdown, tourIn
       <article className="command-net">
         <header className="season-net-head">
           <span>SEZON NET GELİR</span>
-          <span className="season-tour-counter" aria-label={`${tourCount} tur`}>
+          <button type="button" className="season-tour-counter" onClick={()=>setTourReplay(value=>value+1)} aria-label={`${tourCount} tur. Animasyonu yeniden başlat`} title="Tur sayacını yeniden oynat">
             <svg viewBox="0 0 44 44" aria-hidden="true">
               <circle className="season-tour-track" cx="22" cy="22" r="18" />
-              <circle className="season-tour-fill" cx="22" cy="22" r="18" pathLength="100" strokeDasharray="100" strokeDashoffset={100-netProgress*100} />
+              <circle className="season-tour-fill" cx="22" cy="22" r="18" pathLength="100" strokeDasharray="100" strokeDashoffset={100-tourProgress*100} />
             </svg>
-            <span><strong>{Math.round(tourCount*netProgress)}</strong><small>TUR</small></span>
-          </span>
+            <span><strong>{Math.round(tourCount*tourProgress)}</strong><small>TUR</small></span>
+          </button>
         </header>
         <button className="season-net-dial" onClick={()=>setNetReplay(value=>value+1)} aria-label={`${money(net,currency)} sezon net geliri. Animasyonu yeniden başlat`} title="Dolumu yeniden başlat">
           <svg viewBox="0 0 120 120" aria-hidden="true"><circle className="season-net-track" cx="60" cy="60" r="50"/><circle className="season-net-fill" cx="60" cy="60" r="50" pathLength="100" strokeDasharray="100" strokeDashoffset={100-netProgress*100}/></svg>
