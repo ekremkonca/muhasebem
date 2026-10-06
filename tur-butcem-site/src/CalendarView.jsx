@@ -364,11 +364,8 @@ export default function CalendarView({
     .slice()
     .sort((a, b) => (a.time || "").localeCompare(b.time || ""));
   const monthPrefix = `${viewDate.getFullYear()}-${pad(viewDate.getMonth() + 1)}-`;
-  const monthEventCount = events.filter((event) =>
-    event.date.startsWith(monthPrefix),
-  ).length;
   const monthTourCount = events
-    .filter((event) => event.date.startsWith(monthPrefix) && event.category === "Tur Geliri")
+    .filter((event) => event.date.startsWith(monthPrefix))
     .reduce((sum, event) => sum + Math.max(0, Number(event.tourCount ?? 1)), 0);
   const monthLabel = new Intl.DateTimeFormat("tr-TR", {
     month: "long",
@@ -458,7 +455,6 @@ export default function CalendarView({
           <span className="monthly-tour-counter" aria-label={`${monthTourCount} tur`}>
             <small>AYLIK TUR</small><b>{monthTourCount}</b>
           </span>
-          <span>{monthEventCount} etkinlik</span>
           <button type="button" onClick={goToday}>
             Bugün
           </button>
