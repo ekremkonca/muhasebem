@@ -840,3 +840,33 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
   #root .records-table .row-actions::before{display:none!important}
   #root .records-table .row-actions button{width:36px!important;height:36px!important;border-radius:10px!important}
 }
+
+/* Keep entry actions inside the usable viewport and above the mobile page bar. */
+@media screen and (max-width:760px){
+  html body #root .modal-backdrop:has(.v7-entry){
+    inset:0 0 calc(70px + env(safe-area-inset-bottom,0px))!important;
+    z-index:900!important;
+    padding:10px!important;
+    align-items:center!important;
+    overflow:hidden!important;
+  }
+  html body #root .modal.v7-entry{
+    width:min(100%,680px)!important;
+    max-height:100%!important;
+    padding:17px 16px 0!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+    scrollbar-gutter:stable;
+  }
+  html body #root .modal.v7-entry .modal-actions{
+    position:sticky!important;
+    z-index:5!important;
+    bottom:0!important;
+    margin:16px -16px 0!important;
+    padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px))!important;
+    border-top:1px solid var(--line)!important;
+    background:color-mix(in srgb,var(--paper) 96%,transparent)!important;
+    box-shadow:0 -10px 24px color-mix(in srgb,var(--bg) 72%,transparent)!important;
+    backdrop-filter:blur(14px)!important;
+  }
+}
