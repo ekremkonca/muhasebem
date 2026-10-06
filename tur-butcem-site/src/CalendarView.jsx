@@ -489,7 +489,12 @@ export default function CalendarView({
                 title={`${summary}. Çift tıklayarak etkinlik ekleyebilirsin.`}
               >
                 <span className="day-number">{day.date.getDate()}</span>
-                {dayEvents.some(event => event.fromTourRecord) && <span className="calendar-dots" aria-label="Tur planı var"><i className="series-income" /></span>}
+                {!!dayEvents.length && (
+                  <span className="calendar-day-marker" aria-label={`${dayEvents.length} kayıt var`}>
+                    <i />
+                    {dayEvents.length > 1 && <b>{dayEvents.length}</b>}
+                  </span>
+                )}
                 <span className="calendar-event-pills">
                   {dayEvents.slice(0, 2).map((event) => (
                     <i
