@@ -140,6 +140,35 @@
   font-size: 9px;
   font-weight: 800;
 }
+.calendar-toolbar-meta .monthly-tour-counter {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:4px 5px 4px 9px;
+  border:1px solid color-mix(in srgb,var(--green) 32%,var(--line));
+  background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 88%,var(--paper)),var(--paper));
+  box-shadow:0 5px 14px color-mix(in srgb,var(--green) 13%,transparent);
+}
+.calendar-toolbar-meta .monthly-tour-counter small {
+  color:var(--green);
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+.calendar-toolbar-meta .monthly-tour-counter b {
+  display:grid;
+  min-width:23px;
+  height:23px;
+  place-items:center;
+  padding:0 5px;
+  border-radius:999px;
+  background:var(--green);
+  color:#fff;
+  font-size:10px;
+  font-weight:950;
+  box-shadow:0 3px 9px color-mix(in srgb,var(--green) 28%,transparent);
+}
 .calendar-toolbar-meta button {
   border: 0;
   background: transparent;

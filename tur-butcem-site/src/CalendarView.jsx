@@ -367,6 +367,11 @@ export default function CalendarView({
   const monthEventCount = events.filter((event) =>
     event.date.startsWith(monthPrefix),
   ).length;
+  const monthTourDayCount = new Set(
+    events
+      .filter((event) => event.date.startsWith(monthPrefix) && event.category === "Tur Geliri")
+      .map((event) => event.date),
+  ).size;
   const monthLabel = new Intl.DateTimeFormat("tr-TR", {
     month: "long",
     year: "numeric",
@@ -452,6 +457,9 @@ export default function CalendarView({
           </button>
         </div>
         <div className="calendar-toolbar-meta">
+          <span className="monthly-tour-counter" aria-label={`${monthTourDayCount} tur günü`}>
+            <small>AYLIK TUR</small><b>{monthTourDayCount}</b>
+          </span>
           <span>{monthEventCount} etkinlik</span>
           <button type="button" onClick={goToday}>
             Bugün
