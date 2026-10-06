@@ -1293,7 +1293,11 @@ function Dashboard({ onSignedOut }) {
     pending = metrics.pending,
     // Yalnızca girdi tur gelirleri eksi masraflar; döviz satışı burada yoktur.
     operatingNet = tourIncome - expense,
-    tourCount = metrics.tourCount,
+    // Sezon sayacı takvimdeki aylık sayaçlarla aynı birleşik kaynağı kullanır.
+    // Böylece eski muhasebe kayıtlarından üretilen planlar da eksiksiz sayılır.
+    tourCount = calendarEvents
+      .filter((event) => String(event.date || "").slice(0, 10) >= MIN_DATE)
+      .reduce((sum, event) => sum + Math.max(0, Number(event.tourCount ?? 1)), 0),
     average = tourCount ? operatingNet / tourCount : 0;
   const tipTotals = currencyTotals(seasonRows, 'Bahşiş', true);
   const commissionTotals = currencyTotals(seasonRows, 'Komisyon', true);
