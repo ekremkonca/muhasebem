@@ -1,8 +1,8 @@
 import{errorResponse,getDb,json,requireSession}from'../_lib.js';
 
 const CATALOG={
- USDTRY:{query:'USDTRY=X',label:'USD / TL'},EURTRY:{query:'EURTRY=X',label:'EUR / TL'},GBPTRY:{query:'GBPTRY=X',label:'GBP / TL'},GOLD:{query:'GC=F',label:'Ons Altın'},
- BTCUSD:{query:'BTC-USD',label:'Bitcoin'},ETHUSD:{query:'ETH-USD',label:'Ethereum'},SOLUSD:{query:'SOL-USD',label:'Solana'},BNBUSD:{query:'BNB-USD',label:'BNB'},
+ USDTRY:{query:'USDTRY=X',label:'USD / TL'},EURTRY:{query:'EURTRY=X',label:'EUR / TL'},GBPTRY:{query:'GBPTRY=X',label:'GBP / TL'},XAUUSD:{query:'GC=F',label:'Ons Altın / USD'},
+ BTCUSDT:{query:'BTC-USD',label:'Bitcoin / Tether'},ETHUSD:{query:'ETH-USD',label:'Ethereum'},SOLUSD:{query:'SOL-USD',label:'Solana'},BNBUSD:{query:'BNB-USD',label:'BNB'},
  XU100:{query:'%5EXU100',label:'BIST 100'},BRENT:{query:'BZ=F',label:'Brent Petrol'}
 };
 const quote=async(symbol)=>{

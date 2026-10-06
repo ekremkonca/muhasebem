@@ -1780,41 +1780,6 @@ function Dashboard({ onSignedOut }) {
               placeholder="Tur, misafir, acenta, gemi veya not ara..."
             />
           </div>
-          <div className="date-presets">
-            {[
-              ["all", "Tümü"],
-              ["today", "Bugün"],
-              ["week", "Bu hafta"],
-              ["month", "Bu ay"],
-              ["year", "Bu yıl"],
-              ["custom", "Özel"],
-            ].map(([k, l]) => (
-              <button
-                key={k}
-                className={datePreset === k ? "active" : ""}
-                onClick={() => setDatePreset(k)}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
-          {datePreset === "custom" && (
-            <div className="custom-range">
-              <input
-                type="date"
-                min={MIN_DATE}
-                value={customFrom}
-                onChange={(e) => setCustomFrom(e.target.value)}
-              />
-              <span>→</span>
-              <input
-                type="date"
-                min={MIN_DATE}
-                value={customTo}
-                onChange={(e) => setCustomTo(e.target.value)}
-              />
-            </div>
-          )}
         </section>
         <div className="v7-layout unified-accounting-layout">
           <div className="v7-left">
