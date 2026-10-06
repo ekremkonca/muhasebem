@@ -92,3 +92,13 @@
 :root[data-mode="dark"] .assets-fund-page .fund-chart-stats b,
 :root[data-mode="dark"] .assets-fund-page .compact-details-grid dd{color:#edf7fa!important;opacity:1!important}
 .assets-fund-page .fund-kpi.total strong,.assets-fund-page .assets-general-total>strong,.assets-fund-page .assets-general-total small b{color:#fff!important;opacity:1!important}
+.assets-fund-page .assets-general-total{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--green) 68%,#172536),color-mix(in srgb,var(--green) 42%,#0b1724))!important;
+  color:#fff!important;
+}
+.assets-fund-page .fund-kpi.total{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--green) 76%,#172536),color-mix(in srgb,var(--green) 54%,#0b1724))!important;
+  border-color:color-mix(in srgb,var(--green) 70%,#172536)!important;
+  color:#fff!important;
+}
+.assets-fund-page .assets-general-total .eyebrow,.assets-fund-page .assets-general-total small,.assets-fund-page .fund-kpi.total>span,.assets-fund-page .fund-kpi.total small{color:rgba(255,255,255,.82)!important;opacity:1!important}
