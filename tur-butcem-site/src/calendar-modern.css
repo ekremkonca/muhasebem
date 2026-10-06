@@ -195,33 +195,23 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  min-width: 9px;
-  height: 9px;
+  min-width: 16px;
+  height: 16px;
   pointer-events: none;
-}
-.calendar-day-marker i {
-  display: block;
-  width: 8px;
-  height: 8px;
-  flex: 0 0 8px;
-  border: 2px solid color-mix(in srgb, var(--paper) 82%, transparent);
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--green) 22%, transparent), 0 2px 7px color-mix(in srgb, var(--green) 40%, transparent);
 }
 .calendar-day-marker b {
   display: grid;
-  min-width: 13px;
-  height: 13px;
+  min-width: 16px;
+  height: 16px;
   place-items: center;
   padding: 0 3px;
   border-radius: 999px;
   background: var(--green);
   color: #fff;
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 950;
   line-height: 1;
-  box-shadow: 0 2px 7px color-mix(in srgb, var(--green) 32%, transparent);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--green) 18%,transparent),0 2px 7px color-mix(in srgb,var(--green) 32%,transparent);
 }
 
 .calendar-event-pills {

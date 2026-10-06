@@ -491,8 +491,7 @@ export default function CalendarView({
                 <span className="day-number">{day.date.getDate()}</span>
                 {!!dayEvents.length && (
                   <span className="calendar-day-marker" aria-label={`${dayEvents.length} kayıt var`}>
-                    <i />
-                    {dayEvents.length > 1 && <b>{dayEvents.length}</b>}
+                    <b>{dayEvents.length}</b>
                   </span>
                 )}
                 <span className="calendar-event-pills">
