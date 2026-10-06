@@ -76,3 +76,19 @@
   .fund-trade-tabs{grid-template-columns:1fr!important}
   .fund-trade-tabs button{min-height:68px}
 }
+
+/* Final assets contrast guard for both explicit display modes. */
+.assets-fund-page,.assets-fund-page .asset-side,.assets-fund-page .fund-kpi,.assets-fund-page .fund-chart-card,.assets-fund-page .compact-details-card{color:var(--ink)!important}
+:root:not([data-mode="dark"]) .assets-fund-page .fund-kpi:not(.total) strong,
+:root:not([data-mode="dark"]) .assets-fund-page .fund-chart-meta strong,
+:root:not([data-mode="dark"]) .assets-fund-page .fund-chart-stats b,
+:root:not([data-mode="dark"]) .assets-fund-page .compact-details-grid dd{color:#172536!important;opacity:1!important}
+:root[data-mode="dark"] .assets-fund-page .asset-side,
+:root[data-mode="dark"] .assets-fund-page .fund-kpi,
+:root[data-mode="dark"] .assets-fund-page .fund-chart-card,
+:root[data-mode="dark"] .assets-fund-page .compact-details-card{background:#0e1b21!important;border-color:#29414b!important;color:#edf7fa!important}
+:root[data-mode="dark"] .assets-fund-page .fund-kpi:not(.total) strong,
+:root[data-mode="dark"] .assets-fund-page .fund-chart-meta strong,
+:root[data-mode="dark"] .assets-fund-page .fund-chart-stats b,
+:root[data-mode="dark"] .assets-fund-page .compact-details-grid dd{color:#edf7fa!important;opacity:1!important}
+.assets-fund-page .fund-kpi.total strong,.assets-fund-page .assets-general-total>strong,.assets-fund-page .assets-general-total small b{color:#fff!important;opacity:1!important}
