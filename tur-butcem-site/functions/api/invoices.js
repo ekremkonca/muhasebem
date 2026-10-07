@@ -31,7 +31,7 @@ export async function onRequestPost(context) {
   try {
     const db = await getDb(context); await requireSession(context, db);
     const invoice = clean(await context.request.json());
-    await db.prepare(`INSERT INTO invoices (${fields.split(',').slice(0,9).join(',')},note) VALUES (?,?,?,?,?,?,?,?,?,?)`)
+    await db.prepare(`INSERT INTO invoices (id,title,party,invoice_date,due_date,amount,currency,status,note) VALUES (?,?,?,?,?,?,?,?,?)`)
       .bind(invoice.id, invoice.title, invoice.party, invoice.invoice_date, invoice.due_date, invoice.amount, invoice.currency, invoice.status, invoice.note).run();
     await audit(db, invoice.id, 'invoice_create', { after: invoice });
     return json({ invoice }, 201);
