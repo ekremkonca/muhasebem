@@ -218,6 +218,20 @@ export async function ensureSchema(db) {
     )
     .run();
 
+  await db.prepare(`CREATE TABLE IF NOT EXISTS invoices (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    party TEXT NOT NULL DEFAULT '',
+    invoice_date TEXT NOT NULL,
+    due_date TEXT NOT NULL,
+    amount REAL NOT NULL DEFAULT 0,
+    currency TEXT NOT NULL DEFAULT 'TRY',
+    status TEXT NOT NULL DEFAULT 'Bekliyor',
+    note TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`).run();
+
   await db
     .prepare(
       "CREATE INDEX IF NOT EXISTS idx_records_date ON records(date DESC)",
@@ -250,6 +264,7 @@ export async function ensureSchema(db) {
     .run();
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_cash_movements_date ON cash_movements(date DESC, created_at DESC)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_month_closings_month ON month_closings(month DESC)").run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_invoices_due_date ON invoices(due_date DESC)").run();
 
   const movementSeeded=await db.prepare("SELECT value FROM settings WHERE key='cash_movements_seeded_v1'").first();
   if(!movementSeeded){

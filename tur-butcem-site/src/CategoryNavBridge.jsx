@@ -6,11 +6,13 @@ const LINKS=[
   ['/muhasebe/','Muhasebe'],
   ['/varliklar/','Varlıklar'],
   ['/takvim/','Takvim']
+  ,['/takip/','Takip']
 ];
 const pageKey=()=>{
   const path=(location.pathname||'/').replace(/^\/+|\/+$/g,'');
   if(path.startsWith('varliklar'))return'Varlıklar';
   if(path.startsWith('takvim'))return'Takvim';
+  if(path.startsWith('takip'))return'Takip';
   return'Muhasebe';
 };
 
