@@ -231,6 +231,9 @@ export async function ensureSchema(db) {
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`).run();
+  await ensureColumn(db, "invoices", "repeat_monthly", "INTEGER NOT NULL DEFAULT 0");
+  await ensureColumn(db, "invoices", "copy_amount", "INTEGER NOT NULL DEFAULT 1");
+  await ensureColumn(db, "invoices", "series_id", "TEXT NOT NULL DEFAULT ''");
 
   await db
     .prepare(
