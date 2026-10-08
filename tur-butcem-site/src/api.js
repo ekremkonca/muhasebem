@@ -219,8 +219,4 @@ export async function updateEvent(event) {
 export const deleteEvent = (id) =>
   request(`/api/events?id=${encodeURIComponent(id)}`, { method: "DELETE" });
 
-export const loadInvoices = () => request('/api/invoices').then(data => data.invoices || []);
-export const createInvoice = (invoice) => request('/api/invoices', { method: 'POST', body: JSON.stringify(invoice) }).then(data => data.invoice || invoice);
-export const updateInvoice = (invoice) => request('/api/invoices', { method: 'PATCH', body: JSON.stringify(invoice) }).then(data => data.invoice || invoice);
-export const deleteInvoice = (id) => request(`/api/invoices?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
 

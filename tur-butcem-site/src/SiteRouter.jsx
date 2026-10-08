@@ -3,7 +3,6 @@ import App from "./App.jsx";
 import AssetsNav from "./AssetsNav.jsx";
 import AssetsHeaderBridge from "./AssetsHeaderBridge.jsx";
 import CalendarView from "./CalendarView.jsx";
-import TrackingPage from "./TrackingPage.jsx";
 import { withTourPlans } from "./tourCalendar.js";
 import HomePage from "./HomePage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
@@ -323,7 +322,6 @@ export default function SiteRouter() {
       {path === "/varliklar" && <AssetsHeaderBridge />}
     </>;
     if (path === "/takvim" || path === "/takvim/index") return <TakvimPage />;
-    if (path === "/takip" || path === "/takip/index") return <TrackingPage />;
     return <RedirectHome />;
   }, [path]);
 
