@@ -4,7 +4,7 @@ import FinanceOperations from './FinanceOperations.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { categoryTotals, currencyTotals, goalProgress, realizedFxMovementTotal, seasonMetrics } from './accountingSummary.js';
+import { categoryTotals, currencyTotals, goalProgress, seasonMetrics } from './accountingSummary.js';
 import './styles/accounting-refresh.css';
 import FinanceScore from './FinanceScore.jsx';
 import CategoryDonut from './CategoryDonut.jsx';
@@ -1312,10 +1312,10 @@ function Dashboard({ onSignedOut }) {
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
     realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    newRealizedFxTry = realizedFxMovementTotal(cashMovements),
-    newRealizedFxValue = convertAmount(newRealizedFxTry, "TRY", currency),
     spentRodosValue = convertAmount(SPENT_RODOS_EUR, "EUR", currency),
-    income = tourIncome + realizedFxValue + newRealizedFxValue + postJulyTipCommissionIncome + spentRodosValue,
+    // Döviz bozumları gelir değildir; yalnızca mevcut paranın para birimini değiştirir.
+    // 10 Temmuz sabit başlangıç tutarı korunur, yeni kasa hareketleri net gelire eklenmez.
+    income = tourIncome + realizedFxValue + postJulyTipCommissionIncome + spentRodosValue,
     net = income - expense;
   const topTour = useMemo(() => {
     const m = {};

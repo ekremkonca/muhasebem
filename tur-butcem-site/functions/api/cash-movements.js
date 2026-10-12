@@ -35,7 +35,8 @@ export async function onRequestPost(context) {
   try {
     const db=await getDb(context); await requireSession(context,db);
     const m=cleanMovement(await context.request.json());
-    m.include_in_net = m.kind === 'Döviz Bozum' ? 1 : 0;
+    // Döviz bozumu yeni kazanç değildir; daha önce kaydedilmiş gelirin biçimini değiştirir.
+    m.include_in_net = 0;
     await db.prepare(`INSERT INTO cash_movements (id,date,kind,amount,currency,rate,try_amount,account,note,include_in_net) VALUES (?,?,?,?,?,?,?,?,?,?)`).bind(m.id,m.date,m.kind,m.amount,m.currency,m.rate,m.try_amount,m.account,m.note,m.include_in_net).run();
     await audit(db,m.id,'cash_movement_create',{after:m});
     return json({movement:m},201);
