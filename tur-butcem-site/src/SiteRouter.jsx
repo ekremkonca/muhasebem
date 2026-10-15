@@ -8,6 +8,7 @@ import HomePage from "./HomePage.jsx";
 import CategoryNavBridge from "./CategoryNavBridge.jsx";
 import ScrollTopButton from "./ScrollTopButton.jsx";
 import SearchBridge from "./SearchBridge.jsx";
+import RouteBook from "./RouteBook.jsx";
 import {
   createEvent,
   createRecord,
@@ -322,6 +323,7 @@ export default function SiteRouter() {
       {path === "/varliklar" && <AssetsHeaderBridge />}
     </>;
     if (path === "/takvim" || path === "/takvim/index") return <TakvimPage />;
+    if (path === "/rota" || path === "/rota/index") return <RouteBook />;
     return <RedirectHome />;
   }, [path]);
 

@@ -796,7 +796,7 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
   }
   html body .global-category-nav{
     display:grid!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
     gap:6px!important;
     width:100%!important;
     height:auto!important;
