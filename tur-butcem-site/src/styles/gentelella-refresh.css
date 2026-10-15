@@ -942,22 +942,22 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
 }
 
 /* Final theme-card treatment: flat and sharp in both color modes. */
-html body #root .v7-header .header-actions .theme-preview-panel button{
+html body .theme-preview-panel button{
   background:color-mix(in srgb,var(--preview-color) 8%,var(--paper))!important;
   border-color:color-mix(in srgb,var(--preview-color) 24%,var(--line))!important;
   box-shadow:inset -4px 0 0 var(--preview-color)!important;
 }
-html body #root .v7-header .header-actions .theme-preview-panel button::after{display:none!important;content:none!important}
-html body #root .v7-header .header-actions .theme-preview-panel button.active{
+html body .theme-preview-panel button::after{display:none!important;content:none!important}
+html body .theme-preview-panel button.active{
   background:color-mix(in srgb,var(--preview-color) 16%,var(--paper))!important;
   border-color:var(--preview-color)!important;
   box-shadow:inset -4px 0 0 var(--preview-color),0 0 0 1px color-mix(in srgb,var(--preview-color) 18%,transparent)!important;
 }
-:root[data-mode="dark"] body #root .v7-header .header-actions .theme-preview-panel button{
+:root[data-mode="dark"] body .theme-preview-panel button{
   background:color-mix(in srgb,var(--preview-color) 10%,#142038)!important;
   border-color:color-mix(in srgb,var(--preview-color) 32%,#344660)!important;
 }
-:root[data-mode="dark"] body #root .v7-header .header-actions .theme-preview-panel button.active{
+:root[data-mode="dark"] body .theme-preview-panel button.active{
   background:color-mix(in srgb,var(--preview-color) 20%,#142038)!important;
   border-color:color-mix(in srgb,var(--preview-color) 72%,#70809b)!important;
 }
