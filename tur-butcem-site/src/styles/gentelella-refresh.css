@@ -158,27 +158,6 @@ html body #root .global-category-nav-host{display:block!important;visibility:vis
   box-shadow:0 14px 34px rgba(38,76,132,.11)!important;
 }
 
-/* Theme choices: use crisp color cards instead of soft radial preview blobs. */
-html body #root .theme-preview-panel button{
-  background:color-mix(in srgb,var(--preview-color) 8%,var(--paper))!important;
-  border-color:color-mix(in srgb,var(--preview-color) 24%,var(--line))!important;
-  box-shadow:inset -4px 0 0 var(--preview-color)!important;
-}
-html body #root .theme-preview-panel button::after{display:none!important;content:none!important}
-html body #root .theme-preview-panel button.active{
-  background:color-mix(in srgb,var(--preview-color) 16%,var(--paper))!important;
-  border-color:var(--preview-color)!important;
-  box-shadow:inset -4px 0 0 var(--preview-color),0 0 0 1px color-mix(in srgb,var(--preview-color) 18%,transparent)!important;
-}
-:root[data-mode="dark"] body #root .theme-preview-panel button{
-  background:color-mix(in srgb,var(--preview-color) 10%,#142038)!important;
-  border-color:color-mix(in srgb,var(--preview-color) 32%,#344660)!important;
-}
-:root[data-mode="dark"] body #root .theme-preview-panel button.active{
-  background:color-mix(in srgb,var(--preview-color) 20%,#142038)!important;
-  border-color:color-mix(in srgb,var(--preview-color) 72%,#70809b)!important;
-}
-
 /* Crystal-white theme: pearl surfaces and the bright ring treatment of the tour counter. */
 :root[data-theme="pearl"]:not([data-mode="dark"]) #root .command-dashboard .command-net{
   background:radial-gradient(circle at 78% 8%,rgba(255,255,255,.98),transparent 34%),linear-gradient(135deg,#fff 0%,#eef4fb 48%,#dce7f2 100%)!important;
