@@ -779,7 +779,7 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
 @media screen and (max-width:760px){
   html{scroll-padding-bottom:86px!important}
   body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important}
-  html body #root .global-category-nav-host{
+  html body .global-category-nav-host{
     position:fixed!important;
     z-index:850!important;
     inset:auto 0 0!important;
@@ -794,7 +794,7 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
     box-shadow:0 -10px 28px rgba(5,14,28,.18)!important;
     backdrop-filter:blur(16px)!important;
   }
-  html body #root .global-category-nav{
+  html body .global-category-nav{
     display:grid!important;
     grid-template-columns:repeat(3,minmax(0,1fr))!important;
     gap:6px!important;
@@ -805,7 +805,7 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
     background:transparent!important;
     overflow:visible!important;
   }
-  html body #root .global-category-nav a{
+  html body .global-category-nav a{
     min-width:0!important;
     height:62px!important;
     padding:6px 5px 5px!important;
@@ -821,7 +821,7 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
     line-height:1.1!important;
     color:var(--muted)!important;
   }
-  html body #root .global-category-nav .nav-icon{
+  html body .global-category-nav .nav-icon{
     display:block!important;
     width:25px!important;
     height:25px!important;
@@ -829,18 +829,18 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
     stroke-width:1.9!important;
     transition:transform .2s ease,filter .2s ease!important;
   }
-  html body #root .global-category-nav .nav-label{
+  html body .global-category-nav .nav-label{
     display:block!important;
     font-size:11px!important;
     font-weight:800!important;
   }
-  html body #root .global-category-nav a.active{
+  html body .global-category-nav a.active{
     border-color:color-mix(in srgb,var(--accent,var(--green)) 28%,var(--line))!important;
     background:color-mix(in srgb,var(--accent,var(--green)) 14%,var(--paper))!important;
     color:var(--accent,var(--green))!important;
     box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,var(--green)) 8%,transparent),0 6px 16px color-mix(in srgb,var(--accent,var(--green)) 12%,transparent)!important;
   }
-  html body #root .global-category-nav a.active .nav-icon{transform:translateY(-1px) scale(1.06)!important;filter:drop-shadow(0 3px 5px color-mix(in srgb,var(--accent,var(--green)) 28%,transparent))!important}
+  html body .global-category-nav a.active .nav-icon{transform:translateY(-1px) scale(1.06)!important;filter:drop-shadow(0 3px 5px color-mix(in srgb,var(--accent,var(--green)) 28%,transparent))!important}
   body{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important}
   #root .scroll-top-button,#root .undo-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
 }
