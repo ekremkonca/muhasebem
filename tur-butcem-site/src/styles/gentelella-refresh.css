@@ -807,19 +807,42 @@ html body #root .v7-header .header-actions .unified-settings-panel .theme-panel 
   }
   html body #root .global-category-nav a{
     min-width:0!important;
-    height:48px!important;
-    padding:0 5px!important;
+    height:62px!important;
+    padding:6px 5px 5px!important;
     border:1px solid transparent!important;
-    border-radius:13px!important;
-    font-size:12px!important;
+    border-radius:14px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:3px!important;
+    font-size:11px!important;
     letter-spacing:0!important;
+    line-height:1.1!important;
+    color:var(--muted)!important;
+  }
+  html body #root .global-category-nav .nav-icon{
+    display:block!important;
+    width:25px!important;
+    height:25px!important;
+    flex:0 0 25px!important;
+    stroke-width:1.9!important;
+    transition:transform .2s ease,filter .2s ease!important;
+  }
+  html body #root .global-category-nav .nav-label{
+    display:block!important;
+    font-size:11px!important;
+    font-weight:800!important;
   }
   html body #root .global-category-nav a.active{
     border-color:color-mix(in srgb,var(--accent,var(--green)) 28%,var(--line))!important;
     background:color-mix(in srgb,var(--accent,var(--green)) 14%,var(--paper))!important;
+    color:var(--accent,var(--green))!important;
     box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,var(--green)) 8%,transparent),0 6px 16px color-mix(in srgb,var(--accent,var(--green)) 12%,transparent)!important;
   }
-  #root .scroll-top-button,#root .undo-toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+  html body #root .global-category-nav a.active .nav-icon{transform:translateY(-1px) scale(1.06)!important;filter:drop-shadow(0 3px 5px color-mix(in srgb,var(--accent,var(--green)) 28%,transparent))!important}
+  body{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important}
+  #root .scroll-top-button,#root .undo-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
 }
 
 /* Phone calendars: fit the full seven-day month grid without horizontal scrolling. */
