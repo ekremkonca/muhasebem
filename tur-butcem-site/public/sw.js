@@ -1,5 +1,5 @@
 const CACHE_PREFIX='rehberlik-muhasebe-';
-const CACHE='rehberlik-muhasebe-v14-fresh';
+const CACHE='rehberlik-muhasebe-v15-mobile-nav-icons';
 
 self.addEventListener('install',event=>{
   event.waitUntil(self.skipWaiting());
