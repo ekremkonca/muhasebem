@@ -3,8 +3,85 @@ import HomePage from'./HomePage.jsx';
 import'./styles/route-book.css';
 
 const STORAGE_KEY='rehberlik-rota-defteri-v1';
+const EFES_STARTER_KEY='rehberlik-rota-efes-calisma-v1';
+const EFES_ROUTE={
+ id:'starter-efes-antik-kenti',name:'Efes Antik Kenti',region:'Selçuk / İzmir',duration:'3,5–4,5 saat',meetingPoint:'Üst Kapı (Magnesia Kapısı) — çıkış Alt Kapı',favorite:true,updatedAt:'2026-10-15T00:00:00.000Z',
+ stops:[
+  'Üst Kapı ve Magnesia Kapısı — kent planını, Bülbül ile Panayır dağları arasındaki konumu anlat',
+  'Devlet Agorası ve Bazilika — kentin resmî, hukuki ve idari merkezi',
+  'Odeon — meclis toplantıları ve küçük gösteriler için kullanılan yapı',
+  'Prytaneion — kutsal ocağın yandığı belediye ve tören merkezi',
+  'Domitianus Meydanı, Memmius Anıtı ve Pollio Çeşmesi — imparatorluk kültü ve kent seçkinleri',
+  'Herakles Kapısı — araç trafiğinin sınırlandığı Kuretler Caddesi başlangıcı',
+  'Kuretler Caddesi — çeşmeler, anıtlar, dükkânlar ve kamusal yaşam ekseni',
+  'Traianus Çeşmesi — imparatorluk propagandası ve su sistemi',
+  'Skolastikia Hamamı ve Latrina — Roma kentinde temizlik, sosyalleşme ve altyapı',
+  'Hadrianus Tapınağı — zengin cephe bezemesi ve kentin kuruluş anlatısını taşıyan kabartmalar',
+  'Yamaç Evler — mozaikler, freskler, mermer kaplamalar ve seçkinlerin gündelik yaşamı',
+  'Celsus Kütüphanesi — anıt mezar, kütüphane ve iki katlı cephe düzeni',
+  'Mazeus–Mithridates Kapısı ve Ticaret Agorası — ticaret, köle pazarı tartışmaları ve liman ekonomisi',
+  'Mermer Cadde — Kütüphane ile Büyük Tiyatro arasındaki ana bağlantı',
+  'Büyük Tiyatro — yaklaşık 25 bin kişilik kapasite, gösteriler, halk toplantıları ve Aziz Paulus anlatısı',
+  'Arkadiane (Liman Caddesi) — tiyatrodan antik limana uzanan sütunlu ve aydınlatılmış tören yolu',
+  'Alt Kapı çıkışı — limanın alüvyonla dolması, kıyı çizgisinin değişmesi ve kentin gerilemesi'
+ ].join('\n'),
+ narration:`ANLATIM OMURGASI
+
+1. COĞRAFYA VE KENTİN TAŞINMASI
+Efes yalnızca tek bir yerleşim değildir. Kaystros/Küçük Menderes havzasındaki kıyı çizgisi alüvyonla sürekli batıya ilerlediği için yerleşim ve limanlar zaman içinde yer değiştirdi. Bugün gezilen Helenistik kent, Büyük İskender’in ardıllarından Lysimakhos tarafından MÖ 4. yüzyılın sonu ile 3. yüzyılın başında planlandı. Izgara plan, iki dağ arasındaki vadi ve limana bağlanan ana aks üzerinden okunabilir.
+
+2. ARTEMİS VE KİMLİK
+Efes Artemis’i, Anadolu’nun eski ana tanrıça gelenekleriyle birleşmiş yerel ve güçlü bir külttür. Artemision antik dünyanın Yedi Harikası arasında sayılır; bugünkü ören yerinin dışında, Ayasuluk yakınındadır. Tapınak yalnızca dinî değil, ekonomik ve diplomatik bir merkezdi.
+
+3. ROMA ASIA EYALETİNİN BAŞKENTİ
+Pergamon Krallığı’nın topraklarının Roma’ya geçmesinden sonra Efes, Asia eyaletinin başkenti ve Akdeniz ticaret ağının önemli limanlarından biri oldu. Anıtlar yalnızca güzellik için değil; Roma düzenini, imparatora bağlılığı, bağışçı ailelerin prestijini ve kentin zenginliğini göstermek için yapıldı.
+
+4. YUKARI KENT: YÖNETİM VE KUTSAL OCAK
+Devlet Agorası kamusal yönetim alanıdır. Odeon hem küçük gösterilere hem meclis toplantılarına hizmet etti. Prytaneion’da kentin sürekliliğini simgeleyen kutsal ateş yanardı; burada bulunan Artemis heykelleri bugün Efes Müzesi’ndedir. Bu bölümde “şehir nasıl yönetiliyordu?” sorusu üzerinden anlatımı kur.
+
+5. KURETLER CADDESİ: KENT BİR SAHNE
+Kuretler Caddesi eğimli yapısı, mermer döşemesi, çeşmeleri, onur anıtları ve cepheleriyle kentin temsil alanıdır. Herakles Kapısı yaya alanına geçişi vurgular. Traianus Çeşmesi suyun mühendislik kadar siyasi bir gösteri olduğunu anlatmak için iyi duraktır. Hadrianus Tapınağı’nın hareketli cephesi ve kabartmaları üzerinden imparatorluk kültünü açıkla.
+
+6. ROMA GÜNDELİK HAYATI
+Hamamlar yalnızca yıkanma yeri değil; spor, görüşme ve sosyalleşme mekânlarıydı. Latrina ortak kullanım kültürünü ve gelişmiş kanalizasyon sistemini gösterir. Yamaç Evler’de avlulu plan, yerden ısıtma, temiz ve atık su düzeni, freskler ile mozaikler üzerinden varlıklı Efeslilerin yaşam standardını anlat.
+
+7. CELSUS KÜTÜPHANESİ
+MS 2. yüzyılda Tiberius Julius Celsus Polemaeanus onuruna oğlu Aquila tarafından yaptırıldı. Yapı hem kütüphane hem anıt mezardır; Celsus’un lahdi yapının altındaki mezar odasındadır. Cephedeki heykeller bilgelik, erdem, düşünce ve bilgi kavramlarını temsil eder. Cephe, dar alanı daha görkemli göstermek için perspektif etkileri kullanır.
+
+8. TİCARET VE LİMAN
+Mazeus–Mithridates Kapısı Ticaret Agorası’na açılır. Agora, limana yakınlığı sayesinde malların ve insanların dolaşım merkezidir. Burada Efes’in tahıl, şarap, zeytinyağı, seramik ve uzak mesafe ticaretindeki konumundan söz et. Kesin kanıt olmayan popüler “ayak izi/reklam” hikâyelerini gerçekmiş gibi sunma; ziyaretçiye bunun modern bir yorum olduğunu belirt.
+
+9. BÜYÜK TİYATRO VE ERKEN HRİSTİYANLIK
+Tiyatro yaklaşık 25 bin kişilik kapasitesiyle gösteri, toplantı ve kamusal temsil alanıdır. Yeni Ahit’te anlatılan gümüşçüler olayı ve Aziz Paulus geleneğiyle ilişkilendirilir. Efes daha sonra erken Hristiyanlık için önemli bir merkez olmuş; Meryem Kilisesi ve Ayasuluk’taki Aziz Yuhanna Bazilikası bu çok katmanlı geçmişin parçalarıdır.
+
+10. LİMANIN GERİ ÇEKİLMESİ
+Arkadiane, tiyatroyu limana bağlayan geniş sütunlu caddedir. Limanın Küçük Menderes’in taşıdığı alüvyonla dolması, ticaretin zayıflaması ve sıtma gibi çevresel sorunlar kentin dönüşümünde etkili oldu. Kapanışı “Efes’i yükselten liman, kıyı çizgisi değişince kentin kaderini de değiştirdi” fikriyle yap.
+
+KISA AÇILIŞ CÜMLESİ
+“Bugün bir harabe değil, yönetimden ticarete, inançtan gündelik yaşama kadar Roma kentinin nasıl çalıştığını adım adım okuyacağımız bir şehir gezeceğiz.”`,
+ entrance:`• Güncel açılış-kapanış saatini ve bilet bilgisini turdan önce muze.gov.tr üzerinden kontrol et; dönem ve gece müzeciliğine göre değişebilir.
+• Yamaç Evler ören yerinin içindedir fakat giriş uygulaması ve bilet kapsamı değişebilir; gruba başlamadan önce teyit et.
+• Üst Kapıdan başlayıp Alt Kapıdan çıkmak genel olarak eğim aşağı ve anlatım açısından rahattır. Araçla buluşma noktasını önceden netleştir.
+• Zemin büyük ölçüde mermer, eğimli ve yer yer kaygandır. Rahat ayakkabı, şapka, su ve güneş koruması öner.
+• Yoğun sıcaklarda uzun anlatımları gölgeli duraklara taşı; Celsus ve tiyatro çevresinde grup bütünlüğünü özellikle koru.
+• Artemis Tapınağı, Efes Müzesi, Aziz Yuhanna Bazilikası ve Meryem Ana Evi ana ören yeri yürüyüşünün dışında ayrı duraklardır.`,
+ reminders:`TUR ÖNCESİ
+• Kulaklık sistemi, bilet/Müzekart durumu ve araç kapı değişimini kontrol et.
+• Misafirlerin hareket kısıtlılığı, çocuk arabası ve sıcak hassasiyetini sor.
+• Yamaç Evler için en az 30–45 dakika ek süre ayır.
+• Kalabalık grupta Celsus Kütüphanesi önünde yeniden buluşma noktası belirle.
+
+ANLATIMDA DİKKAT
+• Nüfus rakamlarını kesin gerçek gibi değil, antik kentler için tahmin olarak aktar.
+• “Celsus Kütüphanesi dünyanın üçüncü büyük kütüphanesiydi” iddiasını kesin sıralama olarak kullanma.
+• Aşk Evi’ne yön verdiği söylenen ayak izi gibi popüler hikâyeleri “yaygın yorum” diye belirt.
+• Artemis heykelindeki biçimleri tek ve tartışmasız bir açıklamaya indirgeme; bereket, süsleme ve kült sembolizmi üzerine farklı yorumlar bulunduğunu söyle.
+
+KAYNAK KONTROLÜ
+UNESCO Efes Dünya Mirası kaydı, T.C. Kültür ve Turizm Bakanlığı Efes sayfaları ve Efes Müze Müdürlüğü bilgileri temel alınmıştır.`
+};
 const emptyRoute=()=>({id:'',name:'',region:'',duration:'',meetingPoint:'',stops:'',narration:'',entrance:'',reminders:'',favorite:false,updatedAt:''});
-const readRoutes=()=>{try{const rows=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');return Array.isArray(rows)?rows:[]}catch{return[]}};
+const readRoutes=()=>{try{const rows=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'),safe=Array.isArray(rows)?rows:[];if(localStorage.getItem(EFES_STARTER_KEY)!=='1'){const next=safe.some(route=>route.id===EFES_ROUTE.id)?safe:[EFES_ROUTE,...safe];localStorage.setItem(STORAGE_KEY,JSON.stringify(next));localStorage.setItem(EFES_STARTER_KEY,'1');return next}return safe}catch{return[EFES_ROUTE]}};
 
 const Icon=({name})=>{
  const paths={map:<><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></>,pin:<><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,clock:<><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,plus:<path d="M12 5v14M5 12h14"/>,search:<><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,edit:<><path d="m4 20 4.5-1 10-10-3.5-3.5-10 10zM13.5 7l3.5 3.5"/></>,trash:<><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></>,star:<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>};
