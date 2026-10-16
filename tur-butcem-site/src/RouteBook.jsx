@@ -4,6 +4,7 @@ import'./styles/route-book.css';
 
 const STORAGE_KEY='rehberlik-rota-defteri-v1';
 const EFES_STARTER_KEY='rehberlik-rota-efes-calisma-v1';
+const BODRUM_STARTER_KEY='rehberlik-rota-bodrum-calisma-v1';
 const EFES_ROUTE={
  id:'starter-efes-antik-kenti',name:'Efes Antik Kenti',region:'Selçuk / İzmir',duration:'3,5–4,5 saat',meetingPoint:'Üst Kapı (Magnesia Kapısı) — çıkış Alt Kapı',favorite:true,updatedAt:'2026-10-15T00:00:00.000Z',
  stops:[
@@ -80,8 +81,61 @@ ANLATIMDA DİKKAT
 KAYNAK KONTROLÜ
 UNESCO Efes Dünya Mirası kaydı, T.C. Kültür ve Turizm Bakanlığı Efes sayfaları ve Efes Müze Müdürlüğü bilgileri temel alınmıştır.`
 };
+const BODRUM_ROUTE={
+ id:'starter-bodrum-merkez',name:'Bodrum: Kale, Antik Tiyatro ve Yel Değirmenleri',region:'Bodrum / Muğla',duration:'3–4 saat',meetingPoint:'Bodrum Kalesi ana giriş — İskele Meydanı',favorite:false,updatedAt:'2026-10-16T00:00:00.000Z',
+ stops:[
+  'Bodrum Kalesi — Saint Jean Şövalyeleri, Halikarnassos mirası ve Sualtı Arkeoloji Müzesi',
+  'Bodrum Antik Tiyatrosu — Mausolos dönemi kent planı, seyir alanı ve antik liman manzarası',
+  'Bodrum Yel Değirmenleri — Bodrum–Gümbet sırtı, rüzgârla çalışan üretim düzeni ve panorama'
+ ].join('\n'),
+ narration:`ANLATIM OMURGASI
+
+1. HALİKARNASSOS'TAN BODRUM'A
+Bodrum'un antik adı Halikarnassos'tur. Kent, Karia bölgesinin en önemli merkezlerinden biriydi. MÖ 4. yüzyılda Hekatomnid hanedanından Mausolos döneminde başkent olarak büyütüldü; limanı, surları, tiyatrosu ve anıtsal yapılarıyla güçlü bir kent kimliği kazandı. Mausolos için yaptırılan anıt mezar “Mausoleion”, daha sonra büyük anıt mezarların genel adına kaynaklık etti.
+
+2. BODRUM KALESİ
+Kale, 15. yüzyılın başlarından itibaren Saint Jean Şövalyeleri tarafından antik limanın girişindeki kayalık yarımada üzerinde kuruldu. İnşaatta çevredeki antik yapılardan, özellikle Mausoleion çevresinden getirilen taşların da kullanıldığı görülür. Farklı şövalye topluluklarıyla ilişkilendirilen kuleleri, surları ve avluları kalenin çok katmanlı yapısını anlatır.
+
+3. SUALTI ARKEOLOJİSİ
+Kale bugün Bodrum Sualtı Arkeoloji Müzesi'ne ev sahipliği yapar. Batıklardan çıkarılan yükler yalnızca gemileri değil, Akdeniz'deki ticaret yollarını, üretimi ve gündelik hayatı da açıklar. Amforalar, cam eserler ve gemi buluntuları üzerinden “denizin altındaki zaman kapsülü” fikrini kullan.
+
+4. ANTİK TİYATRO
+Tiyatro, Mausolos döneminde başlayan kentleşmenin önemli parçalarındandır; Roma döneminde değişiklik ve genişletmeler görmüştür. Oturma sıraları yamaca yaslanır, orkestraya ve sahne yapısına bakar. Buradan antik kentin limanla ilişkisini ve modern Bodrum'un eski Halikarnassos üzerine nasıl yayıldığını göstermek mümkündür.
+
+5. TİYATRODA TOPLUMSAL HAYAT
+Antik tiyatro yalnızca oyun izlenen bir yer değildi. Törenler, kamusal buluşmalar ve kent yaşamının görünür olduğu etkinlikler burada gerçekleşirdi. Akustik, oturma düzeni ve seçkinlere ayrılan bölümler üzerinden toplumun mekâna nasıl yansıdığını anlat.
+
+6. YEL DEĞİRMENLERİ
+Bodrum ile Gümbet arasındaki sırt, iki yönden aldığı rüzgâr nedeniyle değirmenler için elverişliydi. Bu yapılar bölgenin tahılını öğütmek için rüzgâr enerjisinden yararlanan geleneksel üretim düzeninin izleridir. Kanatlar ve iç mekanizmalar günümüze bütünüyle ulaşmasa da konumları, rüzgâr seçiminin bilinçli olduğunu açıkça gösterir.
+
+7. KAPANIŞ
+Rotayı üç farklı Bodrum üzerinden bağla: Kale deniz ticaretini ve Orta Çağ savunmasını, tiyatro antik Halikarnassos'un kamusal yaşamını, yel değirmenleri ise yakın dönem gündelik üretimini temsil eder.
+
+KISA AÇILIŞ CÜMLESİ
+“Bugün Bodrum'u yalnızca bir tatil merkezi olarak değil; Halikarnassos'tan şövalyelere, deniz ticaretinden rüzgârla çalışan değirmenlere uzanan çok katmanlı bir kent olarak okuyacağız.”`,
+ entrance:`• Bodrum Kalesi ve Sualtı Arkeoloji Müzesi için güncel ziyaret saatini, kapalı bölümleri ve bilet uygulamasını turdan önce muze.gov.tr üzerinden kontrol et.
+• Kale içinde taş döşeme, merdiven ve eğimli geçişler bulunur; hareket kısıtlılığı olan misafirler için güzergâhı önceden netleştir.
+• Antik Tiyatro açık alandadır. Etkinlik veya çalışma nedeniyle ziyaret düzeni değişebileceği için aynı gün kontrol et.
+• Yel değirmenleri bölgesinde zemin düzensizdir; araç indirme-bindirme noktasını ve güvenli yürüyüş hattını önceden belirle.
+• Ücret ve saatleri notlara sabitleme; sezon içinde değişebileceği için resmî kaynaktan güncel bilgi ver.`,
+ reminders:`ÖNERİLEN SIRA
+• Sabah serinliğinde Bodrum Kalesi ile başla.
+• Araçla Antik Tiyatro'ya geç; seyir noktasında kent planını göster.
+• Rotayı gün batımına yakın Yel Değirmenleri'nde tamamla.
+
+TUR ÖNCESİ
+• Rahat ayakkabı, şapka, su ve güneş koruması öner.
+• Kale için bilet/Müzekart durumunu, grup girişini ve açık sergi bölümlerini kontrol et.
+• Yaz trafiği için duraklar arasına ek süre koy.
+• Yel değirmenlerinde kuvvetli rüzgâr ve keskin zemin konusunda grubu uyar.
+
+ANLATIMDA DİKKAT
+• Kalede kullanılan her taşı Mausoleion'a bağlama; devşirme malzeme kullanımını ölçülü anlat.
+• Antik tiyatronun farklı dönemlerde değişiklik gördüğünü belirt; bütün yapıyı tek döneme tarihleme.
+• Değirmenleri yalnızca fotoğraf noktası olarak değil, Bodrum'un üretim ve gündelik yaşam tarihinin parçası olarak açıkla.`
+};
 const emptyRoute=()=>({id:'',name:'',region:'',duration:'',meetingPoint:'',stops:'',narration:'',entrance:'',reminders:'',favorite:false,updatedAt:''});
-const readRoutes=()=>{try{const rows=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'),safe=Array.isArray(rows)?rows:[];if(localStorage.getItem(EFES_STARTER_KEY)!=='1'){const next=safe.some(route=>route.id===EFES_ROUTE.id)?safe:[EFES_ROUTE,...safe];localStorage.setItem(STORAGE_KEY,JSON.stringify(next));localStorage.setItem(EFES_STARTER_KEY,'1');return next}return safe}catch{return[EFES_ROUTE]}};
+const readRoutes=()=>{try{const rows=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');let safe=Array.isArray(rows)?rows:[],changed=false;if(localStorage.getItem(EFES_STARTER_KEY)!=='1'){if(!safe.some(route=>route.id===EFES_ROUTE.id))safe=[EFES_ROUTE,...safe];localStorage.setItem(EFES_STARTER_KEY,'1');changed=true}if(localStorage.getItem(BODRUM_STARTER_KEY)!=='1'){if(!safe.some(route=>route.id===BODRUM_ROUTE.id))safe=[BODRUM_ROUTE,...safe];localStorage.setItem(BODRUM_STARTER_KEY,'1');changed=true}if(changed)localStorage.setItem(STORAGE_KEY,JSON.stringify(safe));return safe}catch{return[BODRUM_ROUTE,EFES_ROUTE]}};
 
 const Icon=({name})=>{
  const paths={map:<><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></>,pin:<><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,clock:<><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,plus:<path d="M12 5v14M5 12h14"/>,search:<><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,edit:<><path d="m4 20 4.5-1 10-10-3.5-3.5-10 10zM13.5 7l3.5 3.5"/></>,trash:<><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></>,star:<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>};
