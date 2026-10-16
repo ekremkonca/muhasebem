@@ -1447,6 +1447,10 @@ function Dashboard({ onSignedOut }) {
         saved,
         ...current.filter((item) => item.id !== saved.id),
       ]);
+      // Calendar writes create/update the linked accounting row on the server.
+      // Refresh the visible ledger immediately so Girdiler and Alacaklar stay in sync.
+      const refreshedRows = await loadRecords();
+      setRows(refreshedRows.map(normalizeRecord));
       setHistory((await loadHistory(50)).history || []);
       return saved;
     } catch (e) {
@@ -1980,7 +1984,7 @@ function Dashboard({ onSignedOut }) {
                           <span>
                             {recordSecondary(r) || "—"}
                           </span>
-                          {(r.due_date || cleanRecordTags(r)) && <small>{[r.due_date && `Vade: ${fmtDate(r.due_date)}`, cleanRecordTags(r)].filter(Boolean).join(" · ")}</small>}
+                          {((!r.source_event_id && r.due_date) || cleanRecordTags(r)) && <small>{[!r.source_event_id && r.due_date && `Vade: ${fmtDate(r.due_date)}`, cleanRecordTags(r)].filter(Boolean).join(" · ")}</small>}
                         </td>
                         <td className="record-type" data-label="Tür">
                           <span
