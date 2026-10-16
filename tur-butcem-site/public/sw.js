@@ -1,5 +1,5 @@
 const CACHE_PREFIX='rehberlik-muhasebe-';
-const CACHE='rehberlik-muhasebe-v16-route-book';
+const CACHE='rehberlik-muhasebe-v17-calendar-agenda';
 
 self.addEventListener('install',event=>{
   event.waitUntil(self.skipWaiting());

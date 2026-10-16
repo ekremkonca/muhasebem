@@ -59,11 +59,12 @@
         day:d,
         month:calendar.dataset.currentMonthShort || '',
         title:pill.textContent.trim(),
+        meta:pill.dataset.agendaMeta || '',
         status:[...pill.classList].find(c => c.startsWith('is-')) || 'is-planned',
       }));
     });
     const visible = items.slice(0,8);
-    box.innerHTML = `<div class="month-agenda-head"><span>AYLIK AJANDA</span><b>${visible.length} öğe</b></div><div class="month-agenda-list">${visible.length ? visible.map(i => `<div class="month-agenda-item"><time><strong>${esc(i.day)}</strong><span>${esc(i.month)}</span></time><span class="month-agenda-copy"><strong>${esc(i.title)}</strong><small>Takvim görünümünden derlendi</small></span><i class="event-status-dot ${i.status}"></i></div>`).join('') : '<div class="upcoming-empty"><span>✦</span><p><strong>Bu ay ajanda boş.</strong>Yeni etkinlik eklenince burada görünür.</p></div>'}</div>`;
+    box.innerHTML = `<div class="month-agenda-head"><span>AYLIK AJANDA</span><b>${visible.length} öğe</b></div><div class="month-agenda-list">${visible.length ? visible.map(i => `<div class="month-agenda-item"><time><strong>${esc(i.day)}</strong><span>${esc(i.month)}</span></time><span class="month-agenda-copy"><strong>${esc(i.title)}</strong>${i.meta?`<small>${esc(i.meta)}</small>`:''}</span><i class="event-status-dot ${i.status}"></i></div>`).join('') : '<div class="upcoming-empty"><span>✦</span><p><strong>Bu ay ajanda boş.</strong>Yeni etkinlik eklenince burada görünür.</p></div>'}</div>`;
   }
 
   let observer;

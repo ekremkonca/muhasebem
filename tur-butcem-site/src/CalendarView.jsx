@@ -504,6 +504,13 @@ export default function CalendarView({
                   {dayEvents.slice(0, 2).map((event) => (
                     <i
                       key={event.id}
+                      data-agenda-meta={
+                        [
+                          event.company,
+                          event.amount > 0 && fmtMoney(event.amount, event.currency),
+                          !event.company && !(event.amount > 0) && event.note,
+                        ].filter(Boolean).join(" · ")
+                      }
                       className={
                         STATUS_META[event.status]?.className || "is-planned"
                       }
