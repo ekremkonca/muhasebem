@@ -190,8 +190,8 @@ function TakvimPage() {
           ? event.category
           : event.category === "Gider" ? "Tur Masrafı" : event.category === "Tahsilat" ? "Komisyon" : "Tur Geliri",
         amount: Number(event.amount), currency: event.currency || "TRY", status: "Ödenmedi",
-        paid_amount: 0, tags: `Takvim, ${event.category}`, source_event_id: event.id,
-        note: event.note || "Takvimden oluşturuldu",
+        paid_amount: 0, tags: "", source_event_id: event.id,
+        note: event.note || "",
       });
       const updated = await updateEvent({ ...event, status: "Kesinleşti", linked_record_id: record.id });
       setRows((current) => [record, ...current]);

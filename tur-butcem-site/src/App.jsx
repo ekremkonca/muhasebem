@@ -187,6 +187,23 @@ const normalizeCurrency = (c) => {
   const x = String(c || "TRY").toUpperCase();
   return CURRENCIES.includes(x) ? x : "TRY";
 };
+const CALENDAR_PLACEHOLDER_NOTES = new Set([
+  "takvimden oluşturuldu",
+  "takvimden oluşturulmuştur",
+  "takvimden eklenmiştir",
+  "takvimden eklendi",
+]);
+const cleanRecordNote = (r) => CALENDAR_PLACEHOLDER_NOTES.has(tidy(r?.note)) ? "" : String(r?.note || "").trim();
+const cleanRecordTags = (r) => r?.source_event_id && /^takvim\s*,/i.test(String(r?.tags || "")) ? "" : String(r?.tags || "").trim();
+const recordPrimary = (r) => r?.source_event_id
+  ? (r.tour || r.agency || r.guest || r.ship || "Kayıt")
+  : (r.agency || r.tour || r.guest || r.ship || "Kayıt");
+const recordSecondary = (r) => r?.source_event_id
+  ? [r.agency, cleanRecordNote(r)].filter(Boolean).join(" · ")
+  : (cleanRecordNote(r) || [r.guest, r.ship].filter(Boolean).join(" · "));
+const receivableTitle = (r) => r?.source_event_id
+  ? [r.tour, r.agency, cleanRecordNote(r)].filter(Boolean).join(" · ")
+  : ([r.agency, cleanRecordNote(r)].filter(Boolean).join(" · ") || r.tour || "Kayıt");
 const normalizeRecord = (r) => ({
   ...r,
   id: r.id || "",
@@ -201,9 +218,9 @@ const normalizeRecord = (r) => ({
   status: normalizeStatus(r.status),
   due_date: r.due_date || "",
   paid_amount: Number(r.paid_amount ?? (normalizeStatus(r.status) === "Ödendi" ? r.amount : 0)),
-  tags: r.tags || "",
+  tags: cleanRecordTags(r),
   source_event_id: r.source_event_id || "",
-  note: r.note || "",
+  note: cleanRecordNote(r),
 });
 const isIncome = (r) => INCOME_TYPES.has(normalizeType(r.type));
 const isExpense = (r) => EXPENSE_TYPES.has(normalizeType(r.type));
@@ -1117,7 +1134,7 @@ function VisualExperience({rows,income,expense,pending,tourCount,currency,conver
 
 function CompactReceivables({rows,currency,convertOutstanding,keepNativeCurrency,onPaid}){
  const open=rows.filter(r=>r.status==='Ödenmedi'&&isIncome(r)).sort((a,b)=>convertOutstanding(b)-convertOutstanding(a)),total=open.reduce((s,r)=>s+convertOutstanding(r),0);
-  return <section className="compact-receivables"><div className="panel-title"><div><span className="eyebrow">ALACAKLAR</span><h2>{money(total,currency)}</h2></div><span>{open.length} kayıt</span></div><div className="compact-receivable-list">{open.slice(0,6).map(r=><article key={r.id}><div><strong>{[r.agency,r.note].filter(Boolean).join(' · ')||r.tour||'Kayıt'}</strong><small>{r.type} · {fmtDate(r.date)}</small></div><div><b>{keepNativeCurrency(r)?money(Math.max(0,r.amount-r.paid_amount),r.currency):money(convertOutstanding(r),currency)}</b><button onClick={()=>onPaid(r)}>Ödendi yap</button></div></article>)}{!open.length&&<p className="empty-mini">Bekleyen alacak yok.</p>}</div></section>
+  return <section className="compact-receivables"><div className="panel-title"><div><span className="eyebrow">ALACAKLAR</span><h2>{money(total,currency)}</h2></div><span>{open.length} kayıt</span></div><div className="compact-receivable-list">{open.slice(0,6).map(r=><article key={r.id}><div><strong>{receivableTitle(r)}</strong><small>{r.type} · {fmtDate(r.date)}</small></div><div><b>{keepNativeCurrency(r)?money(Math.max(0,r.amount-r.paid_amount),r.currency):money(convertOutstanding(r),currency)}</b><button onClick={()=>onPaid(r)}>Ödendi yap</button></div></article>)}{!open.length&&<p className="empty-mini">Bekleyen alacak yok.</p>}</div></section>
 }
 
 function Dashboard({ onSignedOut }) {
@@ -1456,8 +1473,8 @@ function Dashboard({ onSignedOut }) {
         ? event.category
         : event.category === "Gider" ? "Tur Masrafı" : event.category === "Tahsilat" ? "Komisyon" : "Tur Geliri",
       amount: Number(event.amount), currency: event.currency || "TRY",
-      status: "Ödenmedi", paid_amount: 0, tags: `Takvim, ${event.category}`,
-      source_event_id: event.id, note: event.note || "Takvimden oluşturuldu",
+      status: "Ödenmedi", paid_amount: 0, tags: "",
+      source_event_id: event.id, note: event.note || "",
     });
     const saved = await createRecord(record);
     const updatedEvent = await updateEvent({ ...event, status: "Kesinleşti", linked_record_id: saved.id });
@@ -1959,11 +1976,11 @@ function Dashboard({ onSignedOut }) {
                           >⌄</button>
                         </td>
                         <td className="record-source" data-label="Tur / Kaynak">
-                          <strong>{r.agency || r.tour || r.guest || r.ship || "Kayıt"}</strong>
+                          <strong>{recordPrimary(r)}</strong>
                           <span>
-                            {r.note || [r.guest, r.ship].filter(Boolean).join(" · ") || "—"}
+                            {recordSecondary(r) || "—"}
                           </span>
-                          {(r.due_date || r.tags) && <small>{[r.due_date && `Vade: ${fmtDate(r.due_date)}`, r.tags].filter(Boolean).join(" · ")}</small>}
+                          {(r.due_date || cleanRecordTags(r)) && <small>{[r.due_date && `Vade: ${fmtDate(r.due_date)}`, cleanRecordTags(r)].filter(Boolean).join(" · ")}</small>}
                         </td>
                         <td className="record-type" data-label="Tür">
                           <span
@@ -2079,7 +2096,7 @@ function Dashboard({ onSignedOut }) {
                 {receivables.map((r) => (
                   <article key={r.id}>
                     <div>
-                      <strong>{[r.agency, r.note].filter(Boolean).join(" · ") || r.tour || "Kayıt"}</strong>
+                      <strong>{receivableTitle(r)}</strong>
                       <span>{r.type} · {fmtDate(r.date)}</span>
                     </div>
                     <div>

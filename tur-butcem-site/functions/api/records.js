@@ -34,6 +34,16 @@ export async function onRequestGet(context) {
     await ensureDailyBackup(db);
     // Eski sürümde kullanılan Alındı durumu, yeni sistemde Ödendi olarak saklanır.
     await db.prepare("UPDATE records SET status='Ödendi', paid_amount=amount, updated_at=CURRENT_TIMESTAMP WHERE status='Alındı' AND deleted_at IS NULL").run();
+    // Takvim bağlantısı teknik alanlarda kalır; kullanıcıya yapay kaynak metni gösterilmez.
+    await db.prepare(`UPDATE records SET
+      note=CASE WHEN lower(trim(note)) IN ('takvimden oluşturuldu','takvimden oluşturulmuştur','takvimden eklenmiştir','takvimden eklendi') THEN '' ELSE note END,
+      tags=CASE WHEN source_event_id<>'' AND lower(tags) LIKE 'takvim,%' THEN '' ELSE tags END,
+      updated_at=CURRENT_TIMESTAMP
+      WHERE source_event_id<>'' AND (
+        lower(trim(note)) IN ('takvimden oluşturuldu','takvimden oluşturulmuştur','takvimden eklenmiştir','takvimden eklendi')
+        OR lower(tags) LIKE 'takvim,%'
+      )
+    `).run();
     const url = new URL(context.request.url);
     const trash = url.searchParams.get('trash') === '1';
     const result = await db.prepare(`SELECT ${selectFields} FROM records WHERE deleted_at IS ${trash ? 'NOT NULL' : 'NULL'} ORDER BY date DESC, created_at DESC`).all();

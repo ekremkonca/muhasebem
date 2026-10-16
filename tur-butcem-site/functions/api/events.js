@@ -40,15 +40,24 @@ const recordFromEvent = (event, recordId) => normalizeRecord({
   currency: event.currency || "TRY",
   status: event.status === "İptal" ? "İade edildi" : "Ödenmedi",
   paid_amount: 0,
-  tags: `Takvim, ${event.category}`,
+  tags: "",
   source_event_id: event.id,
-  note: event.note || "Takvimden oluşturuldu",
+  note: event.note || "",
 });
 
 export async function onRequestGet(context) {
   try {
     const db = await getDb(context);
     await requireSession(context, db);
+    await db.prepare(`UPDATE records SET
+      note=CASE WHEN lower(trim(note)) IN ('takvimden oluşturuldu','takvimden oluşturulmuştur','takvimden eklenmiştir','takvimden eklendi') THEN '' ELSE note END,
+      tags=CASE WHEN source_event_id<>'' AND lower(tags) LIKE 'takvim,%' THEN '' ELSE tags END,
+      updated_at=CURRENT_TIMESTAMP
+      WHERE source_event_id<>'' AND (
+        lower(trim(note)) IN ('takvimden oluşturuldu','takvimden oluşturulmuştur','takvimden eklenmiştir','takvimden eklendi')
+        OR lower(tags) LIKE 'takvim,%'
+      )
+    `).run();
     await db.prepare(`
       UPDATE calendar_events
       SET title=COALESCE(NULLIF((
