@@ -4,7 +4,7 @@ import FinanceOperations from './FinanceOperations.jsx';
 import './styles/web-september-refresh.css';
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { categoryTotals, currencyTotals, goalProgress, seasonMetrics } from './accountingSummary.js';
+import { categoryTotals, currencyTotals, goalProgress, monthlyMetrics, seasonMetrics } from './accountingSummary.js';
 import './styles/accounting-refresh.css';
 import FinanceScore from './FinanceScore.jsx';
 import CategoryDonut from './CategoryDonut.jsx';
@@ -587,20 +587,21 @@ function ReportModal({ rows, currency, convert, onExcel, onPdf, onWhatsApp, onCl
   const [month, setMonth] = useState(today().slice(0, 7));
   const monthRows = rows.filter((r) => r.date.startsWith(month));
   const paid = monthRows.filter((r) => r.status === "Ödendi");
-  const income = paid
-      .filter((r) => normalizeType(r.type) === "Tur Geliri")
-      .reduce((s, r) => s + convert(r), 0),
-    expense = paid.filter(isExpense).reduce((s, r) => s + convert(r), 0),
+  const reportMetrics = monthlyMetrics(
+      monthRows,
+      convert,
+      (r) => convert({ ...r, amount: Math.max(0, Number(r.amount || 0) - Number(r.paid_amount || 0)) }),
+    ),
+    income = reportMetrics.tourIncome,
+    expense = reportMetrics.expense,
     tips = paid
       .filter((r) => r.type === "Bahşiş")
       .reduce((s, r) => s + convert(r), 0),
     commission = paid
       .filter((r) => r.type === "Komisyon")
       .reduce((s, r) => s + convert(r), 0),
-    tourCount = new Set(monthRows.map((r) => `${r.date}|${r.tour}`)).size,
-    pending = monthRows
-      .filter((r) => r.status === "Ödenmedi" && isIncome(r))
-      .reduce((s, r) => s + convert(r), 0);
+    tourCount = reportMetrics.tourCount,
+    pending = reportMetrics.pending;
   const nativeSummary = (type) => currencyTotals(paid, type)
     .filter((item) => item.amount !== 0)
     .map((item) => money(item.amount, item.code))
@@ -979,7 +980,7 @@ function MonthlySummary({ rows, currency, convert }) {
   const incomeValue = paid.filter(isIncome).reduce((sum, row) => sum + convert(row), 0);
   const expenseValue = paid.filter(isExpense).reduce((sum, row) => sum + convert(row), 0);
   const pendingIncomeRows = monthRows.filter((r) => r.status === "Ödenmedi" && isIncome(r));
-  const pendingValue = pendingIncomeRows.reduce((sum, row) => sum + convert(row), 0);
+  const pendingValue = pendingIncomeRows.reduce((sum, row) => sum + convert({ ...row, amount: Math.max(0, Number(row.amount || 0) - Number(row.paid_amount || 0)) }), 0);
   const byAgency = {};
   paid.forEach((row) => {
     const key = row.agency || row.tour || "Diğer";

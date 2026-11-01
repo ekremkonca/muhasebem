@@ -397,6 +397,13 @@ export async function deleteCurrentSession(context, db) {
     await db.prepare("DELETE FROM sessions WHERE id = ?").bind(token).run();
 }
 
+const isCalendarDate = (value) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+};
+
 export function normalizeRecord(input) {
   if (!input || typeof input !== "object")
     throw Object.assign(new Error("Geçersiz kayıt."), { status: 400 });
@@ -418,7 +425,7 @@ export function normalizeRecord(input) {
     note: String(input.note || "").trim(),
   };
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(record.date) || record.date < "2026-04-01")
+  if (!isCalendarDate(record.date) || record.date < "2026-04-01")
     throw Object.assign(
       new Error("Kayıt tarihi 1 Nisan 2026 veya sonrası olmalı."),
       { status: 400 },
@@ -438,7 +445,7 @@ export function normalizeRecord(input) {
     throw Object.assign(new Error("Geçersiz para birimi."), { status: 400 });
   if (!["Ödendi", "Ödenmedi", "İade edildi"].includes(record.status))
     throw Object.assign(new Error("Geçersiz durum."), { status: 400 });
-  if (record.due_date && !/^\d{4}-\d{2}-\d{2}$/.test(record.due_date))
+  if (record.due_date && !isCalendarDate(record.due_date))
     throw Object.assign(new Error("Geçersiz vade tarihi."), { status: 400 });
   if (!Number.isFinite(record.paid_amount) || record.paid_amount < 0 || record.paid_amount > record.amount)
     throw Object.assign(new Error("Tahsil edilen tutar toplam tutarı aşamaz."), { status: 400 });
@@ -473,7 +480,7 @@ export function normalizeCalendarEvent(input) {
     linked_record_id: String(input.linked_record_id || "").trim(),
   };
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(event.date))
+  if (!isCalendarDate(event.date))
     throw Object.assign(new Error("Geçerli bir etkinlik tarihi gerekli."), {
       status: 400,
     });

@@ -30,3 +30,29 @@ export function seasonMetrics(rows, convert, convertOutstanding) {
   ).length;
   return { tourIncome: roundMoney(tourIncome), expense: roundMoney(expense), pending: roundMoney(pending), tourCount };
 }
+
+export function monthlyMetrics(rows, convert, convertOutstanding) {
+  const paid = rows.filter(row => row.status === 'Ödendi');
+  const tourIncome = paid
+    .filter(row => row.type === 'Tur Geliri')
+    .reduce((sum, row) => sum + convert(row), 0);
+  const totalIncome = paid
+    .filter(row => INCOME_TYPES.has(row.type))
+    .reduce((sum, row) => sum + convert(row), 0);
+  const expense = paid
+    .filter(row => row.type === 'Tur Masrafı')
+    .reduce((sum, row) => sum + convert(row), 0);
+  const pending = rows
+    .filter(row => row.status === 'Ödenmedi' && INCOME_TYPES.has(row.type))
+    .reduce((sum, row) => sum + convertOutstanding(row), 0);
+  const tourCount = rows.filter(
+    row => row.type === 'Tur Geliri' && row.status !== 'İade edildi' && number(row.amount) > 0,
+  ).length;
+  return {
+    tourIncome: roundMoney(tourIncome),
+    totalIncome: roundMoney(totalIncome),
+    expense: roundMoney(expense),
+    pending: roundMoney(pending),
+    tourCount,
+  };
+}

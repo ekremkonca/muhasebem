@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {categoryTotals, currencyTotals, goalProgress, seasonMetrics} from './accountingSummary.js';
+import {categoryTotals, currencyTotals, goalProgress, monthlyMetrics, seasonMetrics} from './accountingSummary.js';
 test('category totals convert each denomination before summing', () => {
  const rows = [{type:'Komisyon',amount:100,currency:'EUR'},{type:'Komisyon',amount:200,currency:'TRY'},{type:'Tur Masrafı',amount:20,currency:'USD'}];
  const rates = {EUR:50,TRY:1,USD:40};
@@ -32,4 +32,16 @@ test('season metrics exclude expenses from receivables and drafts from tour coun
  ];
  const result=seasonMetrics(rows,row=>row.amount,row=>Math.max(0,row.amount-row.paid_amount));
  assert.deepEqual(result,{tourIncome:1250,expense:200,pending:500,tourCount:3});
+});
+test('monthly report counts only tours and uses remaining receivable after partial payment', () => {
+ const rows = [
+  {type:'Tur Geliri',amount:1000,paid_amount:1000,status:'Ödendi'},
+  {type:'Tur Geliri',amount:800,paid_amount:300,status:'Ödenmedi'},
+  {type:'Bahşiş',amount:100,paid_amount:100,status:'Ödendi'},
+  {type:'Komisyon',amount:200,paid_amount:50,status:'Ödenmedi'},
+  {type:'Tur Masrafı',amount:75,paid_amount:75,status:'Ödendi'},
+  {type:'Tur Geliri',amount:900,paid_amount:0,status:'İade edildi'},
+ ];
+ const result=monthlyMetrics(rows,row=>row.amount,row=>Math.max(0,row.amount-row.paid_amount));
+ assert.deepEqual(result,{tourIncome:1000,totalIncome:1100,expense:75,pending:650,tourCount:2});
 });
