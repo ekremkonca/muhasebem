@@ -30,6 +30,7 @@ import {
   loadHistory,
   loadCashMovements,
   loadRecords,
+  loadSeasonArchives,
   loadSettings,
   loadHomeCash,
   refreshRates,
@@ -1146,6 +1147,7 @@ function Dashboard({ onSignedOut }) {
     [ratesUpdatedAt, setRatesUpdatedAt] = useState(null),
     [homeCash, setHomeCash] = useState(CASH_FX_BALANCES),
     [cashMovements, setCashMovements] = useState([]),
+    [activeSeason, setActiveSeason] = useState({title:'Aktif Sezon',startDate:MIN_DATE}),
     [entryDate, setEntryDate] = useState(""),
     [typeFilter, setTypeFilter] = useState("Tümü"),
     [statusFilter, setStatusFilter] = useState("Tümü"),
@@ -1184,15 +1186,19 @@ function Dashboard({ onSignedOut }) {
     setLoading(true);
     setError("");
     try {
-      const [r, s, b, h, e, movements] = await Promise.all([
+      const [r, s, b, h, e, movements, seasons] = await Promise.all([
         loadRecords(),
         loadSettings(),
         loadBackups(),
         loadHistory(50),
         loadEvents(),
         loadCashMovements(),
+        loadSeasonArchives(),
       ]);
-      setRows(r.filter((x) => x.date >= MIN_DATE).map(normalizeRecord));
+      const seasonStart=seasons?.active?.startDate||MIN_DATE;
+      setActiveSeason(seasons?.active||{title:'Aktif Sezon',startDate:MIN_DATE});
+      setCustomFrom(seasonStart);
+      setRows(r.filter((x) => x.date >= seasonStart).map(normalizeRecord));
       setEvents(e);
       setRates(s.rates);
       setRatesUpdatedAt(s.updatedAt);
@@ -1248,12 +1254,12 @@ function Dashboard({ onSignedOut }) {
       return [`${now.getFullYear()}-${pad(now.getMonth() + 1)}-01`, to];
     if (datePreset === "year") return [`${now.getFullYear()}-01-01`, to];
     if (datePreset === "custom")
-      return [customFrom || MIN_DATE, customTo || to];
-    return [MIN_DATE, "9999-12-31"];
-  }, [datePreset, customFrom, customTo]);
+      return [customFrom || activeSeason.startDate || MIN_DATE, customTo || to];
+    return [activeSeason.startDate || MIN_DATE, "9999-12-31"];
+  }, [datePreset, customFrom, customTo, activeSeason.startDate]);
   const seasonRows = useMemo(
-    () => rows.filter((r) => r.date >= MIN_DATE),
-    [rows],
+    () => rows.filter((r) => r.date >= (activeSeason.startDate||MIN_DATE)),
+    [rows,activeSeason.startDate],
   );
   const calendarEvents = useMemo(
     () => withTourPlans(events, seasonRows),
@@ -1314,7 +1320,7 @@ function Dashboard({ onSignedOut }) {
     // Sezon sayacı takvimdeki aylık sayaçlarla aynı birleşik kaynağı kullanır.
     // Böylece eski muhasebe kayıtlarından üretilen planlar da eksiksiz sayılır.
     tourCount = calendarEvents
-      .filter((event) => String(event.date || "").slice(0, 10) >= MIN_DATE)
+      .filter((event) => String(event.date || "").slice(0, 10) >= (activeSeason.startDate||MIN_DATE))
       .reduce((sum, event) => sum + Math.max(0, Number(event.tourCount ?? 1)), 0),
     average = tourCount ? operatingNet / tourCount : 0;
   const tipTotals = currencyTotals(seasonRows, 'Bahşiş', true);
@@ -1329,8 +1335,9 @@ function Dashboard({ onSignedOut }) {
     0,
   );
   const cashFxValue = convertAmount(cashFxTryValue, "TRY", currency),
-    realizedFxValue = convertAmount(REALIZED_FX_TRY, "TRY", currency),
-    spentRodosValue = convertAmount(SPENT_RODOS_EUR, "EUR", currency),
+    legacySeasonAdjustments = (activeSeason.startDate||MIN_DATE) <= '2026-07-10',
+    realizedFxValue = legacySeasonAdjustments ? convertAmount(REALIZED_FX_TRY, "TRY", currency) : 0,
+    spentRodosValue = legacySeasonAdjustments ? convertAmount(SPENT_RODOS_EUR, "EUR", currency) : 0,
     // Döviz bozumları gelir değildir; yalnızca mevcut paranın para birimini değiştirir.
     // 10 Temmuz sabit başlangıç tutarı korunur, yeni kasa hareketleri net gelire eklenmez.
     income = tourIncome + realizedFxValue + postJulyTipCommissionIncome + spentRodosValue,

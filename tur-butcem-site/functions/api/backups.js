@@ -46,7 +46,7 @@ const eventFields = [
 
 function readBackupPayload(raw) {
   const payload = JSON.parse(raw);
-  if (Array.isArray(payload)) return { records: payload, events: null, movements: null, closings: null };
+  if (Array.isArray(payload)) return { records: payload, events: null, movements: null, closings: null, archives: null, settings: null };
   if (
     !payload ||
     !Array.isArray(payload.records) ||
@@ -54,7 +54,7 @@ function readBackupPayload(raw) {
   ) {
     throw Object.assign(new Error("Yedek verisi bozuk."), { status: 400 });
   }
-  return { records: payload.records, events: payload.events || [], movements: Array.isArray(payload.movements)?payload.movements:null, closings:Array.isArray(payload.closings)?payload.closings:null };
+  return { records: payload.records, events: payload.events || [], movements: Array.isArray(payload.movements)?payload.movements:null, closings:Array.isArray(payload.closings)?payload.closings:null, archives:Array.isArray(payload.archives)?payload.archives:null, settings:Array.isArray(payload.settings)?payload.settings:null };
 }
 
 export async function onRequestGet(context) {
@@ -99,13 +99,15 @@ export async function onRequestPost(context) {
         `Geri yükleme öncesi — ${backup.title}`,
         "pre-restore",
       );
-      const { records: rows, events, movements, closings } = readBackupPayload(backup.data);
+      const { records: rows, events, movements, closings, archives, settings } = readBackupPayload(backup.data);
 
       await db.prepare("DELETE FROM records").run();
       if (events !== null)
         await db.prepare("DELETE FROM calendar_events").run();
       if (movements !== null) await db.prepare("DELETE FROM cash_movements").run();
       if (closings !== null) await db.prepare("DELETE FROM month_closings").run();
+      if (archives !== null) await db.prepare("DELETE FROM season_archives").run();
+      if (settings !== null) await db.prepare("DELETE FROM settings").run();
       const statements = rows.map((row) =>
         db
           .prepare(
@@ -148,6 +150,16 @@ export async function onRequestPost(context) {
         const statements=closings.map(row=>db.prepare(`INSERT INTO month_closings (${closingFields.join(',')}) VALUES (${closingFields.map(()=>'?').join(',')})`).bind(...closingFields.map(key=>row[key]??(key==='snapshot'?'{}':key==='note'?'':null))));
         for(let i=0;i<statements.length;i+=40) await db.batch(statements.slice(i,i+40));
       }
+      if (archives !== null) {
+        const archiveFields=['id','title','start_date','end_date','summary','data','created_at'];
+        const statements=archives.map(row=>db.prepare(`INSERT INTO season_archives (${archiveFields.join(',')}) VALUES (${archiveFields.map(()=>'?').join(',')})`).bind(...archiveFields.map(key=>row[key]??(key==='summary'||key==='data'?'{}':null))));
+        for(let i=0;i<statements.length;i+=40) await db.batch(statements.slice(i,i+40));
+      }
+      if (settings !== null) {
+        const settingFields=['key','value','updated_at'];
+        const statements=settings.map(row=>db.prepare(`INSERT INTO settings (${settingFields.join(',')}) VALUES (?,?,?)`).bind(row.key,row.value,row.updated_at||new Date().toISOString()));
+        for(let i=0;i<statements.length;i+=40) await db.batch(statements.slice(i,i+40));
+      }
       await audit(db, null, "backup_restore", {
         backupId: id,
         title: backup.title,
@@ -160,6 +172,8 @@ export async function onRequestPost(context) {
         restoredEvents: events?.length ?? null,
         restoredMovements: movements?.length ?? null,
         restoredClosings: closings?.length ?? null,
+        restoredArchives: archives?.length ?? null,
+        restoredSettings: settings?.length ?? null,
       });
     }
 
@@ -180,6 +194,8 @@ export async function onRequestPost(context) {
           events: payload.events || [],
           movements: payload.movements || [],
           closings: payload.closings || [],
+          archives: payload.archives || [],
+          settings: payload.settings || [],
         },
       });
     }

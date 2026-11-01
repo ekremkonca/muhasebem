@@ -11,7 +11,8 @@ export default defineConfig({
         muhasebe: resolve(process.cwd(), 'muhasebe/index.html'),
         varliklar: resolve(process.cwd(), 'varliklar/index.html'),
         takvim: resolve(process.cwd(), 'takvim/index.html'),
-        rota: resolve(process.cwd(), 'rota/index.html')
+        rota: resolve(process.cwd(), 'rota/index.html'),
+        arsiv: resolve(process.cwd(), 'arsiv/index.html')
       }
     }
   }

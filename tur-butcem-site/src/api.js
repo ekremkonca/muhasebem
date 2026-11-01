@@ -202,6 +202,18 @@ export async function loadEvents() {
   const data = await request("/api/events");
   return Array.isArray(data.events) ? data.events : [];
 }
+
+export async function loadSeasonArchives(id = "") {
+  const query = id ? `?id=${encodeURIComponent(id)}` : "";
+  return request(`/api/seasons${query}`);
+}
+
+export async function archiveSeason(payload) {
+  return request("/api/seasons", {
+    method: "POST",
+    body: JSON.stringify({ action: "archive", ...payload }),
+  });
+}
 export async function createEvent(event) {
   const data = await request("/api/events", {
     method: "POST",

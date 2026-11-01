@@ -269,6 +269,17 @@ export async function ensureSchema(db) {
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_month_closings_month ON month_closings(month DESC)").run();
   await db.prepare("CREATE INDEX IF NOT EXISTS idx_invoices_due_date ON invoices(due_date DESC)").run();
 
+  await db.prepare(`CREATE TABLE IF NOT EXISTS season_archives (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    start_date TEXT NOT NULL,
+    end_date TEXT NOT NULL,
+    summary TEXT NOT NULL DEFAULT '{}',
+    data TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`).run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_season_archives_dates ON season_archives(end_date DESC, created_at DESC)").run();
+
   const movementSeeded=await db.prepare("SELECT value FROM settings WHERE key='cash_movements_seeded_v1'").first();
   if(!movementSeeded){
     const realizedFxSeed = [
@@ -546,13 +557,17 @@ export async function snapshotRecords(
     .all();
   const movementResult = await db.prepare(`SELECT id,date,kind,amount,currency,rate,try_amount,account,note,include_in_net,created_at,updated_at FROM cash_movements ORDER BY date DESC,created_at DESC`).all();
   const closingResult = await db.prepare(`SELECT id,month,income,expense,cash_value,receivable,net,snapshot,note,created_at,updated_at FROM month_closings ORDER BY month DESC`).all();
+  const archiveResult = await db.prepare(`SELECT id,title,start_date,end_date,summary,data,created_at FROM season_archives ORDER BY end_date DESC,created_at DESC`).all();
+  const settingsResult = await db.prepare(`SELECT key,value,updated_at FROM settings ORDER BY key`).all();
   const id = crypto.randomUUID();
   const payload = {
-    version: 3,
+    version: 5,
     records: result.results || [],
     events: eventResult.results || [],
     movements: movementResult.results || [],
     closings: closingResult.results || [],
+    archives: archiveResult.results || [],
+    settings: settingsResult.results || [],
   };
   await db
     .prepare("INSERT INTO backups (id, title, data, kind) VALUES (?, ?, ?, ?)")
