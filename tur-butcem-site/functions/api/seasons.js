@@ -13,7 +13,7 @@ const ratesFrom=async db=>{
 };
 
 const LEGACY_REALIZED_FX_TRY=610*46.44+320*62.34+545*53.07;
-export const summarizeSeason=(records,rates,startDate='9999-12-31')=>{
+export const summarizeSeason=(records,rates,startDate='9999-12-31',events=[])=>{
   const value=row=>number(row.amount)*(number(rates[row.currency||'TRY'])||1);
   const outstanding=row=>Math.max(0,number(row.amount)-number(row.paid_amount))*(number(rates[row.currency||'TRY'])||1);
   const paid=records.filter(row=>row.status==='Ödendi');
@@ -25,7 +25,7 @@ export const summarizeSeason=(records,rates,startDate='9999-12-31')=>{
   const receivable=records.filter(row=>row.status==='Ödenmedi'&&['Tur Geliri','Bahşiş','Komisyon'].includes(row.type)).reduce((sum,row)=>sum+outstanding(row),0);
   const tourCount=records.filter(row=>row.type==='Tur Geliri'&&row.status!=='İade edildi'&&number(row.amount)>0).length;
   const legacyAdjustments=startDate<='2026-07-10'?LEGACY_REALIZED_FX_TRY+134*(number(rates.EUR)||0):0;
-  return {tourIncome,tips,commission,expense,net:tourIncome+realizedTipCommission+legacyAdjustments-expense,recordedNet:tourIncome+tips+commission-expense,receivable,tourCount,recordCount:records.length,rates};
+  return {tourIncome,tips,commission,expense,net:tourIncome+realizedTipCommission+legacyAdjustments-expense,recordedNet:tourIncome+tips+commission-expense,receivable,tourCount,eventCount:events.length,recordCount:records.length,rates};
 };
 
 export async function onRequestGet(context){
@@ -61,7 +61,7 @@ export async function onRequestPost(context){
     ]);
     const records=recordsResult.results||[],events=eventsResult.results||[],movements=movementsResult.results||[],closings=closingsResult.results||[];
     if(!records.length&&!events.length)return json({error:'Bu tarih aralığında arşivlenecek kayıt bulunamadı.'},400);
-    const summary=summarizeSeason(records,rates,startDate),id=crypto.randomUUID();
+    const summary=summarizeSeason(records,rates,startDate,events),id=crypto.randomUUID();
     const data={version:1,records,events,movements,closings,archivedRates:rates};
     await snapshotRecords(db,`Sezon arşivi öncesi — ${title}`,'pre-season-archive');
     const statements=[

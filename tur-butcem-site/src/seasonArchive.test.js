@@ -11,7 +11,7 @@ test('sezon arşivi ödenen gelirleri, masrafı ve kalan alacağı dondurur',()=
   {type:'Tur Masrafı',amount:400,currency:'TRY',status:'Ödendi',paid_amount:400},
   {type:'Tur Geliri',amount:900,currency:'TRY',status:'İade edildi',paid_amount:0},
  ];
- const result=summarizeSeason(rows,{TRY:1,EUR:50,USD:40,GBP:60},'2027-01-01');
+ const result=summarizeSeason(rows,{TRY:1,EUR:50,USD:40,GBP:60},'2027-01-01',[{id:'plan-1'},{id:'plan-2'}]);
  assert.equal(result.tourIncome,5000);
  assert.equal(result.tips,800);
  assert.equal(result.commission,300);
@@ -20,4 +20,5 @@ test('sezon arşivi ödenen gelirleri, masrafı ve kalan alacağı dondurur',()=
  assert.equal(result.recordedNet,5700);
  assert.equal(result.receivable,1500);
  assert.equal(result.tourCount,2);
+ assert.equal(result.eventCount,2);
 });
